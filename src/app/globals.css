@@ -1,26 +1,129 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-dark: var(--color-dark);
+  --color-light: var(--color-light);
+  --color-beige: var(--color-beige);
+
+  --color-success: #f6e6c4;
+  --color-warning: #ffe5cc;
+  --color-error: #cc0303;
+  --color-info: #e5f3ff;
+  --color-gray: #767676;
+
+  --font-sans: Inter, system-ui, -apple-system, sans-serif;
+
+  --spacing-item-spacing-s: 24px;
+  --spacing-item-spacing: 15px;
+}
+
+/* Define custom utilities if needed, or just variables */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Default to Twilight */
+  --color-primary: #4338ca;
+  --color-secondary: #6b7280;
+  --color-accent: #f3f4f6;
+  --color-dark: #111827;
+  --color-light: #fafbfc;
+  --color-beige: #e5e7eb;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.theme-twilight {
+  --color-primary: #4338ca;
+  --color-secondary: #6b7280;
+  --color-accent: #f3f4f6;
+  --color-dark: #111827;
+  --color-light: #fafbfc;
+  --color-beige: #e5e7eb;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.theme-tropical {
+  --color-primary: #1f6357;
+  --color-secondary: #4db8a8;
+  --color-accent: #f4e9cd;
+  --color-dark: #0d3d34;
+  --color-light: #e8f5f3;
+  --color-beige: #d4c5a0;
+}
+
+.theme-vista {
+  --color-primary: #d56a34;
+  --color-secondary: #3f170e;
+  --color-accent: #f9f7e9;
+  --color-dark: #2a0f08;
+  --color-light: #fdfcf5;
+  --color-beige: #f4f1e0;
+}
+
+.theme-mint {
+  --color-primary: #1f756e;
+  --color-secondary: #5ddcc3;
+  --color-accent: #c8e86c;
+  --color-dark: #163d39;
+  --color-light: #f2fff9;
+  --color-beige: #e8f5f2;
+}
+
+.theme-sunset {
+  --color-primary: #ff6b9d;
+  --color-secondary: #ffa07a;
+  --color-accent: #ffd700;
+  --color-dark: #c73866;
+  --color-light: #fff4e6;
+  --color-beige: #ffe4e1;
+}
+
+.theme-ocean {
+  --color-primary: #006d77;
+  --color-secondary: #83c5be;
+  --color-accent: #edf6f9;
+  --color-dark: #003d47;
+  --color-light: #ffddd2;
+  --color-beige: #e29578;
+}
+
+.theme-lavender {
+  --color-primary: #9d84b7;
+  --color-secondary: #c8b6e2;
+  --color-accent: #e8dff5;
+  --color-dark: #6b5b8e;
+  --color-light: #f7f3fc;
+  --color-beige: #e5d9f2;
+}
+
+.theme-fire {
+  --color-primary: #ff4500;
+  --color-secondary: #ffd700;
+  --color-accent: #ff6347;
+  --color-dark: #8b0000;
+  --color-light: #fff8dc;
+  --color-beige: #ffe4b5;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-[var(--color-dark)] leading-relaxed;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-light);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 0.25rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-accent);
 }
