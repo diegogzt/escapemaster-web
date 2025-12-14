@@ -18,6 +18,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: StatsCards,
     defaultColSpan: 48,
     defaultRowSpan: 6,
+    configurableOptions: ["showTrends", "columns", "refreshInterval"],
+    defaultConfig: { showTrends: true, columns: 4, refreshInterval: 60 },
   },
   upcoming: {
     type: "upcoming",
@@ -26,6 +28,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: UpcomingSessions,
     defaultColSpan: 24,
     defaultRowSpan: 20,
+    configurableOptions: ["limit", "showPastSessions", "refreshInterval"],
+    defaultConfig: { limit: 5, showPastSessions: false, refreshInterval: 30 },
   },
   team: {
     type: "team",
@@ -34,6 +38,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: TeamStatus,
     defaultColSpan: 12,
     defaultRowSpan: 12,
+    configurableOptions: ["refreshInterval"],
+    defaultConfig: { refreshInterval: 60 },
   },
   revenue: {
     type: "revenue",
@@ -42,6 +48,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: RevenueWidget,
     defaultColSpan: 24,
     defaultRowSpan: 12,
+    configurableOptions: ["dateRange", "refreshInterval"],
+    defaultConfig: { dateRange: "month", refreshInterval: 300 },
   },
   calendar: {
     type: "calendar",
@@ -50,6 +58,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: CalendarWidget,
     defaultColSpan: 12,
     defaultRowSpan: 16,
+    configurableOptions: ["defaultView", "showWeekends"],
+    defaultConfig: { defaultView: "month", showWeekends: true },
   },
   notes: {
     type: "notes",
@@ -58,6 +68,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: NotesWidget,
     defaultColSpan: 12,
     defaultRowSpan: 8,
+    configurableOptions: ["maxNotes"],
+    defaultConfig: { maxNotes: 10 },
   },
   "revenue-chart": {
     type: "revenue-chart",
@@ -66,6 +78,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: RevenueBarChartWidget,
     defaultColSpan: 24,
     defaultRowSpan: 16,
+    configurableOptions: ["chartType", "showLegend", "dateRange"],
+    defaultConfig: { chartType: "bar", showLegend: true, dateRange: "month" },
   },
   "occupancy-chart": {
     type: "occupancy-chart",
@@ -74,6 +88,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: OccupancyPieChartWidget,
     defaultColSpan: 12,
     defaultRowSpan: 14,
+    configurableOptions: ["showLegend", "dateRange"],
+    defaultConfig: { showLegend: true, dateRange: "month" },
   },
   "quarterly-stats": {
     type: "quarterly-stats",
@@ -82,6 +98,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: QuarterlyStatsWidget,
     defaultColSpan: 24,
     defaultRowSpan: 12,
+    configurableOptions: ["refreshInterval"],
+    defaultConfig: { refreshInterval: 300 },
   },
   "revenue-table": {
     type: "revenue-table",
@@ -90,5 +108,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: RevenueTableWidget,
     defaultColSpan: 48,
     defaultRowSpan: 20,
+    configurableOptions: ["pageSize", "sortBy", "dateRange"],
+    defaultConfig: { pageSize: 10, sortBy: "date", dateRange: "month" },
   },
 };

@@ -73,7 +73,7 @@ export default function LoginPage() {
               </svg>
             </div>
             <CardTitle level="h2" className="text-2xl font-bold text-white">
-              Bienvenido a Flowy
+              Bienvenido a EscapeMaster
             </CardTitle>
             <p className="text-white/80 mt-2">Inicia sesión para continuar</p>
           </CardHeader>
@@ -152,7 +152,7 @@ export default function LoginPage() {
         </Card>
 
         <p className="text-center text-xs text-white/40 mt-8">
-          &copy; {new Date().getFullYear()} Flowy. Todos los derechos
+          &copy; {new Date().getFullYear()} EscapeMaster. Todos los derechos
           reservados.
         </p>
       </div>

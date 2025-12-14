@@ -71,10 +71,10 @@ export function RevenueTableWidget() {
               onChange={(e) => setFilter(e.target.value)}
             />
           </div>
-          <button className="p-2 border border-beige rounded-lg hover:bg-light text-secondary">
-            <Filter className="h-4 w-4" />
+          <button className="p-2 border border-beige rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Descargar">
+            <Download className="h-4 w-4" />
           </button>
-          <button className="p-2 border border-beige rounded-lg hover:bg-light text-secondary">
+          <button className="p-2 border border-beige rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Filtrar">
             <Download className="h-4 w-4" />
           </button>
         </div>

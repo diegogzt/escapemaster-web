@@ -108,7 +108,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle level="h2">Crear Cuenta</CardTitle>
-          <p className="text-dark opacity-75">Únete a Flowy hoy mismo</p>
+          <p className="text-dark opacity-75">Únete a EscapeMaster hoy mismo</p>
         </CardHeader>
         <form onSubmit={handleRegister}>
           <div className="space-y-4">

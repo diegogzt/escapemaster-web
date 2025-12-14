@@ -18,6 +18,12 @@ const config: Config = {
         beige: "var(--color-beige)",
         white: "#ffffff",
         
+        // UI semantic colors
+        background: "var(--color-background)",
+        foreground: "var(--color-foreground)",
+        muted: "var(--color-muted)",
+        "muted-foreground": "var(--color-muted-foreground)",
+        
         // Status colors
         success: "#f6e6c4",
         warning: "#ffe5cc",

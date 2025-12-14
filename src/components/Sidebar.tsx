@@ -37,7 +37,7 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white border-r border-beige flex flex-col h-screen sticky top-0">
       <div className="p-6 border-b border-beige">
-        <h1 className="text-2xl font-bold text-primary">Flowy</h1>
+        <h1 className="text-xl font-bold text-primary">EscapeMaster</h1>
       </div>
 
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">{menuItems.map((item) => (
@@ -48,7 +48,7 @@ export default function Sidebar() {
               "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
               pathname === item.href
                 ? "bg-primary text-white"
-                : "text-gray-700 hover:bg-light"
+                : "text-secondary hover:bg-primary/10 hover:text-primary"
             )}
           >
             <item.icon size={20} />
@@ -60,7 +60,7 @@ export default function Sidebar() {
       <div className="p-4 border-t border-beige space-y-2">
         <button
           onClick={() => setTheme(theme === "tropical" ? "twilight" : "tropical")}
-          className="flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-light w-full transition-colors"
+          className="flex items-center space-x-3 px-4 py-3 rounded-lg text-secondary hover:bg-primary/10 hover:text-primary w-full transition-colors"
         >
           {theme === "tropical" ? <Moon size={20} /> : <Sun size={20} />}
           <span className="font-medium">

@@ -7,7 +7,7 @@ export default function DocsPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-primary">Documentación</h1>
         <p className="text-dark opacity-75">
-          Guías y referencias para usar Flowy.
+          Guías y referencias para usar EscapeMaster.
         </p>
       </div>
 

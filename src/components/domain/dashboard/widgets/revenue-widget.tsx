@@ -29,8 +29,8 @@ export function RevenueWidget() {
           <span className="font-medium text-dark">€10,000</span>
         </div>
         <div className="mt-2 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-primary rounded-full" 
+          <div
+            className="h-full bg-primary rounded-full"
             style={{ width: "84.5%" }}
           />
         </div>

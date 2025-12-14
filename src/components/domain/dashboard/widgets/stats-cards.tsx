@@ -1,6 +1,12 @@
 import { DollarSign, Users, Calendar, Activity } from "lucide-react";
+import { WidgetConfigOptions } from "../types";
 
-export function StatsCards() {
+interface StatsCardsProps extends WidgetConfigOptions {}
+
+export function StatsCards({
+  showTrends = true,
+  columns = 4,
+}: StatsCardsProps) {
   const stats = [
     {
       title: "Ingresos Totales",
@@ -32,22 +38,31 @@ export function StatsCards() {
     },
   ];
 
+  // Dynamic grid columns based on config
+  const gridCols = {
+    2: "grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-3",
+    4: "grid-cols-2 lg:grid-cols-4",
+  }[columns] || "grid-cols-2 lg:grid-cols-4";
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-full">
+    <div className={`grid ${gridCols} gap-3 h-full`}>
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col justify-between"
+          className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col justify-between min-h-0"
         >
           <div className="flex items-center justify-between space-y-0 pb-2">
-            <h3 className="tracking-tight text-sm font-medium text-gray-500">
+            <h3 className="tracking-tight text-xs font-medium text-gray-500 truncate">
               {stat.title}
             </h3>
-            <stat.icon className={`h-4 w-4 ${stat.color}`} />
+            <stat.icon className={`h-4 w-4 ${stat.color} flex-shrink-0`} />
           </div>
-          <div>
-            <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-            <p className="text-xs text-gray-500 mt-1">{stat.change}</p>
+          <div className="min-h-0">
+            <div className="text-xl font-bold text-gray-900">{stat.value}</div>
+            {showTrends && (
+              <p className="text-xs text-gray-500 mt-1 truncate">{stat.change}</p>
+            )}
           </div>
         </div>
       ))}

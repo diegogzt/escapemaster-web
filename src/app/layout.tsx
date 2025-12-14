@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "Flowy",
+  title: "EscapeMaster",
   description: "Escape Room Management System",
 };
 

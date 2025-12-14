@@ -1,18 +1,30 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/utils";
+import { WidgetConfigOptions } from "../types";
 
-export function CalendarWidget() {
-  const [view, setView] = useState<"month" | "week" | "day">("month");
+interface CalendarWidgetProps extends WidgetConfigOptions {}
+
+export function CalendarWidget({
+  defaultView = "month",
+  showWeekends = true,
+}: CalendarWidgetProps) {
+  const [view, setView] = useState<"month" | "week" | "day">(defaultView);
   const [date, setDate] = useState(new Date());
 
-  const days = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  // Sync with prop changes
+  useEffect(() => {
+    setView(defaultView);
+  }, [defaultView]);
+
+  const allDays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  const days = showWeekends ? allDays : allDays.slice(1, 6);
   const monthNames = [
     "Enero",
     "Febrero",
@@ -44,8 +56,8 @@ export function CalendarWidget() {
       byRoom: [
         (seed % 3) + 1, // Room A: 1-3
         (seed % 2) + 1, // Room B: 1-2
-        (seed % 4) === 0 ? 0 : 1, // Room C: 0-1
-      ]
+        seed % 4 === 0 ? 0 : 1, // Room C: 0-1
+      ],
     };
   };
 
@@ -73,28 +85,38 @@ export function CalendarWidget() {
     return (
       <div className="grid grid-cols-7 gap-1 h-full pt-2">
         {weekDays.map((d, index) => {
-          const isToday = d.getDate() === new Date().getDate() && d.getMonth() === new Date().getMonth();
+          const isToday =
+            d.getDate() === new Date().getDate() &&
+            d.getMonth() === new Date().getMonth();
           const sessions = getSessionsForDate(d);
-          
+
           return (
             <div key={index} className="flex flex-col items-center gap-2">
-              <span className="text-xs text-gray-500 font-medium uppercase">{days[d.getDay()]}</span>
-              <span className={cn(
-                "text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full transition-colors",
-                isToday
-                  ? "bg-primary text-white"
-                  : "text-gray-700 hover:bg-light"
-              )}>
+              <span className="text-xs text-gray-500 font-medium uppercase">
+                {days[d.getDay()]}
+              </span>
+              <span
+                className={cn(
+                  "text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full transition-colors",
+                  isToday
+                    ? "bg-primary text-white"
+                    : "text-gray-700 hover:bg-primary/10 hover:text-primary"
+                )}
+              >
                 {d.getDate()}
               </span>
               <div className="mt-1 flex flex-col gap-1 items-center">
-                 {sessions.byRoom.map((count, i) => (
-                   count > 0 && (
-                     <span key={i} className={cn("text-xs font-bold", rooms[i].color)}>
-                       {count}
-                     </span>
-                   )
-                 ))}
+                {sessions.byRoom.map(
+                  (count, i) =>
+                    count > 0 && (
+                      <span
+                        key={i}
+                        className={cn("text-xs font-bold", rooms[i].color)}
+                      >
+                        {count}
+                      </span>
+                    )
+                )}
               </div>
             </div>
           );
@@ -124,20 +146,23 @@ export function CalendarWidget() {
         {daysArray.map((d) => {
           const currentDay = new Date(year, month, d);
           const sessions = getSessionsForDate(currentDay);
-          const isToday = d === new Date().getDate() && month === new Date().getMonth();
-          
+          const isToday =
+            d === new Date().getDate() && month === new Date().getMonth();
+
           return (
             <div
               key={d}
               className={cn(
-                "py-2 rounded-lg hover:bg-light cursor-pointer transition-colors flex flex-col items-center justify-center gap-0.5 min-h-[48px]",
+                "py-2 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors flex flex-col items-center justify-center gap-0.5 min-h-12 group",
                 isToday ? "bg-primary/5" : ""
               )}
             >
-              <span className={cn(
-                "w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium",
-                isToday ? "bg-primary text-white" : "text-gray-700"
-              )}>
+              <span
+                className={cn(
+                  "w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium group-hover:text-primary",
+                  isToday ? "bg-primary text-white group-hover:text-white" : "text-gray-700"
+                )}
+              >
                 {d}
               </span>
               {sessions.total > 0 && (
@@ -153,11 +178,11 @@ export function CalendarWidget() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-dark">Calendario</h3>
+          <h3 className="font-semibold text-dark text-sm">Calendario</h3>
         </div>
         <div className="flex gap-1 bg-light rounded-lg p-1">
           <button
@@ -185,41 +210,43 @@ export function CalendarWidget() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <button
           onClick={() => {
             const newDate = new Date(date);
-            if (view === 'month') {
+            if (view === "month") {
               newDate.setMonth(date.getMonth() - 1);
             } else {
               newDate.setDate(date.getDate() - 7);
             }
             setDate(newDate);
           }}
-          className="p-1 hover:bg-light rounded-full transition-colors"
+          className="p-1 hover:bg-beige hover:text-dark rounded-full transition-colors group"
+          aria-label="Anterior"
         >
-          <ChevronLeft className="h-4 w-4 text-gray-500" />
+          <ChevronLeft className="h-4 w-4 text-secondary group-hover:text-dark" />
         </button>
-        <span className="font-medium text-dark capitalize">
+        <span className="font-medium text-dark capitalize text-sm">
           {monthNames[date.getMonth()]} {date.getFullYear()}
         </span>
         <button
           onClick={() => {
             const newDate = new Date(date);
-            if (view === 'month') {
+            if (view === "month") {
               newDate.setMonth(date.getMonth() + 1);
             } else {
               newDate.setDate(date.getDate() + 7);
             }
             setDate(newDate);
           }}
-          className="p-1 hover:bg-light rounded-full transition-colors"
+          className="p-1 hover:bg-beige hover:text-dark rounded-full transition-colors group"
+          aria-label="Siguiente"
         >
-          <ChevronRight className="h-4 w-4 text-gray-500" />
+          <ChevronRight className="h-4 w-4 text-secondary group-hover:text-dark" />
         </button>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 min-h-0 overflow-auto">
         {view === "month" ? renderMonthView() : renderWeekView()}
       </div>
     </div>

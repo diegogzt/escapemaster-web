@@ -60,13 +60,13 @@ export default function CalendarView() {
           <div className="flex space-x-1">
             <button
               onClick={prev}
-              className="p-2 hover:bg-light rounded-full transition-colors"
+              className="p-2 hover:bg-beige hover:text-dark rounded-full transition-colors text-secondary"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={next}
-              className="p-2 hover:bg-light rounded-full transition-colors"
+              className="p-2 hover:bg-beige hover:text-dark rounded-full transition-colors text-secondary"
             >
               <ChevronRight size={20} />
             </button>

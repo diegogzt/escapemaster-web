@@ -9,11 +9,22 @@ import {
   GripVertical,
   LayoutTemplate,
   Check,
+  ChevronDown,
+  Cog,
+  FolderOpen,
 } from "lucide-react";
 import Button from "@/components/Button";
 import { WIDGET_REGISTRY } from "@/components/domain/dashboard/widget-registry";
-import { WidgetConfig, WidgetType } from "@/components/domain/dashboard/types";
+import {
+  WidgetConfig,
+  WidgetType,
+  WidgetConfigOptions,
+} from "@/components/domain/dashboard/types";
+import { WidgetConfigModal } from "@/components/domain/dashboard/WidgetConfigModal";
+import { SaveCollectionModal } from "@/components/domain/dashboard/SaveCollectionModal";
+import { TemplatePreviewCompact } from "@/components/domain/dashboard/TemplatePreview";
 import { cn } from "@/utils";
+import dashboardService, { DashboardTemplate } from "@/services/dashboard";
 import {
   DndContext,
   closestCenter,
@@ -48,6 +59,7 @@ function WidgetItem({
   isEditMode,
   onRemove,
   onResize,
+  onConfigure,
   dragHandleProps,
   style,
   isDragging,
@@ -60,6 +72,7 @@ function WidgetItem({
     newSpan: number,
     dimension: "width" | "height"
   ) => void;
+  onConfigure?: (widget: WidgetConfig) => void;
   dragHandleProps?: any;
   style?: React.CSSProperties;
   isDragging?: boolean;
@@ -70,6 +83,9 @@ function WidgetItem({
 
   if (!def) return null;
   const Component = def.component;
+
+  // Merge default config with widget-specific config
+  const widgetConfig = { ...def.defaultConfig, ...widget.config };
 
   const handleResizeMouseDown = (
     e: React.MouseEvent,
@@ -186,11 +202,25 @@ function WidgetItem({
           <div className="absolute top-2 right-2 z-20 flex gap-1 bg-white shadow-md rounded-full p-1 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               {...dragHandleProps}
-              className="p-1 hover:bg-gray-100 rounded-full cursor-grab active:cursor-grabbing"
+              className="p-1 hover:bg-beige rounded-full cursor-grab active:cursor-grabbing group"
               title="Arrastrar"
             >
-              <GripVertical className="h-4 w-4 text-gray-600" />
+              <GripVertical className="h-4 w-4 text-secondary group-hover:text-dark" />
             </button>
+            {onConfigure &&
+              def.configurableOptions &&
+              def.configurableOptions.length > 0 && (
+                <>
+                  <div className="w-px bg-gray-200 mx-1" />
+                  <button
+                    onClick={() => onConfigure(widget)}
+                    className="p-1 hover:bg-blue-50 text-blue-500 rounded-full"
+                    title="Configurar widget"
+                  >
+                    <Cog className="h-4 w-4" />
+                  </button>
+                </>
+              )}
             <div className="w-px bg-gray-200 mx-1" />
             {onRemove && (
               <button
@@ -205,7 +235,7 @@ function WidgetItem({
         </>
       )}
       <div className="h-full w-full overflow-auto">
-        <Component />
+        <Component {...widgetConfig} />
       </div>
     </div>
   );
@@ -216,6 +246,7 @@ function SortableWidget({
   isEditMode,
   onRemove,
   onResize,
+  onConfigure,
 }: {
   widget: WidgetConfig;
   isEditMode: boolean;
@@ -225,6 +256,7 @@ function SortableWidget({
     newSpan: number,
     dimension: "width" | "height"
   ) => void;
+  onConfigure: (widget: WidgetConfig) => void;
 }) {
   const {
     attributes,
@@ -250,6 +282,7 @@ function SortableWidget({
         isEditMode={isEditMode}
         onRemove={onRemove}
         onResize={onResize}
+        onConfigure={onConfigure}
         dragHandleProps={{ ...attributes, ...listeners }}
         isDragging={isDragging}
       />
@@ -263,6 +296,71 @@ export default function DashboardPage() {
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  // Template state
+  const [templates, setTemplates] = useState<DashboardTemplate[]>([]);
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false);
+  const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
+
+  // Widget config modal state
+  const [configModalWidget, setConfigModalWidget] =
+    useState<WidgetConfig | null>(null);
+
+  // Collections modal state
+  const [showCollectionsModal, setShowCollectionsModal] = useState(false);
+
+  // Handler to open config modal
+  const handleConfigureWidget = (widget: WidgetConfig) => {
+    setConfigModalWidget(widget);
+  };
+
+  // Handler to save widget config
+  const handleSaveWidgetConfig = (
+    widgetId: string,
+    config: WidgetConfigOptions
+  ) => {
+    setWidgets((prev) =>
+      prev.map((w) =>
+        w.id === widgetId ? { ...w, config: { ...w.config, ...config } } : w
+      )
+    );
+  };
+
+  // Handler to load collection
+  const handleLoadCollection = (layout: WidgetConfig[]) => {
+    setWidgets(layout);
+    localStorage.setItem("dashboard-layout", JSON.stringify(layout));
+  };
+
+  // Fetch templates from API
+  useEffect(() => {
+    const fetchTemplates = async () => {
+      setIsLoadingTemplates(true);
+      try {
+        const data = await dashboardService.getTemplates();
+        setTemplates(data);
+      } catch (error) {
+        console.error("Failed to fetch templates:", error);
+      } finally {
+        setIsLoadingTemplates(false);
+      }
+    };
+    fetchTemplates();
+  }, []);
+
+  // Apply a template layout
+  const applyTemplate = (template: DashboardTemplate) => {
+    const newLayout: WidgetConfig[] = template.layout.map((item) => ({
+      id: item.id,
+      type: item.type as WidgetType,
+      colSpan: item.colSpan,
+      rowSpan: item.rowSpan,
+      config: item.config,
+    }));
+    setWidgets(newLayout);
+    localStorage.setItem("dashboard-layout", JSON.stringify(newLayout));
+    setShowTemplateSelector(false);
+  };
 
   useEffect(() => {
     const savedLayout = localStorage.getItem("dashboard-layout");
@@ -385,21 +483,19 @@ export default function DashboardPage() {
   const activeWidget = activeId ? widgets.find((w) => w.id === activeId) : null;
 
   return (
-    <div className="space-y-8 relative min-h-screen pb-20">
+    <div className="space-y-6 relative min-h-screen pb-20">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-dark">
-            Dashboard
-          </h2>
-          <p className="text-secondary mt-1">
-            Bienvenido de nuevo, aquí tienes el resumen de hoy.
-          </p>
-        </div>
-        <div className="flex gap-2">
+        <nav className="flex items-center text-sm text-secondary">
+          <span className="hover:text-dark cursor-pointer">Inicio</span>
+          <span className="mx-2 text-gray-400">/</span>
+          <span className="text-dark font-medium">Dashboard</span>
+        </nav>
+        <div className="flex gap-2 flex-wrap">
           {isEditMode && (
             <>
               <Button
                 variant="outline"
+                size="sm"
                 onClick={() => {
                   if (
                     confirm(
@@ -411,39 +507,114 @@ export default function DashboardPage() {
                     setIsEditMode(false);
                   }
                 }}
-                className="bg-white text-red-500 border-red-200 hover:bg-red-50"
+                className="bg-white text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                 Restablecer
               </Button>
+              {/* Template Selector Button */}
+              <div className="relative">
+                <Button
+                  onClick={() => setShowTemplateSelector(!showTemplateSelector)}
+                  variant="outline"
+                  size="sm"
+                  className="text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark"
+                  disabled={isLoadingTemplates}
+                >
+                  <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
+                  Plantillas
+                  <ChevronDown className="ml-1.5 h-3.5 w-3.5" />
+                </Button>
+                {showTemplateSelector && templates.length > 0 && (
+                  <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                    <div className="p-3 border-b border-gray-100">
+                      <h4 className="font-semibold text-dark text-sm">
+                        Seleccionar Plantilla
+                      </h4>
+                      <p className="text-xs text-secondary mt-1">
+                        Elige una plantilla predefinida
+                      </p>
+                    </div>
+                    <div className="max-h-80 overflow-y-auto">
+                      {templates.map((template) => (
+                        <button
+                          key={template.id}
+                          onClick={() => applyTemplate(template)}
+                          className="w-full text-left px-4 py-3 hover:bg-beige transition-colors border-b border-gray-50 last:border-0"
+                        >
+                          <div className="flex gap-3">
+                            {/* Template Preview */}
+                            <TemplatePreviewCompact
+                              layout={template.layout}
+                              className="flex-shrink-0"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between">
+                                <span className="font-medium text-dark truncate">
+                                  {template.name}
+                                </span>
+                                {template.is_default && (
+                                  <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full ml-2">
+                                    Default
+                                  </span>
+                                )}
+                              </div>
+                              {template.description && (
+                                <p className="text-xs text-secondary mt-1 line-clamp-2">
+                                  {template.description}
+                                </p>
+                              )}
+                              <p className="text-xs text-gray-400 mt-1">
+                                {template.layout.length} widgets
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
               <Button
                 onClick={resetLayout}
                 variant="outline"
-                className="text-dark border-gray-300 bg-white hover:bg-gray-50"
+                size="sm"
+                className="text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark"
               >
-                <LayoutTemplate className="mr-2 h-4 w-4" />
+                <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
                 Ordenar
               </Button>
               <Button
+                onClick={() => setShowCollectionsModal(true)}
+                variant="outline"
+                size="sm"
+                className="text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark"
+              >
+                <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
+                Colecciones
+              </Button>
+              <Button
                 onClick={() => setShowAddWidget(true)}
+                size="sm"
                 className="bg-primary text-white"
               >
-                <Plus className="mr-2 h-4 w-4" />
+                <Plus className="mr-1.5 h-3.5 w-3.5" />
                 Añadir Widget
               </Button>
             </>
           )}
           <Button
             variant={isEditMode ? "primary" : "outline"}
+            size="sm"
             onClick={toggleEditMode}
-            className={isEditMode ? "bg-accent text-dark border-accent" : ""}
+            className={isEditMode ? "bg-accent text-dark border-accent hover:bg-accent/80" : "hover:bg-beige hover:text-dark"}
           >
             {isEditMode ? (
-              <X className="mr-2 h-4 w-4" />
+              <X className="mr-1.5 h-3.5 w-3.5" />
             ) : (
-              <Settings className="mr-2 h-4 w-4" />
+              <Settings className="mr-1.5 h-3.5 w-3.5" />
             )}
-            {isEditMode ? "Finalizar Edición" : "Configurar"}
+            {isEditMode ? "Finalizar" : "Editar"}
           </Button>
         </div>
       </div>
@@ -527,6 +698,7 @@ export default function DashboardPage() {
                 isEditMode={isEditMode}
                 onRemove={removeWidget}
                 onResize={handleResize}
+                onConfigure={handleConfigureWidget}
               />
             ))}
           </div>
@@ -554,6 +726,24 @@ export default function DashboardPage() {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Widget Configuration Modal */}
+      {configModalWidget && (
+        <WidgetConfigModal
+          widget={configModalWidget}
+          isOpen={!!configModalWidget}
+          onClose={() => setConfigModalWidget(null)}
+          onSave={handleSaveWidgetConfig}
+        />
+      )}
+
+      {/* User Collections Modal */}
+      <SaveCollectionModal
+        isOpen={showCollectionsModal}
+        onClose={() => setShowCollectionsModal(false)}
+        currentLayout={widgets}
+        onLoadCollection={handleLoadCollection}
+      />
     </div>
   );
 }

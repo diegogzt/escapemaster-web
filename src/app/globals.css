@@ -29,6 +29,11 @@
   --color-dark: #111827;
   --color-light: #fafbfc;
   --color-beige: #e5e7eb;
+  /* UI semantic colors */
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: #6b7280;
 }
 
 .theme-twilight {
@@ -38,6 +43,10 @@
   --color-dark: #111827;
   --color-light: #fafbfc;
   --color-beige: #e5e7eb;
+  --color-background: #ffffff;
+  --color-foreground: #111827;
+  --color-muted: #f3f4f6;
+  --color-muted-foreground: #6b7280;
 }
 
 .theme-tropical {
@@ -47,6 +56,10 @@
   --color-dark: #0d3d34;
   --color-light: #e8f5f3;
   --color-beige: #d4c5a0;
+  --color-background: #ffffff;
+  --color-foreground: #0d3d34;
+  --color-muted: #e8f5f3;
+  --color-muted-foreground: #1f6357;
 }
 
 .theme-vista {
@@ -56,6 +69,10 @@
   --color-dark: #2a0f08;
   --color-light: #fdfcf5;
   --color-beige: #f4f1e0;
+  --color-background: #fdfcf5;
+  --color-foreground: #2a0f08;
+  --color-muted: #f4f1e0;
+  --color-muted-foreground: #3f170e;
 }
 
 .theme-mint {

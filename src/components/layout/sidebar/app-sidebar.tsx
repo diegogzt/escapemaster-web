@@ -31,9 +31,9 @@ export function AppSidebar() {
         )}
       >
         {!isCollapsed ? (
-          <h1 className="text-2xl font-bold text-primary">Flowy</h1>
+          <h1 className="text-xl font-bold text-primary">EscapeMaster</h1>
         ) : (
-          <h1 className="text-xl font-bold text-primary">F</h1>
+          <h1 className="text-xl font-bold text-primary">EM</h1>
         )}
       </div>
 
@@ -84,7 +84,7 @@ export function AppSidebar() {
       >
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 rounded-md hover:bg-muted text-muted-foreground transition-colors"
+          className="p-2 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
           title={isCollapsed ? "Expandir sidebar" : "Colapsar sidebar"}
         >
           {isCollapsed ? (

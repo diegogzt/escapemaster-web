@@ -28,11 +28,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles = {
       primary: "bg-primary text-white hover:bg-accent hover:-translate-y-0.5",
-      secondary: "bg-secondary text-dark hover:bg-hover",
-      accent: "bg-accent text-white hover:bg-dark",
+      secondary: "bg-secondary text-white hover:bg-dark",
+      accent: "bg-accent text-dark hover:bg-primary hover:text-white",
       outline:
         "bg-transparent text-primary border-2 border-primary hover:bg-primary hover:text-white",
-      ghost: "bg-transparent text-dark hover:bg-light",
+      ghost: "bg-transparent text-secondary hover:bg-primary/10 hover:text-primary",
     };
 
     const sizeStyles = {

@@ -24,7 +24,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Load theme from local storage if available
-    const savedTheme = localStorage.getItem("flowy-theme") as Theme;
+    const savedTheme = localStorage.getItem("em-theme") as Theme;
     if (savedTheme) {
       setTheme(savedTheme);
     }
@@ -43,7 +43,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       "theme-fire"
     );
     document.body.classList.add(`theme-${theme}`);
-    localStorage.setItem("flowy-theme", theme);
+    localStorage.setItem("em-theme", theme);
   }, [theme]);
 
   return (
