@@ -8,8 +8,10 @@ import { auth } from "@/services/api";
 interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
+  user: any | null;
   login: (token: string) => void;
   logout: () => void;
+  updateUser: (data: any) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -17,6 +19,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
@@ -42,6 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Fetch user data to check organization
           try {
             const userData = await auth.me();
+            setUser(userData);
 
             // Check if user needs onboarding (no organization)
             const publicRoutes = [
@@ -72,6 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       } else {
         setIsAuthenticated(false);
+        setUser(null);
         // Redirect to login if not authenticated and on protected route
         const publicRoutes = [
           "/",
@@ -102,14 +107,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setUser(null);
     router.push("/login");
   };
 
+  const updateUser = async (data: any) => {
+    try {
+      const updatedUser = await auth.updateMe(data);
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, loading, user, login, logout, updateUser }}
+    >
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 };
 
 export const useAuth = () => {

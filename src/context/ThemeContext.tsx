@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 type Theme =
   | "twilight"
@@ -20,15 +21,27 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { user, updateUser, isAuthenticated } = useAuth();
   const [theme, setTheme] = useState<Theme>("twilight");
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Load theme from local storage if available
-    const savedTheme = localStorage.getItem("em-theme") as Theme;
+    // 1. Load from localStorage first for immediate feedback
+    const savedTheme = localStorage.getItem("escapemaster-theme") as Theme;
     if (savedTheme) {
       setTheme(savedTheme);
     }
+    setIsInitialized(true);
   }, []);
+
+  useEffect(() => {
+    // 2. If authenticated, sync with user preferences from API
+    if (isAuthenticated && user?.preferences?.theme && isInitialized) {
+      if (user.preferences.theme !== theme) {
+        setTheme(user.preferences.theme);
+      }
+    }
+  }, [isAuthenticated, user?.preferences?.theme, isInitialized]);
 
   useEffect(() => {
     // Apply theme class to body
@@ -43,8 +56,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       "theme-fire"
     );
     document.body.classList.add(`theme-${theme}`);
-    localStorage.setItem("em-theme", theme);
-  }, [theme]);
+    localStorage.setItem("escapemaster-theme", theme);
+
+    // 3. If authenticated and theme changed, sync back to API
+    if (
+      isAuthenticated &&
+      isInitialized &&
+      user?.preferences?.theme !== theme
+    ) {
+      const newPreferences = {
+        ...(user?.preferences || {}),
+        theme: theme,
+      };
+      updateUser({ preferences: newPreferences }).catch(console.error);
+    }
+  }, [theme, isAuthenticated, isInitialized]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>

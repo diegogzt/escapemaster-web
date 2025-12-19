@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavItem } from "./nav-item";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -15,7 +16,44 @@ import {
 } from "lucide-react";
 
 export function AppSidebar() {
+  const { user, updateUser, isAuthenticated } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    // 1. Load from localStorage first
+    const saved = localStorage.getItem("sidebar-collapsed");
+    if (saved !== null) {
+      setIsCollapsed(saved === "true");
+    }
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      user?.preferences?.sidebarCollapsed !== undefined &&
+      isInitialized
+    ) {
+      if (user.preferences.sidebarCollapsed !== isCollapsed) {
+        setIsCollapsed(user.preferences.sidebarCollapsed);
+      }
+    }
+  }, [isAuthenticated, user?.preferences?.sidebarCollapsed, isInitialized]);
+
+  const toggleSidebar = () => {
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+    localStorage.setItem("sidebar-collapsed", String(newState));
+
+    if (isAuthenticated && isInitialized) {
+      const newPreferences = {
+        ...(user?.preferences || {}),
+        sidebarCollapsed: newState,
+      };
+      updateUser({ preferences: newPreferences }).catch(console.error);
+    }
+  };
 
   return (
     <aside
@@ -26,7 +64,7 @@ export function AppSidebar() {
     >
       <div
         className={cn(
-          "h-16 flex items-center",
+          "h-16 flex items-center relative",
           isCollapsed ? "justify-center" : "px-6"
         )}
       >
@@ -35,6 +73,13 @@ export function AppSidebar() {
         ) : (
           <h1 className="text-xl font-bold text-primary">EM</h1>
         )}
+
+        <button
+          onClick={toggleSidebar}
+          className="absolute -right-3 top-1/2 -translate-y-1/2 bg-background border rounded-full p-1 hover:bg-accent transition-colors z-10"
+        >
+          {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
       </div>
 
       <nav className="flex-1 px-2 space-y-2 py-4">

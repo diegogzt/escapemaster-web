@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = "../flowy-api/test.db"
+DB_PATH = "../escapemaster-api/test.db"
 
 def inspect_db():
     if not os.path.exists(DB_PATH):

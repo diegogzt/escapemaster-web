@@ -1,14 +1,14 @@
 # Registro de Cambios y Hoja de Ruta (Frontend & API)
 
-Este documento resume los cambios recientes realizados en `flowy-web` para mejorar la interfaz y la experiencia de usuario, así como los requisitos necesarios en la API (`flowy-api`) para soportar estas nuevas funcionalidades de manera persistente.
+Este documento resume los cambios recientes realizados en `escapemaster-web` para mejorar la interfaz y la experiencia de usuario, así como los requisitos necesarios en la API (`escapemaster-api`) para soportar estas nuevas funcionalidades de manera persistente.
 
-## 1. Cambios Recientes en Flowy Web
+## 1. Cambios Recientes en Escapemaster Web
 
 ### Sistema de Temas Global (Theming)
 
 Se ha implementado un sistema de temas dinámico que permite cambiar la paleta de colores de toda la aplicación en tiempo real.
 
-- **Contexto**: `src/context/ThemeContext.tsx` gestiona el estado del tema y lo persiste en `localStorage` (`flowy-theme`).
+- **Contexto**: `src/context/ThemeContext.tsx` gestiona el estado del tema y lo persiste en `localStorage` (`escapemaster-theme`).
 - **CSS Variables**: Se utilizan variables CSS (`--color-primary`, `--color-secondary`, etc.) inyectadas en el `body` según el tema seleccionado.
 - **Tailwind**: Configurado para usar estas variables (`bg-primary`, `text-primary`), permitiendo que los componentes reaccionen automáticamente al cambio de tema.
 - **Temas Disponibles**: Twilight (Default), Tropical, Vista, Mint Fresh, Sunset, Ocean, Lavender, Fire.
@@ -45,7 +45,7 @@ El dashboard ha sido refactorizado para ser más modular y visualmente consisten
 
 ## 2. Requisitos de API (Backend Changes)
 
-Para que las funcionalidades del frontend sean persistentes y dinámicas, se requieren los siguientes cambios en `flowy-api`.
+Para que las funcionalidades del frontend sean persistentes y dinámicas, se requieren los siguientes cambios en `escapemaster-api`.
 
 ### 2.1. Preferencias de Usuario / Organización
 
@@ -93,7 +93,7 @@ Para que el usuario no pierda su organización de widgets al recargar.
 
 ## 3. Futuras Integraciones Frontend
 
-Pasos a seguir en `flowy-web` para completar la migración a una aplicación totalmente funcional.
+Pasos a seguir en `escapemaster-web` para completar la migración a una aplicación totalmente funcional.
 
 1.  **Capa de Servicios (API Client)**:
 

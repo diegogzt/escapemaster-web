@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Cog,
   FolderOpen,
+  Save,
 } from "lucide-react";
 import Button from "@/components/Button";
 import { WIDGET_REGISTRY } from "@/components/domain/dashboard/widget-registry";
@@ -327,9 +328,13 @@ export default function DashboardPage() {
   };
 
   // Handler to load collection
+  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(
+    null
+  );
+  const [isSaving, setIsSaving] = useState(false);
+
   const handleLoadCollection = (layout: WidgetConfig[]) => {
     setWidgets(layout);
-    localStorage.setItem("dashboard-layout", JSON.stringify(layout));
   };
 
   // Fetch templates from API
@@ -358,46 +363,85 @@ export default function DashboardPage() {
       config: item.config,
     }));
     setWidgets(newLayout);
-    localStorage.setItem("dashboard-layout", JSON.stringify(newLayout));
     setShowTemplateSelector(false);
   };
 
   useEffect(() => {
-    const savedLayout = localStorage.getItem("dashboard-layout");
-    if (savedLayout) {
+    const loadLayout = async () => {
       try {
-        const parsedLayout = JSON.parse(savedLayout);
-        // Migration check: if we detect the old 12-column grid values
-        // The 'stats' widget is a good indicator, it should be full width (48)
-        // If it's 12 or less, we're likely on the old scale
-        const isOldScale = parsedLayout.some(
-          (w: WidgetConfig) => w.type === "stats" && (w.colSpan || 12) <= 12
-        );
+        // Try to load active collection from API first
+        const collections = await dashboardService.getCollections();
+        const activeCollection = collections.find((c) => c.is_active);
 
-        if (isOldScale) {
-          console.log(
-            "Migrating dashboard layout from 12-col to 48-col system"
-          );
-          const migratedLayout = parsedLayout.map((w: WidgetConfig) => ({
-            ...w,
-            colSpan: (w.colSpan || 12) * 4,
-          }));
-          setWidgets(migratedLayout);
-        } else {
-          setWidgets(parsedLayout);
+        if (activeCollection) {
+          setWidgets(activeCollection.layout as WidgetConfig[]);
+          setActiveCollectionId(activeCollection.id);
+          setIsLoaded(true);
+          return;
         }
+
+        // If no active collection, use default layout
+        setWidgets(DEFAULT_LAYOUT);
       } catch (e) {
-        console.error("Failed to parse dashboard layout", e);
+        console.error("Failed to load dashboard layout", e);
+        setWidgets(DEFAULT_LAYOUT);
+      } finally {
+        setIsLoaded(true);
       }
-    }
-    setIsLoaded(true);
+    };
+
+    loadLayout();
   }, []);
 
+  // Auto-save to active collection if it exists
   useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem("dashboard-layout", JSON.stringify(widgets));
+    const autoSave = async () => {
+      if (isLoaded && activeCollectionId && !isSaving) {
+        try {
+          await dashboardService.updateCollection(activeCollectionId, {
+            layout: widgets as any,
+          });
+        } catch (e) {
+          console.error("Failed to auto-save dashboard layout", e);
+        }
+      }
+    };
+
+    const timer = setTimeout(() => {
+      autoSave();
+    }, 2000); // Auto-save after 2 seconds of inactivity
+
+    return () => clearTimeout(timer);
+  }, [widgets, isLoaded, activeCollectionId]);
+
+  const handleSaveLayout = async () => {
+    setIsSaving(true);
+    try {
+      if (activeCollectionId) {
+        await dashboardService.updateCollection(activeCollectionId, {
+          layout: widgets as any,
+        });
+      } else {
+        const name = prompt(
+          "Nombre para esta colección de widgets:",
+          "Mi Dashboard"
+        );
+        if (name) {
+          const newCollection = await dashboardService.createCollection({
+            name,
+            layout: widgets as any,
+          });
+          await dashboardService.activateCollection(newCollection.id);
+          setActiveCollectionId(newCollection.id);
+        }
+      }
+    } catch (e) {
+      console.error("Failed to save dashboard layout", e);
+      alert("Error al guardar el diseño");
+    } finally {
+      setIsSaving(false);
     }
-  }, [widgets, isLoaded]);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -503,7 +547,6 @@ export default function DashboardPage() {
                     )
                   ) {
                     setWidgets(DEFAULT_LAYOUT);
-                    localStorage.removeItem("dashboard-layout");
                     setIsEditMode(false);
                   }
                 }}
@@ -604,10 +647,33 @@ export default function DashboardPage() {
             </>
           )}
           <Button
+            onClick={handleSaveLayout}
+            variant="outline"
+            size="sm"
+            className={cn(
+              "text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark",
+              activeCollectionId && "border-primary/30 text-primary"
+            )}
+            disabled={isSaving}
+          >
+            <Save
+              className={cn("mr-1.5 h-3.5 w-3.5", isSaving && "animate-spin")}
+            />
+            {isSaving
+              ? "Guardando..."
+              : activeCollectionId
+              ? "Guardado"
+              : "Guardar"}
+          </Button>
+          <Button
             variant={isEditMode ? "primary" : "outline"}
             size="sm"
             onClick={toggleEditMode}
-            className={isEditMode ? "bg-accent text-dark border-accent hover:bg-accent/80" : "hover:bg-beige hover:text-dark"}
+            className={
+              isEditMode
+                ? "bg-accent text-dark border-accent hover:bg-accent/80"
+                : "hover:bg-beige hover:text-dark"
+            }
           >
             {isEditMode ? (
               <X className="mr-1.5 h-3.5 w-3.5" />

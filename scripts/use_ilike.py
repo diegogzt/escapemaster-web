@@ -1,6 +1,6 @@
 import os
 
-file_path = '../flowy-api/app/services/auth_service.py'
+file_path = '../escapemaster-api/app/services/auth_service.py'
 
 with open(file_path, 'r') as f:
     lines = f.readlines()

@@ -4,11 +4,11 @@ import time
 import requests
 from dotenv import load_dotenv
 
-# Add flowy-api to python path
-api_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../flowy-api'))
+# Add escapemaster-api to python path
+api_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../escapemaster-api'))
 sys.path.append(api_path)
 
-# Load .env from flowy-api
+# Load .env from escapemaster-api
 env_path = os.path.join(api_path, '.env')
 load_dotenv(env_path)
 

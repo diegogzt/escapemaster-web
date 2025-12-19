@@ -1,6 +1,6 @@
-# Flowy Web
+# Escapemaster Web
 
-> The modern frontend for the Flowy hospitality ecosystem.
+> The modern frontend for the Escapemaster hospitality ecosystem.
 
 ## 🚀 Features
 
