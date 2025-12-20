@@ -11,7 +11,10 @@ export default function LandingPage() {
         <div className="text-2xl font-bold text-primary">EscapeMaster</div>
         <div className="space-x-4">
           <Link href="/login">
-            <Button variant="outline" className="border-primary text-primary hover:bg-primary hover:text-white">
+            <Button
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-white"
+            >
               Iniciar Sesión
             </Button>
           </Link>
@@ -27,11 +30,13 @@ export default function LandingPage() {
       <header className="container mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row items-center">
         <div className="md:w-1/2 mb-12 md:mb-0">
           <h1 className="text-heading-1 mb-6 text-dark">
-            Gestiona tus Escape Rooms con <span className="text-primary">Estilo</span>
+            Gestiona tus Escape Rooms con{" "}
+            <span className="text-primary">Estilo</span>
           </h1>
           <p className="text-body text-secondary mb-8 max-w-lg">
-            La solución integral para administrar reservas, salas y clientes. 
-            Simplifica tu operación y enfócate en crear experiencias inolvidables.
+            La solución integral para administrar reservas, salas y clientes.
+            Simplifica tu operación y enfócate en crear experiencias
+            inolvidables.
           </p>
           <div className="flex space-x-4">
             <Link href="/register">
@@ -40,7 +45,10 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link href="/login">
-              <Button variant="outline" className="border-secondary text-secondary px-8 py-3 text-lg hover:bg-secondary hover:text-white">
+              <Button
+                variant="outline"
+                className="border-secondary text-secondary px-8 py-3 text-lg hover:bg-secondary hover:text-white"
+              >
                 Ya tengo cuenta
               </Button>
             </Link>
@@ -70,7 +78,9 @@ export default function LandingPage() {
       {/* Features Section */}
       <section className="bg-white py-20">
         <div className="container mx-auto px-6">
-          <h2 className="text-heading-2 text-center mb-16 text-dark">Todo lo que necesitas</h2>
+          <h2 className="text-heading-2 text-center mb-16 text-dark">
+            Todo lo que necesitas
+          </h2>
           <div className="grid md:grid-cols-3 gap-12">
             {[
               {
@@ -89,9 +99,14 @@ export default function LandingPage() {
                 icon: "uD83DuDCC8",
               },
             ].map((feature, index) => (
-              <div key={index} className="text-center p-6 rounded-xl hover:bg-light transition-colors duration-300">
+              <div
+                key={index}
+                className="text-center p-6 rounded-xl hover:bg-light transition-colors duration-300"
+              >
                 <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-heading-3 mb-2 text-primary">{feature.title}</h3>
+                <h3 className="text-heading-3 mb-2 text-primary">
+                  {feature.title}
+                </h3>
                 <p className="text-body text-secondary">{feature.desc}</p>
               </div>
             ))}
@@ -103,7 +118,8 @@ export default function LandingPage() {
       <footer className="bg-dark text-white py-8">
         <div className="container mx-auto px-6 text-center">
           <p className="text-body-small opacity-70">
-            © {new Date().getFullYear()} EscapeMaster. Todos los derechos reservados.
+            © {new Date().getFullYear()} EscapeMaster. Todos los derechos
+            reservados.
           </p>
         </div>
       </footer>

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 
 import { auth } from "@/services/api";
 
@@ -28,6 +29,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const token = localStorage.getItem("token");
 
       if (token) {
+        // Ensure cookie is synced with localStorage
+        if (!Cookies.get("token")) {
+          Cookies.set("token", token, { expires: 7 }); // 7 days
+        }
+
         try {
           // Basic JWT expiration check
           const payload = JSON.parse(atob(token.split(".")[1]));
@@ -89,7 +95,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           !publicRoutes.includes(pathname) &&
           !pathname.startsWith("/reset-password")
         ) {
-          router.push("/login");
+          // Middleware handles this now, but keeping as fallback
+          // router.push("/login");
         }
       }
 
@@ -101,24 +108,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
+    Cookies.set("token", token, { expires: 7 }); // 7 days
     setIsAuthenticated(true);
+    // Fetch user data immediately after login
+    auth.me().then((userData) => {
+      setUser(userData);
+      if (!userData.organization_id) {
+        router.push("/onboarding");
+      } else {
+        router.push("/dashboard");
+      }
+    });
   };
 
   const logout = () => {
     localStorage.removeItem("token");
+    Cookies.remove("token");
     setIsAuthenticated(false);
     setUser(null);
     router.push("/login");
   };
 
   const updateUser = async (data: any) => {
-    try {
-      const updatedUser = await auth.updateMe(data);
-      setUser(updatedUser);
-    } catch (error) {
-      console.error("Failed to update user:", error);
-      throw error;
-    }
+    setUser(data);
   };
 
   return (

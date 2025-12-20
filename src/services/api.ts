@@ -30,6 +30,9 @@ api.interceptors.response.use(
       // Clear token and redirect to login if unauthorized
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
+        // Also remove cookie
+        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        
         // Only redirect if not already on login/register
         if (
           !window.location.pathname.includes("/login") &&
