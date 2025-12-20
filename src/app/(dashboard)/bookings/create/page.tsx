@@ -1,8 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import BookingForm from "@/components/domain/bookings/BookingForm";
 
 export default function CreateBookingPage() {
-  return <BookingForm />;
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BookingForm />
+    </Suspense>
+  );
 }
