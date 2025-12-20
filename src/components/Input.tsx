@@ -7,6 +7,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   helpText?: string;
   labelClassName?: string;
   wrapperClassName?: string;
+  icon?: React.ReactNode;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -18,6 +19,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       className,
       labelClassName,
       wrapperClassName,
+      icon,
       ...props
     },
     ref
@@ -30,16 +32,24 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {label}
         </label>
       )}
-      <input
-        ref={ref}
-        className={cn(
-          "w-full px-3 py-2 border-2 rounded-lg text-base transition-colors bg-white text-dark",
-          error ? "border-red-500" : "border-beige focus:border-primary",
-          props.disabled && "bg-light cursor-not-allowed",
-          className
+      <div className="relative">
+        {icon && (
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+            {icon}
+          </div>
         )}
-        {...props}
-      />
+        <input
+          ref={ref}
+          className={cn(
+            "w-full px-3 py-2 border-2 rounded-lg text-base transition-colors bg-white text-dark",
+            icon && "pl-10",
+            error ? "border-red-500" : "border-beige focus:border-primary",
+            props.disabled && "bg-light cursor-not-allowed",
+            className
+          )}
+          {...props}
+        />
+      </div>
       {error && <span className="text-red-600 text-sm mt-1">{error}</span>}
       {helpText && <span className="text-dark text-sm mt-1">{helpText}</span>}
     </div>
