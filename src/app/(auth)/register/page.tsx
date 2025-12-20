@@ -45,9 +45,37 @@ export default function RegisterPage() {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const organizationName = formData.get("organizationName") as string;
+
+    // --- STRIPE PAYMENT LOGIC (COMMENTED OUT) ---
+    /*
+    try {
+      // 1. Create Stripe Checkout Session
+      const stripeSession = await stripe.createCheckoutSession({
+        line_items: [{ price: 'price_12345', quantity: 1 }],
+        mode: 'subscription',
+        success_url: `${window.location.origin}/register/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${window.location.origin}/register`,
+        customer_email: email,
+        metadata: {
+          organizationName,
+          fullName: name
+        }
+      });
+
+      // 2. Redirect to Stripe
+      window.location.href = stripeSession.url;
+      return; // Stop execution here, registration happens via Webhook or Success Page
+    } catch (stripeError) {
+      setError("Error initiating payment");
+      setLoading(false);
+      return;
+    }
+    */
+    // --------------------------------------------
 
     try {
-      await auth.register(name, email, password);
+      await auth.register(name, email, password, organizationName);
       
       // Save confirmation data with timestamp
       localStorage.setItem("email_confirmation", JSON.stringify({
@@ -112,6 +140,12 @@ export default function RegisterPage() {
         </CardHeader>
         <form onSubmit={handleRegister}>
           <div className="space-y-4">
+            <Input
+              name="organizationName"
+              label="Nombre de tu Escape Room"
+              placeholder="Ej. Mystery Escape"
+              required
+            />
             <Input
               name="name"
               label="Nombre Completo"

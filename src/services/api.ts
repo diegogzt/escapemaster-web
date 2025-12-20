@@ -51,11 +51,12 @@ export const auth = {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
-  register: async (name: string, email: string, password: string) => {
+  register: async (name: string, email: string, password: string, organizationName: string) => {
     const response = await api.post("/auth/register", {
       full_name: name,
       email,
       password,
+      organization_name: organizationName,
     });
     return response.data;
   },
