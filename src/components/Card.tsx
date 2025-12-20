@@ -55,5 +55,13 @@ export const CardFooter = ({ children, className }: CardFooterProps) => (
   </div>
 );
 
+export const CardContent = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => <div className={cn("", className)}>{children}</div>;
+
 export { Card, CardHeader, CardTitle };
 export default Card;
