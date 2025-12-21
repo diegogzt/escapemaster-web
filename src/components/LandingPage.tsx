@@ -1,8 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import Button from "@/components/Button";
+import { 
+  motion, 
+  useScroll, 
+  useTransform, 
+  useSpring, 
+  useInView,
+  AnimatePresence
+} from "framer-motion";
 import {
   Calendar,
   Users,
@@ -11,46 +18,476 @@ import {
   CheckCircle2,
   Menu,
   X,
-  ChevronDown,
-  ChevronUp,
   ArrowRight,
   Star,
   Shield,
+  Zap,
+  Clock,
+  Smartphone
 } from "lucide-react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export default function LandingPage() {
+// Utility for classes
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+// --- Components ---
+
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
-    "monthly"
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  return (
+    <motion.nav
+      className={cn(
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 px-6 py-4",
+        isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm py-3" : "bg-transparent"
+      )}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl group-hover:rotate-12 transition-transform">
+            E
+          </div>
+          <span className={cn("font-bold text-xl tracking-tight", isScrolled ? "text-dark" : "text-dark")}>
+            EscapeMaster
+          </span>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-8">
+          {["Características", "Precios", "Testimonios", "FAQ"].map((item) => (
+            <Link 
+              key={item} 
+              href={`#${item.toLowerCase()}`}
+              className="text-sm font-medium text-gray-600 hover:text-primary transition-colors"
+            >
+              {item}
+            </Link>
+          ))}
+        </div>
+
+        <div className="hidden md:flex items-center gap-4">
+          <Link href="/login" className="text-sm font-medium text-gray-600 hover:text-primary">
+            Iniciar Sesión
+          </Link>
+          <Link href="/register">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="bg-primary text-white px-5 py-2 rounded-full text-sm font-medium shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow"
+            >
+              Empezar Gratis
+            </motion.button>
+          </Link>
+        </div>
+
+        <button 
+          className="md:hidden text-dark"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          {isMenuOpen ? <X /> : <Menu />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-white border-t border-gray-100 overflow-hidden"
+          >
+            <div className="flex flex-col p-6 gap-4">
+              {["Características", "Precios", "Testimonios", "FAQ"].map((item) => (
+                <Link 
+                  key={item} 
+                  href={`#${item.toLowerCase()}`}
+                  className="text-lg font-medium text-gray-800"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {item}
+                </Link>
+              ))}
+              <hr className="border-gray-100 my-2" />
+              <Link href="/login" className="text-lg font-medium text-gray-800">
+                Iniciar Sesión
+              </Link>
+              <Link href="/register">
+                <button className="w-full bg-primary text-white py-3 rounded-xl font-medium">
+                  Empezar Gratis
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   );
-  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+};
 
-  const toggleFaq = (index: number) => {
-    setOpenFaqIndex(openFaqIndex === index ? null : index);
-  };
+const HeroSection = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"],
+  });
 
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.8]);
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const y = useTransform(scrollYProgress, [0, 1], [0, 200]);
+
+  return (
+    <section ref={containerRef} className="h-[120vh] relative flex flex-col items-center justify-start pt-32 overflow-hidden bg-[#FAFAFA]">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(217,70,239,0.1),transparent_50%)]" />
+      
+      <motion.div 
+        style={{ scale, opacity, y }}
+        className="sticky top-32 text-center z-10 px-4 max-w-5xl mx-auto"
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+        >
+          <span className="inline-block py-1 px-3 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6 border border-primary/20">
+            🚀 La plataforma #1 para Escape Rooms
+          </span>
+        </motion.div>
+        
+        <motion.h1 
+          className="text-6xl md:text-8xl font-black text-dark tracking-tight leading-[1.1] mb-8"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.2, type: "spring" }}
+        >
+          Gestiona tu <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-purple-600">
+            Escape Room
+          </span> <br />
+          como un Pro.
+        </motion.h1>
+
+        <motion.p 
+          className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 0.6 }}
+        >
+          Automatiza reservas, controla tus salas y fideliza clientes con la herramienta todo-en-uno diseñada para dueños exigentes.
+        </motion.p>
+
+        <motion.div
+          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <Link href="/register">
+            <Button className="h-14 px-8 text-lg rounded-full shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all hover:-translate-y-1">
+              Comenzar Prueba Gratis <ArrowRight className="ml-2" />
+            </Button>
+          </Link>
+          <Link href="#demo">
+            <button className="h-14 px-8 text-lg font-medium text-gray-600 hover:text-dark transition-colors flex items-center gap-2">
+              <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+                <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-dark border-b-[6px] border-b-transparent ml-1" />
+              </div>
+              Ver Demo
+            </button>
+          </Link>
+        </motion.div>
+      </motion.div>
+
+      {/* Abstract Background Elements */}
+      <motion.div 
+        className="absolute top-1/4 -left-20 w-96 h-96 bg-purple-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+        animate={{ 
+          x: [0, 100, 0],
+          y: [0, 50, 0],
+        }}
+        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+      />
+      <motion.div 
+        className="absolute bottom-1/4 -right-20 w-96 h-96 bg-primary/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+        animate={{ 
+          x: [0, -100, 0],
+          y: [0, -50, 0],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+      />
+    </section>
+  );
+};
+
+const FeatureCard = ({ icon, title, desc, index }: { icon: React.ReactNode, title: string, desc: string, index: number }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ y: -10 }}
+      className="bg-white p-8 rounded-3xl shadow-lg border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all group"
+    >
+      <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary/10 group-hover:scale-110 transition-all duration-300">
+        <div className="text-gray-600 group-hover:text-primary transition-colors">
+          {icon}
+        </div>
+      </div>
+      <h3 className="text-xl font-bold text-dark mb-3">{title}</h3>
+      <p className="text-gray-500 leading-relaxed">{desc}</p>
+    </motion.div>
+  );
+};
+
+const FeaturesSection = () => {
   const features = [
     {
       title: "Gestión de Reservas",
-      desc: "Calendario intuitivo drag-and-drop para manejar todas tus sesiones sin conflictos.",
-      icon: <Calendar className="w-6 h-6 text-primary" />,
+      desc: "Calendario intuitivo drag-and-drop para manejar todas tus sesiones sin conflictos. Sincronización en tiempo real.",
+      icon: <Calendar size={28} />,
     },
     {
       title: "Control de Salas",
-      desc: "Configura múltiples salas, capacidades, tiempos de limpieza y horarios personalizados.",
-      icon: <Settings className="w-6 h-6 text-primary" />,
+      desc: "Configura múltiples salas, capacidades, tiempos de limpieza y horarios personalizados para cada experiencia.",
+      icon: <Settings size={28} />,
     },
     {
       title: "CRM de Clientes",
-      desc: "Base de datos de clientes con historial de juegos y preferencias para marketing.",
-      icon: <Users className="w-6 h-6 text-primary" />,
+      desc: "Base de datos de clientes con historial de juegos, preferencias y herramientas de fidelización.",
+      icon: <Users size={28} />,
     },
     {
       title: "Analíticas Avanzadas",
-      desc: "Reportes detallados de ocupación, ingresos y rendimiento por sala.",
-      icon: <BarChart3 className="w-6 h-6 text-primary" />,
+      desc: "Reportes detallados de ocupación, ingresos y rendimiento por sala para tomar mejores decisiones.",
+      icon: <BarChart3 size={28} />,
+    },
+    {
+      title: "Pagos Automatizados",
+      desc: "Integra pasarelas de pago y gestiona depósitos, reembolsos y facturación automáticamente.",
+      icon: <DollarSignIcon size={28} />,
+    },
+    {
+      title: "Mobile First",
+      desc: "Gestiona tu negocio desde cualquier lugar con nuestra interfaz optimizada para móviles y tablets.",
+      icon: <Smartphone size={28} />,
     },
   ];
+
+  return (
+    <section id="características" className="py-32 bg-white relative z-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-3xl mx-auto mb-20">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-5xl font-bold text-dark mb-6"
+          >
+            Todo lo que necesitas para <br />
+            <span className="text-primary">escalar tu negocio</span>
+          </motion.h2>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-xl text-gray-600"
+          >
+            Deja de usar hojas de cálculo y herramientas desconectadas. Centraliza tu operación en una sola plataforma.
+          </motion.p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((f, i) => (
+            <FeatureCard key={i} {...f} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// Helper for DollarSign since it wasn't imported
+const DollarSignIcon = ({ size, className }: { size?: number, className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width={size || 24} 
+    height={size || 24} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <line x1="12" x2="12" y1="2" y2="22" />
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+  </svg>
+);
+
+const DarkModeSection = () => {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+
+  const background = useTransform(
+    scrollYProgress,
+    [0.2, 0.5, 0.8],
+    ["#ffffff", "#1a1a1a", "#ffffff"]
+  );
+
+  const textColor = useTransform(
+    scrollYProgress,
+    [0.2, 0.5, 0.8],
+    ["#1a1a1a", "#ffffff", "#1a1a1a"]
+  );
+
+  return (
+    <motion.section 
+      ref={ref}
+      style={{ backgroundColor: background, color: textColor }}
+      className="py-40 relative overflow-hidden transition-colors duration-500"
+    >
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="flex flex-col md:flex-row items-center gap-16">
+          <div className="flex-1">
+            <motion.h2 
+              className="text-5xl md:text-6xl font-bold mb-8"
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              Modo Oscuro <br />
+              <span className="text-primary">Impresionante</span>
+            </motion.h2>
+            <motion.p 
+              className="text-xl opacity-80 mb-8 leading-relaxed"
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Diseñado para reducir la fatiga visual durante esas largas jornadas de gestión. 
+              La interfaz se adapta a tus preferencias y al ambiente de tu sala de control.
+            </motion.p>
+            <ul className="space-y-4">
+              {["Interfaz de alto contraste", "Menor consumo de energía", "Perfecto para ambientes tenues"].map((item, i) => (
+                <motion.li 
+                  key={i}
+                  className="flex items-center gap-3 text-lg"
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + (i * 0.1) }}
+                >
+                  <CheckCircle2 className="text-primary" /> {item}
+                </motion.li>
+              ))}
+            </ul>
+          </div>
+          <div className="flex-1 relative">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.8 }}
+              className="relative z-10 rounded-2xl overflow-hidden shadow-2xl border border-gray-700"
+            >
+              {/* Placeholder for a dashboard screenshot */}
+              <div className="bg-gray-900 aspect-video p-6 flex flex-col gap-4">
+                <div className="flex gap-4 mb-4">
+                  <div className="w-1/4 h-24 bg-gray-800 rounded-lg animate-pulse" />
+                  <div className="w-1/4 h-24 bg-gray-800 rounded-lg animate-pulse delay-75" />
+                  <div className="w-1/4 h-24 bg-gray-800 rounded-lg animate-pulse delay-150" />
+                  <div className="w-1/4 h-24 bg-gray-800 rounded-lg animate-pulse delay-200" />
+                </div>
+                <div className="flex-1 bg-gray-800 rounded-lg w-full animate-pulse" />
+              </div>
+            </motion.div>
+            
+            {/* Decorative glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/20 blur-[100px] rounded-full -z-10" />
+          </div>
+        </div>
+      </div>
+    </motion.section>
+  );
+};
+
+const PricingCard = ({ plan, billingCycle }: { plan: any, billingCycle: string }) => {
+  return (
+    <motion.div
+      whileHover={{ y: -15 }}
+      className={cn(
+        "relative p-8 rounded-3xl border flex flex-col h-full transition-all duration-300",
+        plan.popular 
+          ? "bg-dark text-white border-dark shadow-2xl scale-105 z-10" 
+          : "bg-white text-dark border-gray-200 hover:border-primary/30 hover:shadow-xl"
+      )}
+    >
+      {plan.popular && (
+        <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-purple-600 text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
+          Más Popular
+        </div>
+      )}
+      
+      <div className="mb-8">
+        <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+        <p className={cn("text-sm", plan.popular ? "text-gray-300" : "text-gray-500")}>
+          {plan.desc}
+        </p>
+      </div>
+
+      <div className="mb-8">
+        <div className="flex items-baseline gap-1">
+          <span className="text-4xl font-bold">{plan.price}</span>
+          <span className={cn("text-sm", plan.popular ? "text-gray-400" : "text-gray-500")}>
+            {plan.period}
+          </span>
+        </div>
+      </div>
+
+      <ul className="space-y-4 mb-8 flex-1">
+        {plan.features.map((feature: string, i: number) => (
+          <li key={i} className="flex items-start gap-3 text-sm">
+            <CheckCircle2 className={cn("w-5 h-5 shrink-0", plan.popular ? "text-primary" : "text-green-500")} />
+            <span className={plan.popular ? "text-gray-300" : "text-gray-600"}>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Link href="/register" className="w-full">
+        <Button 
+          variant={plan.popular ? "primary" : "outline"} 
+          className={cn(
+            "w-full py-6 rounded-xl font-bold text-base",
+            plan.popular ? "bg-primary hover:bg-primary/90 border-none" : "border-2"
+          )}
+        >
+          {plan.cta}
+        </Button>
+      </Link>
+    </motion.div>
+  );
+};
+
+const PricingSection = () => {
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">("monthly");
 
   const pricing = [
     {
@@ -99,615 +536,121 @@ export default function LandingPage() {
     },
   ];
 
-  const faqs = [
-    {
-      question: "¿Necesito tarjeta de crédito para la prueba?",
-      answer:
-        "No, puedes registrarte y probar todas las funcionalidades del plan Pro durante 14 días sin compromiso.",
-    },
-    {
-      question: "¿Puedo cambiar de plan en cualquier momento?",
-      answer:
-        "Sí, puedes actualizar o degradar tu plan en cualquier momento desde tu panel de configuración.",
-    },
-    {
-      question: "¿Ofrecen descuentos por pago anual?",
-      answer:
-        "Sí, al elegir la facturación anual obtienes 2 meses gratis en cualquiera de nuestros planes.",
-    },
-    {
-      question: "¿Cómo funciona el soporte técnico?",
-      answer:
-        "Nuestro equipo está disponible por chat y email. Los planes Pro y Enterprise tienen prioridad en la cola de soporte.",
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-light font-sans text-dark selection:bg-primary selection:text-white">
-      {/* Navbar */}
-      <nav className="fixed w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray/10">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                E
-              </div>
-              <span className="text-xl font-bold text-dark tracking-tight">
-                EscapeMaster
-              </span>
-            </div>
+    <section id="precios" className="py-32 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <h2 className="text-4xl font-bold text-dark mb-6">Planes simples y transparentes</h2>
+          <p className="text-xl text-gray-600 mb-10">
+            Sin comisiones ocultas. Cancela cuando quieras.
+          </p>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex items-center space-x-8">
-              <a
-                href="#features"
-                className="text-sm font-medium text-secondary hover:text-primary transition-colors"
-              >
-                Características
-              </a>
-              <a
-                href="#pricing"
-                className="text-sm font-medium text-secondary hover:text-primary transition-colors"
-              >
-                Precios
-              </a>
-              <a
-                href="#faq"
-                className="text-sm font-medium text-secondary hover:text-primary transition-colors"
-              >
-                FAQ
-              </a>
-              <div className="flex items-center space-x-4 ml-4">
-                <Link
-                  href="/login"
-                  className="text-sm font-medium text-primary hover:text-accent transition-colors"
-                >
-                  Iniciar Sesión
-                </Link>
-                <Link href="/register">
-                  <Button size="sm" className="shadow-lg shadow-primary/20">
-                    Registrarse Gratis
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile Menu Button */}
+          <div className="flex items-center justify-center gap-4 bg-white p-1.5 rounded-full w-fit mx-auto border border-gray-200 shadow-sm">
             <button
-              className="md:hidden text-dark"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setBillingCycle("monthly")}
+              className={cn(
+                "px-6 py-2 rounded-full text-sm font-medium transition-all",
+                billingCycle === "monthly" ? "bg-dark text-white shadow-md" : "text-gray-500 hover:text-dark"
+              )}
             >
-              {isMenuOpen ? <X /> : <Menu />}
+              Mensual
+            </button>
+            <button
+              onClick={() => setBillingCycle("yearly")}
+              className={cn(
+                "px-6 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2",
+                billingCycle === "yearly" ? "bg-dark text-white shadow-md" : "text-gray-500 hover:text-dark"
+              )}
+            >
+              Anual <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">-20%</span>
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray/10 absolute w-full">
-            <div className="px-6 py-4 space-y-4 flex flex-col">
-              <a
-                href="#features"
-                className="text-secondary hover:text-primary"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Características
-              </a>
-              <a
-                href="#pricing"
-                className="text-secondary hover:text-primary"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Precios
-              </a>
-              <a
-                href="#faq"
-                className="text-secondary hover:text-primary"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                FAQ
-              </a>
-              <hr className="border-gray/10" />
-              <Link
-                href="/login"
-                className="text-primary font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Iniciar Sesión
-              </Link>
-              <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                <Button block>Registrarse Gratis</Button>
-              </Link>
-            </div>
-          </div>
-        )}
-      </nav>
-
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-32 overflow-hidden relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-7xl pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto items-center">
+          {pricing.map((plan, i) => (
+            <PricingCard key={i} plan={plan} billingCycle={billingCycle} />
+          ))}
         </div>
+      </div>
+    </section>
+  );
+};
 
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="text-center max-w-4xl mx-auto mb-16">
-            <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <Star className="w-4 h-4 mr-2 fill-primary" />
-              La plataforma #1 para Escape Rooms
-            </div>
-            <h1 className="text-5xl md:text-7xl font-bold text-dark mb-6 tracking-tight leading-tight">
-              Gestiona tu Escape Room <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-                sin complicaciones
-              </span>
-            </h1>
-            <p className="text-xl text-secondary mb-10 max-w-2xl mx-auto leading-relaxed">
-              Automatiza reservas, gestiona salas y fideliza clientes desde una
-              única plataforma. Diseñada por dueños de Escape Rooms, para dueños
-              de Escape Rooms.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link href="/register">
-                <Button
-                  size="lg"
-                  className="shadow-xl shadow-primary/20 text-lg px-8"
-                >
-                  Empezar Prueba Gratis
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
-              </Link>
-              <Link href="#demo">
-                <Button variant="outline" size="lg" className="text-lg px-8">
-                  Ver Demo
-                </Button>
-              </Link>
-            </div>
-            <p className="mt-6 text-sm text-secondary/70">
-              No requiere tarjeta de crédito · 14 días de prueba · Cancelación
-              en cualquier momento
-            </p>
-          </div>
-
-          {/* Dashboard Preview */}
-          <div className="relative mx-auto max-w-5xl">
-            <div className="bg-dark/5 rounded-2xl p-2 md:p-4 backdrop-blur-sm">
-              <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-gray/10 aspect-[16/9] relative group">
-                {/* Mock UI */}
-                <div className="absolute inset-0 bg-light flex">
-                  {/* Sidebar Mock */}
-                  <div className="w-16 md:w-64 bg-white border-r border-gray/10 p-4 hidden md:flex flex-col gap-4">
-                    <div className="h-8 w-32 bg-gray/10 rounded mb-4"></div>
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div
-                        key={i}
-                        className="h-10 w-full bg-gray/5 rounded flex items-center px-3 gap-3"
-                      >
-                        <div className="w-5 h-5 bg-gray/20 rounded-full"></div>
-                        <div className="h-3 w-24 bg-gray/20 rounded"></div>
-                      </div>
-                    ))}
-                  </div>
-                  {/* Main Content Mock */}
-                  <div className="flex-1 p-6 md:p-8 overflow-hidden">
-                    <div className="flex justify-between items-center mb-8">
-                      <div className="h-8 w-48 bg-gray/10 rounded"></div>
-                      <div className="flex gap-3">
-                        <div className="h-10 w-10 bg-gray/10 rounded-full"></div>
-                        <div className="h-10 w-32 bg-primary/10 rounded"></div>
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                      {[1, 2, 3].map((i) => (
-                        <div
-                          key={i}
-                          className="h-32 bg-white rounded-xl border border-gray/10 shadow-sm p-4"
-                        >
-                          <div className="h-8 w-8 bg-primary/10 rounded-full mb-3"></div>
-                          <div className="h-4 w-24 bg-gray/10 rounded mb-2"></div>
-                          <div className="h-8 w-16 bg-gray/20 rounded"></div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="h-64 bg-white rounded-xl border border-gray/10 shadow-sm p-4">
-                      <div className="h-6 w-32 bg-gray/10 rounded mb-4"></div>
-                      <div className="space-y-3">
-                        {[1, 2, 3, 4].map((i) => (
-                          <div
-                            key={i}
-                            className="h-12 w-full bg-gray/5 rounded"
-                          ></div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Overlay on Hover */}
-                <div className="absolute inset-0 bg-dark/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Link href="/register">
-                    <Button size="lg" className="scale-110">
-                      Explorar Dashboard
-                    </Button>
-                  </Link>
-                </div>
+const Footer = () => {
+  return (
+    <footer className="bg-dark text-white py-20 border-t border-gray-800">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+          <div className="col-span-1 md:col-span-1">
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                E
               </div>
+              <span className="font-bold text-xl tracking-tight">EscapeMaster</span>
             </div>
+            <p className="text-gray-400 text-sm leading-relaxed">
+              La plataforma integral para la gestión moderna de Escape Rooms. Potencia tu negocio con tecnología de punta.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-6">Producto</h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li><Link href="#" className="hover:text-primary transition-colors">Características</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Precios</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Integraciones</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Changelog</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Compañía</h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li><Link href="#" className="hover:text-primary transition-colors">Sobre Nosotros</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Carreras</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Contacto</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold mb-6">Legal</h4>
+            <ul className="space-y-4 text-sm text-gray-400">
+              <li><Link href="#" className="hover:text-primary transition-colors">Privacidad</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Términos</Link></li>
+              <li><Link href="#" className="hover:text-primary transition-colors">Seguridad</Link></li>
+            </ul>
           </div>
         </div>
-      </section>
-
-      {/* Social Proof */}
-      <section className="py-10 bg-white border-y border-gray/10">
-        <div className="container mx-auto px-6 text-center">
-          <p className="text-sm font-semibold text-secondary uppercase tracking-wider mb-8">
-            Confían en nosotros más de 500 Escape Rooms
+        
+        <div className="pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-gray-500 text-sm">
+            © 2024 EscapeMaster. Todos los derechos reservados.
           </p>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-            {/* Logos placeholders */}
-            {[
-              "EscapeX",
-              "MysteryDoor",
-              "Lock&Key",
-              "PuzzleMaster",
-              "SecretRoom",
-            ].map((brand) => (
-              <div
-                key={brand}
-                className="text-xl font-bold text-dark flex items-center gap-2"
-              >
-                <div className="w-8 h-8 bg-dark rounded-full"></div>
-                {brand}
-              </div>
-            ))}
+          <div className="flex gap-6">
+            {/* Social icons placeholders */}
+            <div className="w-5 h-5 bg-gray-800 rounded-full hover:bg-primary transition-colors cursor-pointer" />
+            <div className="w-5 h-5 bg-gray-800 rounded-full hover:bg-primary transition-colors cursor-pointer" />
+            <div className="w-5 h-5 bg-gray-800 rounded-full hover:bg-primary transition-colors cursor-pointer" />
           </div>
         </div>
-      </section>
+      </div>
+    </footer>
+  );
+};
 
-      {/* Features Section */}
-      <section id="features" className="py-24 bg-light relative">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">
-              Todo lo que necesitas para crecer
-            </h2>
-            <p className="text-lg text-secondary">
-              Deja de usar hojas de cálculo y pásate a una gestión profesional.
-            </p>
-          </div>
+import Button from "@/components/Button";
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white p-8 rounded-2xl shadow-sm border border-gray/10 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-              >
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                  {React.cloneElement(feature.icon as any, {
-                    className:
-                      "w-6 h-6 text-primary group-hover:text-white transition-colors",
-                  })}
-                </div>
-                <h3 className="text-xl font-bold text-dark mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-secondary leading-relaxed">{feature.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Interactive Feature Highlight */}
-      <section className="py-24 bg-white overflow-hidden">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center gap-16">
-            <div className="md:w-1/2">
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-accent/20 text-dark text-sm font-medium mb-6">
-                <Shield className="w-4 h-4 mr-2" />
-                Seguridad y Control
-              </div>
-              <h2 className="text-3xl md:text-4xl font-bold text-dark mb-6">
-                Control total sobre tu negocio, estés donde estés
-              </h2>
-              <p className="text-lg text-secondary mb-8">
-                Accede a tu panel desde cualquier dispositivo. Gestiona permisos
-                de empleados, controla el acceso a la caja y monitorea las
-                reservas en tiempo real.
-              </p>
-              <ul className="space-y-4 mb-8">
-                {[
-                  "Roles y permisos personalizables",
-                  "Registro de actividad detallado",
-                  "Copias de seguridad automáticas",
-                  "Acceso seguro SSL/TLS",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center text-dark">
-                    <CheckCircle2 className="w-5 h-5 text-primary mr-3" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <Button variant="outline">Conocer más características</Button>
-            </div>
-            <div className="md:w-1/2 relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-primary to-accent opacity-20 blur-2xl rounded-full"></div>
-              <div className="relative bg-light rounded-2xl p-8 border border-gray/10 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center border-b border-gray/10 pb-4">
-                    <div className="font-bold text-dark">
-                      Actividad Reciente
-                    </div>
-                    <div className="text-sm text-primary">Ver todo</div>
-                  </div>
-                  {[1, 2, 3, 4].map((i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-4 p-3 hover:bg-white rounded-lg transition-colors"
-                    >
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
-                        U{i}
-                      </div>
-                      <div>
-                        <div className="font-medium text-dark">
-                          Nueva reserva confirmada
-                        </div>
-                        <div className="text-xs text-secondary">
-                          Hace {i * 5} minutos
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section id="pricing" className="py-24 bg-light">
-        <div className="container mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">
-              Planes simples y transparentes
-            </h2>
-            <p className="text-lg text-secondary mb-8">
-              Elige el plan que mejor se adapte a tu etapa actual.
-            </p>
-
-            {/* Billing Toggle */}
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <span
-                className={`text-sm font-medium ${
-                  billingCycle === "monthly" ? "text-dark" : "text-secondary"
-                }`}
-              >
-                Mensual
-              </span>
-              <button
-                className="w-14 h-8 bg-primary rounded-full p-1 relative transition-colors"
-                onClick={() =>
-                  setBillingCycle(
-                    billingCycle === "monthly" ? "yearly" : "monthly"
-                  )
-                }
-              >
-                <div
-                  className={`w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                    billingCycle === "yearly" ? "translate-x-6" : ""
-                  }`}
-                ></div>
-              </button>
-              <span
-                className={`text-sm font-medium ${
-                  billingCycle === "yearly" ? "text-dark" : "text-secondary"
-                }`}
-              >
-                Anual{" "}
-                <span className="text-primary text-xs font-bold bg-primary/10 px-2 py-0.5 rounded-full ml-1">
-                  -20%
-                </span>
-              </span>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {pricing.map((plan, index) => (
-              <div
-                key={index}
-                className={`relative bg-white rounded-2xl p-8 border ${
-                  plan.popular
-                    ? "border-primary shadow-xl scale-105 z-10"
-                    : "border-gray/10 shadow-sm"
-                } flex flex-col`}
-              >
-                {plan.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm font-bold shadow-lg">
-                    Más Popular
-                  </div>
-                )}
-                <div className="mb-8">
-                  <h3 className="text-xl font-bold text-dark mb-2">
-                    {plan.name}
-                  </h3>
-                  <div className="flex items-baseline mb-4">
-                    <span className="text-4xl font-bold text-dark">
-                      {plan.price}
-                    </span>
-                    <span className="text-secondary ml-1">{plan.period}</span>
-                  </div>
-                  <p className="text-secondary text-sm">{plan.desc}</p>
-                </div>
-                <ul className="space-y-4 mb-8 flex-1">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center text-sm text-dark">
-                      <CheckCircle2 className="w-4 h-4 text-primary mr-3 flex-shrink-0" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Button
-                  variant={plan.popular ? "primary" : "outline"}
-                  block
-                  className={plan.popular ? "shadow-lg shadow-primary/20" : ""}
-                >
-                  {plan.cta}
-                </Button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="py-24 bg-white">
-        <div className="container mx-auto px-6 max-w-3xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-dark text-center mb-12">
-            Preguntas Frecuentes
-          </h2>
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="border border-gray/10 rounded-xl overflow-hidden transition-all duration-300 hover:border-primary/30"
-              >
-                <button
-                  className="w-full px-6 py-4 text-left flex justify-between items-center bg-light/30 hover:bg-light transition-colors"
-                  onClick={() => toggleFaq(index)}
-                >
-                  <span className="font-medium text-dark">{faq.question}</span>
-                  {openFaqIndex === index ? (
-                    <ChevronUp className="text-primary" />
-                  ) : (
-                    <ChevronDown className="text-secondary" />
-                  )}
-                </button>
-                <div
-                  className={`px-6 overflow-hidden transition-all duration-300 ease-in-out ${
-                    openFaqIndex === index
-                      ? "max-h-40 py-4 opacity-100"
-                      : "max-h-0 py-0 opacity-0"
-                  }`}
-                >
-                  <p className="text-secondary text-sm leading-relaxed">
-                    {faq.answer}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Footer */}
-      <section className="py-20 bg-dark text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/20 rounded-full blur-3xl"></div>
-
-        <div className="container mx-auto px-6 text-center relative z-10">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            ¿Listo para llevar tu Escape Room al siguiente nivel?
-          </h2>
-          <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-            Únete a cientos de propietarios que ya han optimizado su negocio con
-            EscapeMaster.
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Link href="/register">
-              <Button
-                size="lg"
-                className="bg-primary text-white hover:bg-white hover:text-primary text-lg px-10"
-              >
-                Comenzar Ahora
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button
-                variant="outline"
-                size="lg"
-                className="border-white text-white hover:bg-white hover:text-dark text-lg px-10"
-              >
-                Agendar Demo
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Simple Footer */}
-      <footer className="bg-dark border-t border-white/10 py-12 text-white/60 text-sm">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="text-white font-bold text-xl mb-4">
-                EscapeMaster
-              </div>
-              <p>La plataforma integral para la gestión de salas de escape.</p>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Producto</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Características
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Precios
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Integraciones
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Compañía</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Sobre Nosotros
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Contacto
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-bold mb-4">Legal</h4>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Privacidad
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-primary">
-                    Términos
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="text-center pt-8 border-t border-white/10">
-            © {new Date().getFullYear()} EscapeMaster. Todos los derechos
-            reservados.
-          </div>
-        </div>
-      </footer>
-    </div>
+export default function LandingPage() {
+  return (
+    <main className="min-h-screen bg-white selection:bg-primary/20 selection:text-primary">
+      <Navbar />
+      <HeroSection />
+      <FeaturesSection />
+      <DarkModeSection />
+      <PricingSection />
+      <Footer />
+    </main>
   );
 }
