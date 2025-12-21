@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import { rooms } from "@/services/api";
-import { Layers, Users, Clock, DollarSign } from "lucide-react";
+import { Layers, Users, Clock, DollarSign, Settings, Calendar, Info } from "lucide-react";
 
 export default function RoomsPage() {
   const [roomsList, setRoomsList] = useState<any[]>([]);
@@ -48,7 +48,7 @@ export default function RoomsPage() {
           <p className="text-gray-600 mb-6">
             Crea tu primera sala para empezar a recibir reservas
           </p>
-          <Link href="/rooms/create">
+          <Link href="/dashboard/rooms/create">
             <Button>Crear Sala</Button>
           </Link>
         </Card>
@@ -75,7 +75,49 @@ export default function RoomsPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {roomsList.map((room) => (
-          <Card key={room.id} className="hover:shadow-lg transition-shadow">
+          <Card key={room.id} className="group relative overflow-hidden hover:shadow-xl transition-all duration-300 border-beige/50">
+            {/* Hover Overlay for Stats */}
+            <div className="absolute inset-0 bg-primary/95 text-white p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="font-bold text-lg">Próximas Sesiones</h4>
+                <span className="bg-white/20 px-2 py-1 rounded text-xs">
+                  {room.pending_bookings_count || 0} pendientes
+                </span>
+              </div>
+              
+              <div className="flex-1 space-y-3 overflow-y-auto">
+                {room.next_bookings && room.next_bookings.length > 0 ? (
+                  room.next_bookings.map((booking: any) => (
+                    <div key={booking.id} className="bg-white/10 p-2 rounded text-sm">
+                      <div className="flex justify-between font-medium">
+                        <span>{new Date(booking.start_time).toLocaleDateString()}</span>
+                        <span>{new Date(booking.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      </div>
+                      <div className="text-xs text-white/70 mt-1 flex justify-between">
+                        <span>{booking.num_people} personas</span>
+                        <span>{booking.assigned_users?.join(", ") || "Sin asignar"}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-white/60 text-center">
+                    <Calendar size={32} className="mb-2 opacity-20" />
+                    <p>No hay sesiones próximas</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-white/10 flex gap-2">
+                <Link href={`/dashboard/rooms/${room.id}`} className="flex-1">
+                  <Button variant="secondary" block className="bg-white text-primary hover:bg-white/90">
+                    <Settings size={16} className="mr-2" />
+                    Configurar
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Main Content */}
             <div className="mb-4">
               <div className="flex items-start justify-between">
                 <h3 className="font-bold text-lg text-dark">{room.name}</h3>

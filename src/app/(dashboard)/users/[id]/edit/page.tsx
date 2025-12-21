@@ -1,49 +1,86 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { users, roles } from "@/services/api";
-import { Shield, Mail, User, Lock, ArrowLeft } from "lucide-react";
+import { Shield, Mail, User, ArrowLeft, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
-export default function CreateUserPage() {
+export default function EditUserPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const params = useParams();
+  const userId = params.id as string;
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [rolesList, setRolesList] = useState<any[]>([]);
+  const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
-    roles.list()
-      .then(data => setRolesList(data.roles || data))
-      .catch(err => console.error("Error loading roles:", err));
-  }, []);
+    const fetchData = async () => {
+      try {
+        const [rolesData, userDetails] = await Promise.all([
+          roles.list(),
+          users.get(userId)
+        ]);
+        setRolesList(rolesData.roles || rolesData);
+        setUserData(userDetails);
+      } catch (err) {
+        console.error("Error loading data:", err);
+        setError("No se pudo cargar la información del usuario");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
+    setSaving(true);
     setError("");
 
     const formData = new FormData(e.target as HTMLFormElement);
     const data = {
       full_name: formData.get("full_name"),
       email: formData.get("email"),
-      password: formData.get("password"),
       role_id: formData.get("role_id"),
-      is_active: true,
+      is_active: formData.get("is_active") === "true",
     };
 
     try {
-      await users.create(data);
+      await users.update(userId, data);
       router.push("/dashboard/users");
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Error al crear el usuario");
+      setError(err.response?.data?.detail || "Error al actualizar el usuario");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <p className="text-gray-500">Cargando información del usuario...</p>
+      </div>
+    );
+  }
+
+  if (!userData) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500 mb-4">{error || "Usuario no encontrado"}</p>
+        <Link href="/dashboard/users">
+          <Button variant="secondary">Volver a la lista</Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -52,9 +89,9 @@ export default function CreateUserPage() {
           <ArrowLeft size={16} className="mr-1" />
           Volver a usuarios
         </Link>
-        <h1 className="text-3xl font-bold text-primary">Nuevo Usuario</h1>
+        <h1 className="text-3xl font-bold text-primary">Editar Usuario</h1>
         <p className="text-dark opacity-75">
-          Crea un nuevo miembro para tu equipo y asígnale un rol
+          Modifica los datos y permisos de {userData.full_name || userData.email}
         </p>
       </div>
 
@@ -63,7 +100,7 @@ export default function CreateUserPage() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <User size={20} className="mr-2 text-primary" />
-              Información Personal
+              Información del Usuario
             </CardTitle>
           </CardHeader>
           
@@ -72,6 +109,7 @@ export default function CreateUserPage() {
               <Input
                 name="full_name"
                 label="Nombre Completo"
+                defaultValue={userData.full_name}
                 placeholder="Ej: Juan Pérez"
                 required
                 icon={<User size={18} />}
@@ -80,6 +118,7 @@ export default function CreateUserPage() {
                 name="email"
                 label="Correo Electrónico"
                 type="email"
+                defaultValue={userData.email}
                 placeholder="ejemplo@correo.com"
                 required
                 icon={<Mail size={18} />}
@@ -95,6 +134,7 @@ export default function CreateUserPage() {
                   <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                   <select
                     name="role_id"
+                    defaultValue={userData.role_id}
                     className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white appearance-none"
                     required
                   >
@@ -106,19 +146,25 @@ export default function CreateUserPage() {
                     ))}
                   </select>
                 </div>
-                <p className="text-xs text-gray-500">
-                  El rol determina qué acciones puede realizar el usuario.
-                </p>
               </div>
 
-              <Input
-                name="password"
-                label="Contraseña Temporal"
-                type="password"
-                placeholder="••••••••"
-                required
-                icon={<Lock size={18} />}
-              />
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  Estado de la Cuenta
+                </label>
+                <div className="relative">
+                  <CheckCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <select
+                    name="is_active"
+                    defaultValue={userData.is_active ? "true" : "false"}
+                    className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white appearance-none"
+                    required
+                  >
+                    <option value="true">Activo</option>
+                    <option value="false">Inactivo</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -132,8 +178,8 @@ export default function CreateUserPage() {
             <Button type="button" variant="ghost" onClick={() => router.back()}>
               Cancelar
             </Button>
-            <Button type="submit" loading={loading}>
-              Crear Usuario
+            <Button type="submit" loading={saving}>
+              Guardar Cambios
             </Button>
           </CardFooter>
         </Card>

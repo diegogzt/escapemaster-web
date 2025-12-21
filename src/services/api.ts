@@ -31,8 +31,9 @@ api.interceptors.response.use(
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
         // Also remove cookie
-        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
-        
+        document.cookie =
+          "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+
         // Only redirect if not already on login/register
         if (
           !window.location.pathname.includes("/login") &&
@@ -51,7 +52,12 @@ export const auth = {
     const response = await api.post("/auth/login", { email, password });
     return response.data;
   },
-  register: async (name: string, email: string, password: string, organizationName: string) => {
+  register: async (
+    name: string,
+    email: string,
+    password: string,
+    organizationName: string
+  ) => {
     const response = await api.post("/auth/register", {
       full_name: name,
       email,
@@ -130,20 +136,56 @@ export const rooms = {
     const response = await api.post("/rooms", data);
     return response.data;
   },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/rooms/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/rooms/${id}`);
+    return response.data;
+  },
+};
+
+export const roles = {
+  list: async (params?: any) => {
+    try {
+      const response = await api.get("/roles", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      return { roles: [], total: 0 };
+    }
+  },
 };
 
 export const users = {
-  list: async () => {
+  list: async (params?: any) => {
     try {
-      const response = await api.get("/users");
+      const response = await api.get("/users", { params });
       return response.data;
     } catch (error) {
       console.error("Error fetching users:", error);
-      return [];
+      return { users: [], total: 0 };
     }
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
   },
   create: async (data: any) => {
     const response = await api.post("/users", data);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/users/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+  changePassword: async (id: string, data: any) => {
+    const response = await api.put(`/users/${id}/password`, data);
     return response.data;
   },
 };

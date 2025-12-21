@@ -21,8 +21,9 @@ export default function RegisterPage() {
     if (confirmationData) {
       try {
         const { timestamp, email } = JSON.parse(confirmationData);
-        const hoursSinceConfirmation = (Date.now() - timestamp) / (1000 * 60 * 60);
-        
+        const hoursSinceConfirmation =
+          (Date.now() - timestamp) / (1000 * 60 * 60);
+
         // If less than 24 hours, show the confirmation screen
         if (hoursSinceConfirmation < 24) {
           setRegisteredEmail(email);
@@ -76,13 +77,16 @@ export default function RegisterPage() {
 
     try {
       await auth.register(name, email, password, organizationName);
-      
+
       // Save confirmation data with timestamp
-      localStorage.setItem("email_confirmation", JSON.stringify({
-        email,
-        timestamp: Date.now()
-      }));
-      
+      localStorage.setItem(
+        "email_confirmation",
+        JSON.stringify({
+          email,
+          timestamp: Date.now(),
+        })
+      );
+
       setRegisteredEmail(email);
       setSuccess(true);
     } catch (err: any) {
@@ -114,12 +118,13 @@ export default function RegisterPage() {
             </div>
             <CardTitle level="h2">¡Revisa tu Email!</CardTitle>
             <p className="text-dark opacity-75 mt-2">
-              Hemos enviado un enlace de confirmación a <strong>{registeredEmail}</strong>. Por
-              favor, confirma tu cuenta para continuar.
+              Hemos enviado un enlace de confirmación a{" "}
+              <strong>{registeredEmail}</strong>. Por favor, confirma tu cuenta
+              para continuar.
             </p>
           </CardHeader>
           <CardFooter className="flex justify-center">
-            <Link 
+            <Link
               href="/login"
               onClick={() => localStorage.removeItem("email_confirmation")}
             >
