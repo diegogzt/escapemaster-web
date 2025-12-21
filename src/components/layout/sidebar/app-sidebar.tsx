@@ -13,7 +13,10 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  Users,
+  LogOut,
 } from "lucide-react";
+import Link from "next/link";
 
 export function AppSidebar() {
   const { user, updateUser, isAuthenticated } = useAuth();
@@ -127,23 +130,45 @@ export function AppSidebar() {
         />
       </nav>
 
-      <div
-        className={cn(
-          "p-4 border-t flex",
-          isCollapsed ? "justify-center" : "justify-end"
-        )}
-      >
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors"
-          title={isCollapsed ? "Expandir sidebar" : "Colapsar sidebar"}
-        >
-          {isCollapsed ? (
-            <ChevronRight className="h-4 w-4" />
-          ) : (
-            <ChevronLeft className="h-4 w-4" />
+      <div className="border-t p-3 space-y-1">
+        <Link 
+          href="/settings" 
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors group w-full",
+            isCollapsed && "justify-center"
           )}
-        </button>
+        >
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20 overflow-hidden">
+            {user?.photo_url ? (
+              <img src={user.photo_url} alt={user?.full_name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="font-bold text-sm">{user?.full_name?.charAt(0) || "U"}</span>
+            )}
+          </div>
+          
+          {!isCollapsed && (
+            <div className="flex flex-col overflow-hidden text-left">
+              <span className="text-sm font-medium truncate text-foreground group-hover:text-primary">
+                {user?.full_name || "Usuario"}
+              </span>
+              <span className="text-xs text-muted-foreground truncate">
+                Configurar cuenta
+              </span>
+            </div>
+          )}
+        </Link>
+
+        <Link 
+          href="/" 
+          className={cn(
+            "flex items-center gap-3 p-2 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-600 transition-colors w-full",
+            isCollapsed && "justify-center"
+          )}
+          title="Salir del dashboard"
+        >
+          <LogOut size={20} />
+          {!isCollapsed && <span className="text-sm font-medium">Salir del dashboard</span>}
+        </Link>
       </div>
     </aside>
   );
