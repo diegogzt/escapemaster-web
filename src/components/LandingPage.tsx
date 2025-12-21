@@ -291,7 +291,7 @@ export default function LandingPage() {
                 className="bg-white p-8 rounded-2xl shadow-sm border border-gray/10 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors">
-                  {React.cloneElement(feature.icon as React.ReactElement, { className: "w-6 h-6 text-primary group-hover:text-white transition-colors" })}
+                  {React.cloneElement(feature.icon as any, { className: "w-6 h-6 text-primary group-hover:text-white transition-colors" })}
                 </div>
                 <h3 className="text-xl font-bold text-dark mb-3">{feature.title}</h3>
                 <p className="text-secondary leading-relaxed">
