@@ -48,7 +48,7 @@ export default function RoomsPage() {
           <p className="text-gray-600 mb-6">
             Crea tu primera sala para empezar a recibir reservas
           </p>
-          <Link href="/dashboard/rooms/create">
+          <Link href="/rooms/create">
             <Button>Crear Sala</Button>
           </Link>
         </Card>
@@ -65,7 +65,7 @@ export default function RoomsPage() {
             {roomsList.length} {roomsList.length === 1 ? "sala" : "salas"}
           </p>
         </div>
-        <Link href="/dashboard/rooms/create">
+        <Link href="/rooms/create">
           <Button>
             <Layers size={20} className="mr-2" />
             Nueva Sala
@@ -108,7 +108,7 @@ export default function RoomsPage() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-white/10 flex gap-2">
-                <Link href={`/dashboard/rooms/${room.id}`} className="flex-1">
+                <Link href={`/rooms/${room.id}`} className="flex-1">
                   <Button variant="secondary" block className="bg-white text-primary hover:bg-white/90">
                     <Settings size={16} className="mr-2" />
                     Configurar

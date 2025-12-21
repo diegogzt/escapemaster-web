@@ -37,7 +37,7 @@ export default function CreateUserPage() {
 
     try {
       await users.create(data);
-      router.push("/dashboard/users");
+      router.push("/users");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error al crear el usuario");
     } finally {
@@ -48,7 +48,7 @@ export default function CreateUserPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <Link href="/dashboard/users" className="text-primary flex items-center text-sm mb-4 hover:underline">
+        <Link href="/users" className="text-primary flex items-center text-sm mb-4 hover:underline">
           <ArrowLeft size={16} className="mr-1" />
           Volver a usuarios
         </Link>

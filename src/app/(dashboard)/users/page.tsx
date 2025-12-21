@@ -59,7 +59,7 @@ export default function UsersPage() {
           <h1 className="text-3xl font-bold text-primary">Usuarios</h1>
           <p className="text-dark opacity-75">Gestiona tu equipo y permisos</p>
         </div>
-        <Link href="/dashboard/users/create">
+        <Link href="/users/create">
           <Button>
             <UserPlus size={20} className="mr-2" />
             Nuevo Usuario
@@ -103,7 +103,7 @@ export default function UsersPage() {
           <UserPlus className="mx-auto text-gray-400 mb-4" size={48} />
           <h3 className="text-xl font-bold text-dark mb-2">No se encontraron usuarios</h3>
           <p className="text-gray-600 mb-6">Prueba con otros filtros o crea uno nuevo</p>
-          <Link href="/dashboard/users/create">
+          <Link href="/users/create">
             <Button>Crear Usuario</Button>
           </Link>
         </Card>
@@ -154,7 +154,7 @@ export default function UsersPage() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
-                      <Link href={`/dashboard/users/${user.id}/edit`}>
+                      <Link href={`/users/${user.id}/edit`}>
                         <button className="p-2 text-gray-400 hover:text-primary transition-colors" title="Editar">
                           <Edit2 size={18} />
                         </button>

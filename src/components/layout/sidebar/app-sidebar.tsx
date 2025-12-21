@@ -108,6 +108,12 @@ export function AppSidebar() {
           isCollapsed={isCollapsed}
         />
         <NavItem
+          href="/users"
+          icon={Users}
+          label="Usuarios"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
           href="/reports/revenue"
           icon={BarChart3}
           label="Reportes"

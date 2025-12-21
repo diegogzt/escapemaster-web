@@ -59,7 +59,7 @@ export default function RoomConfigPage() {
       // Note: We need to add update method to rooms service if not exists
       // For now, let's assume it exists or we'll add it
       await (rooms as any).update(roomId, data);
-      router.push("/dashboard/rooms");
+      router.push("/rooms");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error al actualizar la sala");
     } finally {
@@ -79,7 +79,7 @@ export default function RoomConfigPage() {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 mb-4">{error || "Sala no encontrada"}</p>
-        <Link href="/dashboard/rooms">
+        <Link href="/rooms">
           <Button variant="secondary">Volver a la lista</Button>
         </Link>
       </div>
@@ -90,7 +90,7 @@ export default function RoomConfigPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8 flex justify-between items-end">
         <div>
-          <Link href="/dashboard/rooms" className="text-primary flex items-center text-sm mb-4 hover:underline">
+          <Link href="/rooms" className="text-primary flex items-center text-sm mb-4 hover:underline">
             <ArrowLeft size={16} className="mr-1" />
             Volver a salas
           </Link>

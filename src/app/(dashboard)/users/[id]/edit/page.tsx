@@ -55,7 +55,7 @@ export default function EditUserPage() {
 
     try {
       await users.update(userId, data);
-      router.push("/dashboard/users");
+      router.push("/users");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error al actualizar el usuario");
     } finally {
@@ -75,7 +75,7 @@ export default function EditUserPage() {
     return (
       <div className="text-center py-12">
         <p className="text-red-500 mb-4">{error || "Usuario no encontrado"}</p>
-        <Link href="/dashboard/users">
+        <Link href="/users">
           <Button variant="secondary">Volver a la lista</Button>
         </Link>
       </div>
@@ -85,7 +85,7 @@ export default function EditUserPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <Link href="/dashboard/users" className="text-primary flex items-center text-sm mb-4 hover:underline">
+        <Link href="/users" className="text-primary flex items-center text-sm mb-4 hover:underline">
           <ArrowLeft size={16} className="mr-1" />
           Volver a usuarios
         </Link>
