@@ -3,7 +3,7 @@ import { cn } from "../utils";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost";
+  variant?: "primary" | "secondary" | "accent" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
   block?: boolean;
   loading?: boolean;
@@ -32,7 +32,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       accent: "bg-accent text-dark hover:bg-primary hover:text-white",
       outline:
         "bg-transparent text-primary border-2 border-primary hover:bg-primary hover:text-white",
-      ghost: "bg-transparent text-secondary hover:bg-primary/10 hover:text-primary",
+      ghost:
+        "bg-transparent text-secondary hover:bg-primary/10 hover:text-primary",
+      danger: "bg-red-500 text-white hover:bg-red-600 hover:-translate-y-0.5",
     };
 
     const sizeStyles = {

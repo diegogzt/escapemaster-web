@@ -25,7 +25,7 @@ export default function EditUserPage() {
       try {
         const [rolesData, userDetails] = await Promise.all([
           roles.list(),
-          users.get(userId)
+          users.get(userId),
         ]);
         setRolesList(rolesData.roles || rolesData);
         setUserData(userDetails);
@@ -85,13 +85,17 @@ export default function EditUserPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <Link href="/users" className="text-primary flex items-center text-sm mb-4 hover:underline">
+        <Link
+          href="/users"
+          className="text-primary flex items-center text-sm mb-4 hover:underline"
+        >
           <ArrowLeft size={16} className="mr-1" />
           Volver a usuarios
         </Link>
         <h1 className="text-3xl font-bold text-primary">Editar Usuario</h1>
         <p className="text-dark opacity-75">
-          Modifica los datos y permisos de {userData.full_name || userData.email}
+          Modifica los datos y permisos de{" "}
+          {userData.full_name || userData.email}
         </p>
       </div>
 
@@ -103,7 +107,7 @@ export default function EditUserPage() {
               Información del Usuario
             </CardTitle>
           </CardHeader>
-          
+
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
@@ -131,7 +135,10 @@ export default function EditUserPage() {
                   Rol del Sistema
                 </label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Shield
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                   <select
                     name="role_id"
                     defaultValue={userData.role_id}
@@ -139,7 +146,7 @@ export default function EditUserPage() {
                     required
                   >
                     <option value="">Selecciona un rol</option>
-                    {rolesList.map(role => (
+                    {rolesList.map((role) => (
                       <option key={role.id} value={role.id}>
                         {role.name}
                       </option>
@@ -153,7 +160,10 @@ export default function EditUserPage() {
                   Estado de la Cuenta
                 </label>
                 <div className="relative">
-                  <CheckCircle className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <CheckCircle
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                   <select
                     name="is_active"
                     defaultValue={userData.is_active ? "true" : "false"}

@@ -22,18 +22,23 @@
 
 /* Define custom utilities if needed, or just variables */
 :root {
-  /* Default to Twilight */
-  --color-primary: #4338ca;
-  --color-secondary: #6b7280;
-  --color-accent: #f3f4f6;
-  --color-dark: #111827;
-  --color-light: #fafbfc;
-  --color-beige: #e5e7eb;
+  /* Tropical / Bali Luxury Palette */
+  --color-primary: #2c5f2d; /* Forest Green */
+  --color-secondary: #97bc62; /* Moss Green */
+  --color-accent: #d4a373; /* Sand/Wood */
+  --color-dark: #1a3c1e; /* Darker Green */
+  --color-light: #fdfcf8; /* Warm White */
+  --color-beige: #f4e9cd;
+
   /* UI semantic colors */
-  --color-background: #ffffff;
-  --color-foreground: #111827;
-  --color-muted: #f3f4f6;
-  --color-muted-foreground: #6b7280;
+  --color-background: #fdfcf8; /* Warm White Background */
+  --color-foreground: #1a3c1e; /* Dark Green Text */
+  --color-muted: #e8f5e9; /* Light Green Muted */
+  --color-muted-foreground: #52796f; /* Muted Teal/Green */
+
+  --color-border: #d4a373; /* Sand Border */
+  --color-input: #e8f5e9;
+  --color-ring: #2c5f2d;
 }
 
 .theme-twilight {

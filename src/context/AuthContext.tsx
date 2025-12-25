@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -23,6 +23,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<any | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    Cookies.remove("token");
+    setIsAuthenticated(false);
+    setUser(null);
+    router.push("/login");
+  }, [router]);
+
+  const login = useCallback((token: string) => {
+    localStorage.setItem("token", token);
+    Cookies.set("token", token, { expires: 7 }); // 7 days
+    setIsAuthenticated(true);
+    
+    // Fetch user data immediately after login
+    auth.me().then((userData) => {
+      setUser(userData);
+      if (!userData.organization_id) {
+        router.push("/onboarding");
+      } else {
+        router.push("/dashboard");
+      }
+    }).catch((error) => {
+      console.error("Login failed during user fetch:", error);
+      // If we can't get user data, we might want to logout or show error
+      // For now, we'll just log it, but ideally we should handle it.
+    });
+  }, [router]);
+
+  const updateUser = useCallback(async (data: any) => {
+    setUser(data);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -95,8 +127,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           !publicRoutes.includes(pathname) &&
           !pathname.startsWith("/reset-password")
         ) {
-          // Middleware handles this now, but keeping as fallback
-          // router.push("/login");
+           // Fallback redirect if middleware misses it
+           router.push("/login");
         }
       }
 
@@ -104,34 +136,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-  }, [pathname, router]);
-
-  const login = (token: string) => {
-    localStorage.setItem("token", token);
-    Cookies.set("token", token, { expires: 7 }); // 7 days
-    setIsAuthenticated(true);
-    // Fetch user data immediately after login
-    auth.me().then((userData) => {
-      setUser(userData);
-      if (!userData.organization_id) {
-        router.push("/onboarding");
-      } else {
-        router.push("/dashboard");
-      }
-    });
-  };
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    Cookies.remove("token");
-    setIsAuthenticated(false);
-    setUser(null);
-    router.push("/login");
-  };
-
-  const updateUser = async (data: any) => {
-    setUser(data);
-  };
+  }, [pathname, router, logout]);
 
   return (
     <AuthContext.Provider

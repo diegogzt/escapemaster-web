@@ -78,12 +78,16 @@ export default function SettingsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <UserIcon className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800">Perfil de Usuario</h2>
+            <h2 className="text-2xl font-semibold text-gray-800">
+              Perfil de Usuario
+            </h2>
           </div>
           <Card className="w-full max-w-none">
             <CardHeader>
               <CardTitle>Información Personal</CardTitle>
-              <p className="text-gray-500">Actualiza tus datos de acceso y perfil.</p>
+              <p className="text-gray-500">
+                Actualiza tus datos de acceso y perfil.
+              </p>
             </CardHeader>
             <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-6">
@@ -106,17 +110,22 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="space-y-6">
-                 <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
-                    <h4 className="font-bold text-yellow-800 mb-2 flex items-center gap-2">
-                      <Lock size={16} /> Seguridad
-                    </h4>
-                    <p className="text-sm text-yellow-700 mb-4">
-                      Para cambiar tu contraseña, te enviaremos un enlace a tu correo.
-                    </p>
-                    <Button variant="outline" size="sm" className="bg-white border-yellow-200 text-yellow-800 hover:bg-yellow-100">
-                      Cambiar Contraseña
-                    </Button>
-                 </div>
+                <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-lg">
+                  <h4 className="font-bold text-yellow-800 mb-2 flex items-center gap-2">
+                    <Lock size={16} /> Seguridad
+                  </h4>
+                  <p className="text-sm text-yellow-700 mb-4">
+                    Para cambiar tu contraseña, te enviaremos un enlace a tu
+                    correo.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="bg-white border-yellow-200 text-yellow-800 hover:bg-yellow-100"
+                  >
+                    Cambiar Contraseña
+                  </Button>
+                </div>
               </div>
             </div>
           </Card>

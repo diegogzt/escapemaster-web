@@ -117,7 +117,7 @@ export function AppSidebar() {
           isCollapsed={isCollapsed}
         />
         <NavItem
-          href="/reports/revenue"
+          href="/reports"
           icon={BarChart3}
           label="Reportes"
           isCollapsed={isCollapsed}
@@ -131,8 +131,8 @@ export function AppSidebar() {
       </nav>
 
       <div className="border-t p-3 space-y-1">
-        <Link 
-          href="/settings" 
+        <Link
+          href="/settings"
           className={cn(
             "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors group w-full",
             isCollapsed && "justify-center"
@@ -140,12 +140,18 @@ export function AppSidebar() {
         >
           <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/20 overflow-hidden">
             {user?.photo_url ? (
-              <img src={user.photo_url} alt={user?.full_name} className="w-full h-full object-cover" />
+              <img
+                src={user.photo_url}
+                alt={user?.full_name}
+                className="w-full h-full object-cover"
+              />
             ) : (
-              <span className="font-bold text-sm">{user?.full_name?.charAt(0) || "U"}</span>
+              <span className="font-bold text-sm">
+                {user?.full_name?.charAt(0) || "U"}
+              </span>
             )}
           </div>
-          
+
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden text-left">
               <span className="text-sm font-medium truncate text-foreground group-hover:text-primary">
@@ -158,8 +164,8 @@ export function AppSidebar() {
           )}
         </Link>
 
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className={cn(
             "flex items-center gap-3 p-2 rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-600 transition-colors w-full",
             isCollapsed && "justify-center"
@@ -167,7 +173,9 @@ export function AppSidebar() {
           title="Salir del dashboard"
         >
           <LogOut size={20} />
-          {!isCollapsed && <span className="text-sm font-medium">Salir del dashboard</span>}
+          {!isCollapsed && (
+            <span className="text-sm font-medium">Salir del dashboard</span>
+          )}
         </Link>
       </div>
     </aside>

@@ -4,6 +4,24 @@ Este documento resume los cambios recientes realizados en `escapemaster-web` par
 
 ## 1. Cambios Recientes en Escapemaster Web
 
+### Correcciones y Mejoras en Reportes (Diciembre 2025)
+
+**Estabilidad y Navegación:**
+
+- **AuthContext Fix**: Se solucionó un error crítico de "hoisting" que causaba crashes al iniciar sesión (`ReferenceError: logout is not defined`).
+- **Sidebar**: Se corrigió el enlace de "Reportes" para apuntar a `/reports` en lugar de `/reports/revenue`.
+
+**Módulo de Reportes (`/reports`):**
+
+- **UI Compacta**: Se redujo el espaciado general (`gap-4`, `space-y-4`) para aumentar la densidad de información.
+- **Filtros Avanzados**: Nuevas opciones de rango de fechas: "Últimos 3 meses", "Últimos 6 meses", "Este año" y "Personalizado" (con selectores de fecha inicio/fin).
+- **Gestión de Gastos**: Nuevo modal para registrar gastos operativos directamente desde el dashboard.
+- **Generador de Gráficas**: Nuevo modal para configurar y añadir visualizaciones personalizadas.
+- **Visualización**:
+  - KPIs con indicadores de color semánticos (bordes laterales).
+  - Tooltips y leyendas mejoradas en todos los gráficos (Recharts).
+  - Tablas de transacciones con estilos actualizados.
+
 ### Sistema de Temas Global (Theming)
 
 Se ha implementado un sistema de temas dinámico que permite cambiar la paleta de colores de toda la aplicación en tiempo real.

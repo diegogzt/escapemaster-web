@@ -1,0 +1,17 @@
+
+> escapemaster-web@0.1.0 dev
+> next dev -H 0.0.0.0 -p 3001
+
+▲ Next.js 16.1.0 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://0.0.0.0:3001
+- Environments: .env.local
+
+✓ Starting...
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+✓ Ready in 663ms
+ GET / 200 in 1181ms (compile: 940ms, proxy.ts: 52ms, render: 189ms)
+ GET / 200 in 48ms (compile: 4ms, proxy.ts: 6ms, render: 37ms)
+ GET /login 200 in 105ms (compile: 33ms, proxy.ts: 1978µs, render: 69ms)
+ GET / 200 in 347ms (compile: 128ms, proxy.ts: 7ms, render: 213ms)
+ GET /login 200 in 67ms (compile: 12ms, proxy.ts: 6ms, render: 49ms)

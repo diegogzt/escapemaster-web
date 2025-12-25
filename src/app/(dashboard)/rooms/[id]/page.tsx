@@ -6,7 +6,17 @@ import { Card, CardHeader, CardTitle, CardFooter } from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { rooms } from "@/services/api";
-import { Settings, Users, Clock, DollarSign, ArrowLeft, Save, Trash2 } from "lucide-react";
+import {
+  Settings,
+  Users,
+  Clock,
+  DollarSign,
+  ArrowLeft,
+  Save,
+  Trash2,
+  Plus,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function RoomConfigPage() {
@@ -19,23 +29,53 @@ export default function RoomConfigPage() {
   const [error, setError] = useState("");
   const [roomData, setRoomData] = useState<any>(null);
 
+  // Custom Fields State
+  const [customFields, setCustomFields] = useState<
+    { id: string; label: string; type: string }[]
+  >([]);
+  const [newFieldLabel, setNewFieldLabel] = useState("");
+
   useEffect(() => {
-    rooms.list()
-      .then(data => {
+    rooms
+      .list()
+      .then((data) => {
         const list = data.rooms || data;
         const room = list.find((r: any) => r.id === roomId);
         if (room) {
           setRoomData(room);
+          // Mock loading custom fields if they existed
+          if (room.custom_fields) {
+            setCustomFields(room.custom_fields);
+          } else {
+            // Default mock fields
+            setCustomFields([
+              { id: "1", label: "¿Cómo nos conociste?", type: "text" },
+              { id: "2", label: "Alergias o Intolerancias", type: "text" },
+            ]);
+          }
         } else {
           setError("Sala no encontrada");
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Error loading room:", err);
         setError("Error al cargar la sala");
       })
       .finally(() => setLoading(false));
   }, [roomId]);
+
+  const handleAddCustomField = () => {
+    if (!newFieldLabel.trim()) return;
+    setCustomFields([
+      ...customFields,
+      { id: Date.now().toString(), label: newFieldLabel, type: "text" },
+    ]);
+    setNewFieldLabel("");
+  };
+
+  const handleRemoveCustomField = (id: string) => {
+    setCustomFields(customFields.filter((f) => f.id !== id));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +93,7 @@ export default function RoomConfigPage() {
       difficulty_level: parseInt(formData.get("difficulty_level") as string),
       theme: formData.get("theme"),
       is_active: formData.get("is_active") === "true",
+      custom_fields: customFields, // Include custom fields in save
     };
 
     try {
@@ -90,7 +131,10 @@ export default function RoomConfigPage() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8 flex justify-between items-end">
         <div>
-          <Link href="/rooms" className="text-primary flex items-center text-sm mb-4 hover:underline">
+          <Link
+            href="/rooms"
+            className="text-primary flex items-center text-sm mb-4 hover:underline"
+          >
             <ArrowLeft size={16} className="mr-1" />
             Volver a salas
           </Link>
@@ -146,11 +190,77 @@ export default function RoomConfigPage() {
                       defaultValue={roomData.difficulty_level}
                       className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
                     >
-                      {[1, 2, 3, 4, 5].map(n => (
-                        <option key={n} value={n}>{n} - {n === 1 ? 'Muy Fácil' : n === 5 ? 'Muy Difícil' : 'Normal'}</option>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <option key={n} value={n}>
+                          {n} -{" "}
+                          {n === 1
+                            ? "Muy Fácil"
+                            : n === 5
+                            ? "Muy Difícil"
+                            : "Normal"}
+                        </option>
                       ))}
                     </select>
                   </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* Custom Fields Section */}
+            <Card className="border-beige">
+              <CardHeader>
+                <CardTitle>Campos Personalizados</CardTitle>
+              </CardHeader>
+              <div className="p-6">
+                <p className="text-sm text-gray-600 mb-4">
+                  Define qué información adicional quieres solicitar a los
+                  clientes al hacer la reserva.
+                </p>
+
+                <div className="space-y-3 mb-6">
+                  {customFields.map((field) => (
+                    <div
+                      key={field.id}
+                      className="flex items-center justify-between bg-light/30 p-3 rounded-lg border border-beige"
+                    >
+                      <span className="font-medium text-dark">
+                        {field.label}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCustomField(field.id)}
+                        className="text-gray-400 hover:text-red-500 transition-colors"
+                      >
+                        <X size={18} />
+                      </button>
+                    </div>
+                  ))}
+                  {customFields.length === 0 && (
+                    <p className="text-sm text-gray-400 italic text-center py-2">
+                      No hay campos personalizados
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Nuevo campo (ej: ¿Cómo nos conociste?)"
+                    className="flex-1 px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    value={newFieldLabel}
+                    onChange={(e) => setNewFieldLabel(e.target.value)}
+                    onKeyDown={(e) =>
+                      e.key === "Enter" &&
+                      (e.preventDefault(), handleAddCustomField())
+                    }
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleAddCustomField}
+                    variant="secondary"
+                  >
+                    <Plus size={18} />
+                  </Button>
                 </div>
               </div>
             </Card>

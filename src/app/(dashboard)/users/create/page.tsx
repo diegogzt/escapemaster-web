@@ -16,9 +16,10 @@ export default function CreateUserPage() {
   const [rolesList, setRolesList] = useState<any[]>([]);
 
   useEffect(() => {
-    roles.list()
-      .then(data => setRolesList(data.roles || data))
-      .catch(err => console.error("Error loading roles:", err));
+    roles
+      .list()
+      .then((data) => setRolesList(data.roles || data))
+      .catch((err) => console.error("Error loading roles:", err));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +49,10 @@ export default function CreateUserPage() {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <Link href="/users" className="text-primary flex items-center text-sm mb-4 hover:underline">
+        <Link
+          href="/users"
+          className="text-primary flex items-center text-sm mb-4 hover:underline"
+        >
           <ArrowLeft size={16} className="mr-1" />
           Volver a usuarios
         </Link>
@@ -66,7 +70,7 @@ export default function CreateUserPage() {
               Información Personal
             </CardTitle>
           </CardHeader>
-          
+
           <div className="p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
@@ -92,14 +96,17 @@ export default function CreateUserPage() {
                   Rol del Sistema
                 </label>
                 <div className="relative">
-                  <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+                  <Shield
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    size={18}
+                  />
                   <select
                     name="role_id"
                     className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white appearance-none"
                     required
                   >
                     <option value="">Selecciona un rol</option>
-                    {rolesList.map(role => (
+                    {rolesList.map((role) => (
                       <option key={role.id} value={role.id}>
                         {role.name}
                       </option>

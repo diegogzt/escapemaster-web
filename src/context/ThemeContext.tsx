@@ -22,7 +22,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const { user, updateUser, isAuthenticated } = useAuth();
-  const [theme, setTheme] = useState<Theme>("twilight");
+  const [theme, setTheme] = useState<Theme>("tropical");
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {

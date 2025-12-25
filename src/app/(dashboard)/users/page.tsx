@@ -5,7 +5,17 @@ import Link from "next/link";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import { users } from "@/services/api";
-import { UserPlus, Mail, Shield, MoreVertical, Edit2, Trash2, Key, Search, Filter } from "lucide-react";
+import {
+  UserPlus,
+  Mail,
+  Shield,
+  MoreVertical,
+  Edit2,
+  Trash2,
+  Key,
+  Search,
+  Filter,
+} from "lucide-react";
 
 export default function UsersPage() {
   const [usersList, setUsersList] = useState<any[]>([]);
@@ -15,7 +25,8 @@ export default function UsersPage() {
 
   const fetchUsers = () => {
     setLoading(true);
-    users.list({ search: searchTerm, role_id: filterRole || undefined })
+    users
+      .list({ search: searchTerm, role_id: filterRole || undefined })
       .then((data) => setUsersList(data.users || data))
       .catch((err) => {
         console.error("Failed to load users:", err);
@@ -44,14 +55,6 @@ export default function UsersPage() {
     }
   };
 
-  if (loading && usersList.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500">Cargando usuarios...</p>
-      </div>
-    );
-  }
-
   return (
     <div>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
@@ -69,9 +72,15 @@ export default function UsersPage() {
 
       {/* Filters & Search */}
       <Card className="mb-6 p-4">
-        <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
+        <form
+          onSubmit={handleSearch}
+          className="flex flex-col md:flex-row gap-4"
+        >
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Buscar por nombre o email..."
@@ -98,11 +107,19 @@ export default function UsersPage() {
         </form>
       </Card>
 
-      {usersList.length === 0 ? (
+      {loading ? (
+        <div className="flex items-center justify-center min-h-[400px]">
+          <p className="text-gray-500">Cargando usuarios...</p>
+        </div>
+      ) : usersList.length === 0 ? (
         <Card className="text-center py-12">
           <UserPlus className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-xl font-bold text-dark mb-2">No se encontraron usuarios</h3>
-          <p className="text-gray-600 mb-6">Prueba con otros filtros o crea uno nuevo</p>
+          <h3 className="text-xl font-bold text-dark mb-2">
+            No se encontraron usuarios
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Prueba con otros filtros o crea uno nuevo
+          </p>
           <Link href="/users/create">
             <Button>Crear Usuario</Button>
           </Link>
@@ -115,19 +132,27 @@ export default function UsersPage() {
                 <th className="px-6 py-4 font-bold text-dark">Usuario</th>
                 <th className="px-6 py-4 font-bold text-dark">Rol</th>
                 <th className="px-6 py-4 font-bold text-dark">Estado</th>
-                <th className="px-6 py-4 font-bold text-dark text-right">Acciones</th>
+                <th className="px-6 py-4 font-bold text-dark text-right">
+                  Acciones
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-beige">
               {usersList.map((user) => (
-                <tr key={user.id} className="hover:bg-light/30 transition-colors">
+                <tr
+                  key={user.id}
+                  className="hover:bg-light/30 transition-colors"
+                >
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold text-sm">
-                        {user.full_name?.charAt(0) || user.email.charAt(0).toUpperCase()}
+                        {user.full_name?.charAt(0) ||
+                          user.email.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-bold text-dark">{user.full_name || "Sin nombre"}</div>
+                        <div className="font-bold text-dark">
+                          {user.full_name || "Sin nombre"}
+                        </div>
                         <div className="text-xs text-gray-500 flex items-center">
                           <Mail size={12} className="mr-1" />
                           {user.email}
@@ -155,13 +180,16 @@ export default function UsersPage() {
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <Link href={`/users/${user.id}/edit`}>
-                        <button className="p-2 text-gray-400 hover:text-primary transition-colors" title="Editar">
+                        <button
+                          className="p-2 text-gray-400 hover:text-primary transition-colors"
+                          title="Editar"
+                        >
                           <Edit2 size={18} />
                         </button>
                       </Link>
-                      <button 
+                      <button
                         onClick={() => handleDeleteUser(user.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors" 
+                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
                         title="Desactivar"
                       >
                         <Trash2 size={18} />

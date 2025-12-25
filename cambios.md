@@ -238,3 +238,17 @@ Ubicación: src/types/api.ts
 
 ### **7.2. Autenticación (Frontend - escapemaster-web)**
 * **Normalización de Input:** En `src/app/(auth)/forgot-password/page.tsx`, el email ingresado se convierte a minúsculas antes de enviarlo a la API.
+
+### **3.4. Módulo: Reportes y Finanzas (Analytics)**
+
+**Ruta:** app/(dashboard)/reports/page.tsx
+
+**Distribución Visual:**
+* **Header:** Título, Filtros de Fecha (Select + Custom Range), Botones de Acción (Exportar, Registrar Gasto, Crear Gráfica).
+* **KPIs:** Grid de 4 tarjetas con indicadores financieros y operativos (Ingresos, Beneficio, Gastos, Cancelación).
+* **Gráficos:** Grid de 2 columnas con visualizaciones (Barras, Áreas, Pie Charts).
+* **Tablas:** Listado de últimas transacciones.
+
+**Componentes y Ubicación:**
+* Todo el contenido actual reside en `page.tsx` como un componente monolítico (refactorización pendiente a componentes atómicos en `components/domain/reports/`).
+* **Modales:** Formularios integrados para "Registrar Gasto" y "Crear Gráfica".
