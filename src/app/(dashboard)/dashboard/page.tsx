@@ -248,6 +248,7 @@ function SortableWidget({
   onRemove,
   onResize,
   onConfigure,
+  isMobile,
 }: {
   widget: WidgetConfig;
   isEditMode: boolean;
@@ -258,6 +259,7 @@ function SortableWidget({
     dimension: "width" | "height"
   ) => void;
   onConfigure: (widget: WidgetConfig) => void;
+  isMobile: boolean;
 }) {
   const {
     attributes,
@@ -271,8 +273,14 @@ function SortableWidget({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    gridColumn: `span ${widget.colSpan || 48} / span ${widget.colSpan || 48}`,
-    gridRow: `span ${widget.rowSpan || 8} / span ${widget.rowSpan || 8}`,
+    gridColumn: isMobile
+      ? "span 1"
+      : `span ${widget.colSpan || 48} / span ${widget.colSpan || 48}`,
+    gridRow: isMobile
+      ? "auto"
+      : `span ${widget.rowSpan || 8} / span ${widget.rowSpan || 8}`,
+    height: isMobile ? "auto" : undefined,
+    marginBottom: isMobile ? "1rem" : undefined,
   };
 
   return (
@@ -297,6 +305,14 @@ export default function DashboardPage() {
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   // Template state
   const [templates, setTemplates] = useState<DashboardTemplate[]>([]);
@@ -754,8 +770,15 @@ export default function DashboardPage() {
         >
           {/* eslint-disable-next-line react-dom/no-unsafe-inline-style */}
           <div
-            className="grid gap-4 auto-rows-[10px]"
-            style={{ gridTemplateColumns: "repeat(48, minmax(0, 1fr))" }}
+            className={cn(
+              "grid gap-4",
+              isMobile ? "grid-cols-1 auto-rows-auto" : "auto-rows-[10px]"
+            )}
+            style={
+              isMobile
+                ? {}
+                : { gridTemplateColumns: "repeat(48, minmax(0, 1fr))" }
+            }
           >
             {widgets.map((widget) => (
               <SortableWidget
@@ -765,6 +788,7 @@ export default function DashboardPage() {
                 onRemove={removeWidget}
                 onResize={handleResize}
                 onConfigure={handleConfigureWidget}
+                isMobile={isMobile}
               />
             ))}
           </div>

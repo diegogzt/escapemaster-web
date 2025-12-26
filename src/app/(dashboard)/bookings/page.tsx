@@ -16,6 +16,8 @@ import {
   XCircle,
   AlertCircle,
   Plus,
+  LayoutGrid,
+  List,
 } from "lucide-react";
 
 // Mock Data
@@ -65,9 +67,28 @@ export default function BookingsPage() {
   const [dateFilterType, setDateFilterType] = useState("all"); // all, today, tomorrow, custom
   const [customStartDate, setCustomStartDate] = useState("");
   const [customEndDate, setCustomEndDate] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "table">("table");
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setViewMode("table");
+      } else {
+        setViewMode("grid");
+      }
+    };
+
+    // Set initial value
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Extract unique rooms
-  const uniqueRooms = Array.from(new Set(MOCK_BOOKINGS.map((b) => b.room_name)));
+  const uniqueRooms = Array.from(
+    new Set(MOCK_BOOKINGS.map((b) => b.room_name))
+  );
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -106,7 +127,8 @@ export default function BookingsPage() {
       statusFilter === "all" || booking.status === statusFilter;
 
     // Room Filter
-    const matchesRoom = roomFilter === "all" || booking.room_name === roomFilter;
+    const matchesRoom =
+      roomFilter === "all" || booking.room_name === roomFilter;
 
     // Date Filter
     let matchesDate = true;
@@ -147,12 +169,38 @@ export default function BookingsPage() {
             Gestiona las sesiones y reservas
           </p>
         </div>
-        <Link href="/bookings/create">
-          <Button>
-            <Plus size={20} className="mr-2" />
-            Nueva Reserva
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <div className="bg-white border border-beige rounded-lg p-1 flex items-center mr-2">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "grid"
+                  ? "bg-primary/10 text-primary"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+              title="Vista de cuadrícula"
+            >
+              <LayoutGrid size={20} />
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "table"
+                  ? "bg-primary/10 text-primary"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+              title="Vista de lista"
+            >
+              <List size={20} />
+            </button>
+          </div>
+          <Link href="/bookings/create">
+            <Button>
+              <Plus size={20} className="mr-2" />
+              Nueva Reserva
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Filters */}
@@ -274,100 +322,175 @@ export default function BookingsPage() {
         </div>
       </Card>
 
-      {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-light/50 border-b border-beige">
-              <th className="px-6 py-4 font-bold text-dark">Fecha y Hora</th>
-              <th className="px-6 py-4 font-bold text-dark">Sala</th>
-              <th className="px-6 py-4 font-bold text-dark">Grupo</th>
-              <th className="px-6 py-4 font-bold text-dark">Jugadores</th>
-              <th className="px-6 py-4 font-bold text-dark">Estado</th>
-              <th className="px-6 py-4 font-bold text-dark">Pago</th>
-              <th className="px-6 py-4 font-bold text-dark text-right">
-                Acciones
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-beige">
-            {filteredBookings.length > 0 ? (
-              filteredBookings.map((booking) => (
-                <tr
-                  key={booking.id}
-                  className="hover:bg-light/30 transition-colors"
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <div className="flex items-center font-medium text-dark">
-                        <Calendar size={14} className="mr-1 text-primary" />
-                        {new Date(booking.date).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-500 mt-1">
-                        <Clock size={14} className="mr-1" />
-                        {booking.time}
-                      </div>
+      {/* Content */}
+      {viewMode === "grid" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredBookings.length > 0 ? (
+            filteredBookings.map((booking) => (
+              <Card key={booking.id} className="p-4 border-beige/50">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <div className="flex items-center font-bold text-dark mb-1">
+                      <Calendar size={14} className="mr-1 text-primary" />
+                      {new Date(booking.date).toLocaleDateString()}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 font-medium text-dark">
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Clock size={14} className="mr-1" />
+                      {booking.time}
+                    </div>
+                  </div>
+                  {getStatusBadge(booking.status)}
+                </div>
+
+                <div className="mb-3">
+                  <h3 className="font-bold text-lg text-dark">
                     {booking.room_name}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="font-medium text-dark">
-                      {booking.group_name}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      GM: {booking.game_master}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center text-gray-700">
-                      <Users size={16} className="mr-2 text-gray-400" />
-                      {booking.players_count}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    {getStatusBadge(booking.status)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm">
-                      <span
-                        className={
-                          booking.paid_amount >= booking.total_price
-                            ? "text-green-600 font-medium"
-                            : "text-yellow-600 font-medium"
-                        }
-                      >
-                        {booking.paid_amount}€
-                      </span>
-                      <span className="text-gray-400">
-                        {" "}
-                        / {booking.total_price}€
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link href={`/bookings/${booking.id}`}>
-                      <button
-                        className="p-2 text-gray-400 hover:text-primary transition-colors"
-                        title="Ver detalles"
-                      >
-                        <Eye size={18} />
-                      </button>
-                    </Link>
+                  </h3>
+                  <div className="text-sm text-gray-600 mt-1">
+                    {booking.group_name}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-3 bg-light/30 p-2 rounded">
+                  <div className="flex items-center">
+                    <Users size={14} className="mr-1" />
+                    {booking.players_count} pax
+                  </div>
+                  <div className="flex items-center">
+                    <span
+                      className={
+                        booking.paid_amount >= booking.total_price
+                          ? "text-green-600 font-medium"
+                          : "text-yellow-600 font-medium"
+                      }
+                    >
+                      {booking.paid_amount}€
+                    </span>
+                    <span className="text-gray-400">
+                      {" "}
+                      / {booking.total_price}€
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-beige">
+                  <div className="text-xs text-gray-500">
+                    GM: {booking.game_master}
+                  </div>
+                  <Link href={`/bookings/${booking.id}`}>
+                    <Button variant="outline" size="sm" className="text-xs h-8">
+                      Ver Detalles
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 bg-white rounded-xl border border-beige">
+              <p className="text-gray-500">
+                No se encontraron reservas con los filtros seleccionados.
+              </p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-light/50 border-b border-beige">
+                <th className="px-6 py-4 font-bold text-dark">Fecha y Hora</th>
+                <th className="px-6 py-4 font-bold text-dark">Sala</th>
+                <th className="px-6 py-4 font-bold text-dark">Grupo</th>
+                <th className="px-6 py-4 font-bold text-dark">Jugadores</th>
+                <th className="px-6 py-4 font-bold text-dark">Estado</th>
+                <th className="px-6 py-4 font-bold text-dark">Pago</th>
+                <th className="px-6 py-4 font-bold text-dark text-right">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-beige">
+              {filteredBookings.length > 0 ? (
+                filteredBookings.map((booking) => (
+                  <tr
+                    key={booking.id}
+                    className="hover:bg-light/30 transition-colors"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col">
+                        <div className="flex items-center font-medium text-dark">
+                          <Calendar size={14} className="mr-1 text-primary" />
+                          {new Date(booking.date).toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                          <Clock size={14} className="mr-1" />
+                          {booking.time}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 font-medium text-dark">
+                      {booking.room_name}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-dark">
+                        {booking.group_name}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        GM: {booking.game_master}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center text-gray-700">
+                        <Users size={16} className="mr-2 text-gray-400" />
+                        {booking.players_count}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      {getStatusBadge(booking.status)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm">
+                        <span
+                          className={
+                            booking.paid_amount >= booking.total_price
+                              ? "text-green-600 font-medium"
+                              : "text-yellow-600 font-medium"
+                          }
+                        >
+                          {booking.paid_amount}€
+                        </span>
+                        <span className="text-gray-400">
+                          {" "}
+                          / {booking.total_price}€
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <Link href={`/bookings/${booking.id}`}>
+                        <button
+                          className="p-2 text-gray-400 hover:text-primary transition-colors"
+                          title="Ver detalles"
+                        >
+                          <Eye size={18} />
+                        </button>
+                      </Link>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={7}
+                    className="px-6 py-8 text-center text-gray-500"
+                  >
+                    No se encontraron reservas con los filtros seleccionados.
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                  No se encontraron reservas con los filtros seleccionados.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

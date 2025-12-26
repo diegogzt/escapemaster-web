@@ -15,6 +15,7 @@ Escapemaster Web is the primary interface for hotel staff and escape room owners
 The application is built on **Next.js 16** using the **App Router** architecture.
 
 ### Core Stack
+
 - **Framework:** Next.js 16 (React 19)
 - **Styling:** Tailwind CSS v4 + CSS Variables for Theming
 - **State Management:** Zustand (Global Store) + React Context (Theme/Auth)
@@ -56,6 +57,7 @@ escapemaster-web/
 ## 🚀 Development Phases & Roadmap
 
 ### ✅ Phase 1: UI Foundation (Completed)
+
 - [x] Next.js 16 + Tailwind v4 setup.
 - [x] Global Theming System (8+ presets).
 - [x] Responsive App Shell (Sidebar, Header).
@@ -63,31 +65,65 @@ escapemaster-web/
 - [x] Drag & Drop Layout Engine.
 
 ### 🚧 Phase 2: Integration (In Progress)
+
 - [ ] **API Connection:** Replace mock data in widgets with real API calls.
 - [ ] **Persistence:** Save user preferences (theme, layout) to the backend.
 - [ ] **Settings:** Implement forms for Organization and Location settings.
 - [ ] **Bookings:** Build the interactive calendar and booking list views.
 
 ### 🔮 Phase 3: Advanced Features (Planned)
+
 - [ ] **Real-time:** Implement WebSockets for live booking updates.
 - [ ] **Offline Mode:** Basic PWA capabilities.
 - [ ] **Performance:** Route pre-fetching and image optimization.
 
+## 🧪 Testing
+
+We use a dual-testing strategy to ensure reliability:
+
+### Unit & Integration Tests (Vitest)
+Fast, component-level tests using Vitest and React Testing Library.
+
+```bash
+# Run unit tests
+npm run test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Run tests with coverage
+npm run test:coverage
+```
+
+### End-to-End Tests (Playwright)
+Full browser automation tests to verify critical user flows.
+
+```bash
+# Run E2E tests
+npm run test:e2e
+
+# Open Playwright UI mode
+npm run test:e2e:ui
+```
+
 ## 🛠️ Setup & Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/diegogzt/escapemaster-web.git
    cd escapemaster-web
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Configure Environment:**
    Create `.env.local` and add:
+
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:8000
    ```

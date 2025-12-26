@@ -13,11 +13,16 @@ import {
   Settings,
   Calendar,
   Info,
+  LayoutGrid,
+  List,
+  Edit,
+  Trash2,
 } from "lucide-react";
 
 export default function RoomsPage() {
   const [roomsList, setRoomsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
 
   useEffect(() => {
     rooms
@@ -28,23 +33,54 @@ export default function RoomsPage() {
         setRoomsList([]);
       })
       .finally(() => setLoading(false));
+
+    // Set default view based on screen width
+    if (typeof window !== "undefined" && window.innerWidth >= 768) {
+      setViewMode("table");
+    }
   }, []);
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">Salas</h1>
           <p className="text-dark opacity-75">
             {roomsList.length} {roomsList.length === 1 ? "sala" : "salas"}
           </p>
         </div>
-        <Link href="/rooms/create">
-          <Button>
-            <Layers size={20} className="mr-2" />
-            Nueva Sala
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <div className="bg-white border border-beige rounded-lg p-1 flex items-center mr-2">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "grid"
+                  ? "bg-primary/10 text-primary"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+              title="Vista de cuadrícula"
+            >
+              <LayoutGrid size={20} />
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`p-2 rounded-md transition-colors ${
+                viewMode === "table"
+                  ? "bg-primary/10 text-primary"
+                  : "text-gray-400 hover:text-gray-600"
+              }`}
+              title="Vista de lista"
+            >
+              <List size={20} />
+            </button>
+          </div>
+          <Link href="/rooms/create">
+            <Button>
+              <Layers size={20} className="mr-2" />
+              Nueva Sala
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {loading ? (
@@ -64,7 +100,7 @@ export default function RoomsPage() {
             <Button>Crear Sala</Button>
           </Link>
         </Card>
-      ) : (
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {roomsList.map((room) => (
             <Card
@@ -187,6 +223,93 @@ export default function RoomsPage() {
               </div>
             </Card>
           ))}
+        </div>
+      ) : (
+        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-light/50 border-b border-beige">
+                <th className="px-6 py-4 font-bold text-dark">Nombre</th>
+                <th className="px-6 py-4 font-bold text-dark">Jugadores</th>
+                <th className="px-6 py-4 font-bold text-dark">Duración</th>
+                <th className="px-6 py-4 font-bold text-dark">Precio</th>
+                <th className="px-6 py-4 font-bold text-dark">Estado</th>
+                <th className="px-6 py-4 font-bold text-dark text-right">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-beige">
+              {roomsList.map((room) => (
+                <tr
+                  key={room.id}
+                  className="hover:bg-light/30 transition-colors"
+                >
+                  <td className="px-6 py-4">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-lg bg-gray-200 mr-3 overflow-hidden flex-shrink-0">
+                        {room.image_url ? (
+                          <img
+                            src={room.image_url}
+                            alt={room.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            <Layers size={20} />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="font-medium text-dark">{room.name}</div>
+                        <div className="text-xs text-gray-500">
+                          {room.theme}
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {room.capacity_min}-{room.capacity_max}
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {room.duration_minutes} min
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">
+                    {room.price_per_person}€ / pers
+                  </td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`px-2 py-1 text-xs rounded ${
+                        room.is_active
+                          ? "bg-green-100 text-green-700"
+                          : "bg-gray-100 text-gray-700"
+                      }`}
+                    >
+                      {room.is_active ? "Activa" : "Inactiva"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Link href={`/rooms/${room.id}`}>
+                        <button
+                          className="p-2 text-gray-400 hover:text-primary transition-colors"
+                          title="Editar"
+                        >
+                          <Edit size={18} />
+                        </button>
+                      </Link>
+                      <button
+                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        title="Eliminar"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

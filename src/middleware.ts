@@ -1,14 +1,32 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (!payload.exp) return false;
+    const expirationTime = payload.exp * 1000;
+    return Date.now() >= expirationTime;
+  } catch (e) {
+    return true; // Treat malformed tokens as expired
+  }
+}
+
 export function middleware(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
 
   // 1. Protected Routes (Dashboard, etc.)
   if (pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding")) {
-    if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (!token || isTokenExpired(token)) {
+      // If token is expired, we should also probably clear the cookie,
+      // but we can't easily modify the response here if we are redirecting.
+      // The login page should handle clearing invalid tokens or the new login will overwrite it.
+      const response = NextResponse.redirect(new URL("/login", request.url));
+      if (token && isTokenExpired(token)) {
+        response.cookies.delete("token");
+      }
+      return response;
     }
   }
 
@@ -19,7 +37,7 @@ export function middleware(request: NextRequest) {
     pathname.startsWith("/login") ||
     pathname.startsWith("/register")
   ) {
-    if (token) {
+    if (token && !isTokenExpired(token)) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
