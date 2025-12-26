@@ -11,7 +11,7 @@ test('Reset password with invalid code shows error', async ({ page }) => {
   });
 
   // Navigate to the reset password page with query params
-  await page.goto('http://localhost:3000/reset-password?code=123456&email=test@example.com');
+  await page.goto('/reset-password?code=123456&email=test@example.com');
 
   // Verify fields are pre-filled
   await expect(page.locator('input[name="email"]')).toHaveValue('test@example.com');

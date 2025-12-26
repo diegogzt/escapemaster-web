@@ -1,5 +1,15 @@
 import { test, expect } from "@playwright/test";
 
+function makeFakeJwt(expSecondsFromNow: number = 60 * 60) {
+  const header = Buffer.from(JSON.stringify({ alg: "none", typ: "JWT" })).toString(
+    "base64"
+  );
+  const payload = Buffer.from(
+    JSON.stringify({ exp: Math.floor(Date.now() / 1000) + expSecondsFromNow })
+  ).toString("base64");
+  return `${header}.${payload}.sig`;
+}
+
 test.describe("Authentication Flows", () => {
   test.describe("Registration", () => {
     test.beforeEach(async ({ page }) => {
@@ -60,11 +70,12 @@ test.describe("Authentication Flows", () => {
     });
 
     test("should handle successful login", async ({ page }) => {
+      const token = makeFakeJwt();
       await page.route("**/auth/login", async (route) => {
         await route.fulfill({
           status: 200,
           body: JSON.stringify({
-            access_token: "fake-token",
+            access_token: token,
             token_type: "bearer",
           }),
         });
@@ -87,7 +98,7 @@ test.describe("Authentication Flows", () => {
       await page.click('button[type="submit"]');
 
       // Expect redirection to dashboard
-      await expect(page).toHaveURL(/.*dashboard/);
+      await expect(page).toHaveURL(/.*\/dashboard/, { timeout: 10_000 });
     });
 
     test("should handle invalid credentials", async ({ page }) => {

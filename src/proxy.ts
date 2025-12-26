@@ -7,12 +7,12 @@ function isTokenExpired(token: string): boolean {
     if (!payload.exp) return false;
     const expirationTime = payload.exp * 1000;
     return Date.now() >= expirationTime;
-  } catch (e) {
+  } catch {
     return true; // Treat malformed tokens as expired
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
 
@@ -32,11 +32,7 @@ export function middleware(request: NextRequest) {
 
   // 2. Public Routes (Login, Register, Root)
   // If user is logged in, they shouldn't see Login/Register or the Landing Page (at root)
-  if (
-    pathname === "/" ||
-    pathname.startsWith("/login") ||
-    pathname.startsWith("/register")
-  ) {
+  if (pathname === "/" || pathname.startsWith("/login") || pathname.startsWith("/register")) {
     if (token && !isTokenExpired(token)) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }

@@ -13,7 +13,7 @@ test("Landing page animations", async ({ page }) => {
   // 3. Check Hero Paragraph Animation
   // It has a delay, so we wait a bit or just expect it to eventually be visible
   const heroParagraph = page.getByText(
-    "The ultimate management system for escape rooms"
+    "El sistema de gestión definitivo para escape rooms"
   );
   await expect(heroParagraph).toBeVisible();
   await expect(heroParagraph).toHaveCSS("opacity", "1");
@@ -24,7 +24,7 @@ test("Landing page animations", async ({ page }) => {
 
   // 5. Check Feature Items Animation
   // Feature items animate in when in view.
-  const firstFeature = page.getByText("Smart Booking");
+  const firstFeature = page.getByText("Reservas Inteligentes");
   // Wait for animation
   await expect(firstFeature).toBeVisible();
 
@@ -32,13 +32,15 @@ test("Landing page animations", async ({ page }) => {
   // We need to find the parent of the text which is the motion.div
   // The structure is motion.div > div > h3(Smart Booking)
   const featureItem = page
-    .locator("h3", { hasText: "Smart Booking" })
+    .locator("h3", { hasText: "Reservas Inteligentes" })
     .locator("..")
     .locator("..");
   await expect(featureItem).toHaveCSS("opacity", "1");
 
   // 6. Check Parallax Image
-  const parallaxSection = page.locator("h2", { hasText: "Experience" });
+  const parallaxSection = page.locator("h2", {
+    hasText: "Experiencia Inmersiva",
+  });
   await parallaxSection.scrollIntoViewIfNeeded();
   await expect(parallaxSection).toBeVisible();
 });
