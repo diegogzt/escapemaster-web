@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ChevronLeft,
@@ -115,6 +115,16 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [sessions] = useState<Session[]>(generateMockSessions());
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) setView("week");
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   // Utilidades de Fecha
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -149,6 +159,74 @@ export default function CalendarPage() {
       month: "long",
       year: "numeric",
     }).format(date);
+  };
+
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  const getWeekStartMonday = (date: Date) => {
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    const monday = new Date(date);
+    monday.setHours(0, 0, 0, 0);
+    monday.setDate(diff);
+    return monday;
+  };
+
+  const weekStart = useMemo(
+    () => getWeekStartMonday(currentDate),
+    [currentDate]
+  );
+  const weekDays = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    [weekStart]
+  );
+  const weekEnd = useMemo(() => addDays(weekStart, 6), [weekStart]);
+
+  const formatWeekRange = (start: Date, end: Date) => {
+    const sameMonth = start.getMonth() === end.getMonth();
+    const sameYear = start.getFullYear() === end.getFullYear();
+
+    const startFmt = new Intl.DateTimeFormat("es-ES", {
+      day: "numeric",
+      month: "short",
+    }).format(start);
+
+    const endFmt = new Intl.DateTimeFormat("es-ES", {
+      day: "numeric",
+      month: sameMonth ? undefined : "short",
+      year: sameYear ? undefined : "numeric",
+    }).format(end);
+
+    const yearFmt = new Intl.DateTimeFormat("es-ES", {
+      year: "numeric",
+    }).format(end);
+    return `${startFmt} - ${endFmt} ${yearFmt}`;
+  };
+
+  const getStatusPill = (status: Session["status"]) => {
+    if (status === "confirmed") {
+      return (
+        <span className="px-2 py-0.5 text-xs rounded-full bg-green-100 text-green-700">
+          Confirmada
+        </span>
+      );
+    }
+    if (status === "pending") {
+      return (
+        <span className="px-2 py-0.5 text-xs rounded-full bg-yellow-100 text-yellow-700">
+          Pendiente
+        </span>
+      );
+    }
+    return (
+      <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700">
+        Cancelada
+      </span>
+    );
   };
 
   // Navegación
@@ -245,156 +323,59 @@ export default function CalendarPage() {
   };
 
   const renderWeekView = () => {
-    // Calcular inicio de semana (Lunes)
-    const day = currentDate.getDay();
-    const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1);
-    const monday = new Date(currentDate);
-    monday.setDate(diff);
-
-    const weekDays = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
-    const hours = Array.from({ length: 15 }, (_, i) => i + 8); // 08:00 a 22:00
-
     return (
-      <div className="flex flex-col h-[600px] overflow-y-auto border rounded-lg">
-        <div className="grid grid-cols-8 border-b sticky top-0 bg-white z-10">
-          <div className="p-2 border-r bg-gray-50"></div>
-          {weekDays.map((d, i) => (
+      <div className="border rounded-lg overflow-hidden bg-white">
+        <div className="grid grid-cols-7 border-b bg-gray-50">
+          {weekDays.map((d) => (
             <div
-              key={i}
-              className={`p-2 text-center border-r font-medium ${
-                isSameDay(d, new Date())
-                  ? "text-primary bg-blue-50"
-                  : "text-gray-700"
+              key={d.toISOString()}
+              className={`p-3 text-center border-r last:border-r-0 ${
+                isSameDay(d, new Date()) ? "text-primary" : "text-gray-700"
               }`}
             >
               <div className="text-xs uppercase text-gray-500">
                 {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][d.getDay()]}
               </div>
-              <div className="text-lg">{d.getDate()}</div>
+              <div className="text-lg font-bold">{d.getDate()}</div>
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-8 flex-1">
-          {/* Columna Horas */}
-          <div className="border-r bg-gray-50">
-            {hours.map((h) => (
-              <div
-                key={h}
-                className="h-20 border-b text-xs text-gray-500 p-1 text-right pr-2"
-              >
-                {h}:00
-              </div>
-            ))}
-          </div>
-          {/* Columnas Días */}
-          {weekDays.map((d, i) => (
-            <div key={i} className="border-r relative">
-              {hours.map((h) => (
-                <div key={h} className="h-20 border-b border-gray-50"></div>
-              ))}
-              {/* Renderizar sesiones posicionadas absolutamente */}
-              {sessions
-                .filter((s) => isSameDay(s.start, d))
-                .map((session) => {
-                  const startHour = session.start.getHours();
-                  const startMin = session.start.getMinutes();
-                  const duration =
-                    (session.end.getTime() - session.start.getTime()) /
-                    (1000 * 60); // minutos
-                  const top = (startHour - 8) * 80 + startMin * (80 / 60); // 80px por hora
-                  const height = duration * (80 / 60);
 
-                  return (
-                    <div
-                      key={session.id}
-                      className={`absolute left-1 right-1 rounded p-1 text-xs border overflow-hidden ${session.color}`}
-                      style={{ top: `${top}px`, height: `${height}px` }}
-                    >
-                      <div className="font-bold">{session.title}</div>
-                      <div>
-                        {session.start.getHours()}:
-                        {session.start.getMinutes().toString().padStart(2, "0")}{" "}
-                        - {session.end.getHours()}:
-                        {session.end.getMinutes().toString().padStart(2, "0")}
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderDayView = () => {
-    const hours = Array.from({ length: 15 }, (_, i) => i + 8); // 08:00 a 22:00
-    const daySessions = sessions.filter((s) => isSameDay(s.start, currentDate));
-
-    return (
-      <div className="border rounded-lg overflow-hidden bg-white">
-        <div className="p-4 border-b bg-gray-50 text-center font-bold text-lg">
-          {currentDate.toLocaleDateString("es-ES", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-          })}
-        </div>
-        <div className="relative">
-          {hours.map((h) => (
-            <div key={h} className="flex border-b h-24">
-              <div className="w-20 border-r bg-gray-50 p-2 text-right text-sm text-gray-500">
-                {h}:00
-              </div>
-              <div className="flex-1 relative">
-                {/* Línea de media hora */}
-                <div className="absolute top-1/2 w-full border-t border-dashed border-gray-100"></div>
-              </div>
-            </div>
-          ))}
-
-          {/* Sesiones */}
-          {daySessions.map((session) => {
-            const startHour = session.start.getHours();
-            const startMin = session.start.getMinutes();
-            const duration =
-              (session.end.getTime() - session.start.getTime()) / (1000 * 60);
-            const top = (startHour - 8) * 96 + startMin * (96 / 60); // 96px por hora (h-24 = 6rem = 96px)
-            const height = duration * (96 / 60);
+        <div className="grid grid-cols-7 gap-px bg-gray-200">
+          {weekDays.map((d) => {
+            const daySessions = sessions
+              .filter((s) => isSameDay(s.start, d))
+              .sort((a, b) => a.start.getTime() - b.start.getTime());
 
             return (
-              <div
-                key={session.id}
-                className={`absolute left-24 right-4 rounded-lg p-3 border shadow-sm ${session.color}`}
-                style={{ top: `${top}px`, height: `${height}px` }}
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="font-bold text-sm">{session.title}</h4>
-                    <div className="flex items-center gap-2 text-xs mt-1 opacity-90">
-                      <Clock size={12} />
-                      <span>
-                        {session.start.toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {session.end.toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs mt-1 opacity-90">
-                      <Users size={12} />
-                      <span>{session.customer}</span>
-                    </div>
+              <div key={d.toISOString()} className="bg-white p-3 min-h-[220px]">
+                {daySessions.length === 0 ? (
+                  <div className="text-sm text-gray-400">Sin sesiones</div>
+                ) : (
+                  <div className="space-y-2">
+                    {daySessions.map((session) => (
+                      <div
+                        key={session.id}
+                        className={`text-xs rounded-lg border p-2 ${session.color}`}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="font-bold truncate">
+                            {session.title}
+                          </div>
+                          <div className="text-[11px] opacity-80 whitespace-nowrap">
+                            {formatTime(session.start)}
+                          </div>
+                        </div>
+                        <div className="mt-1 flex items-center justify-between gap-2 opacity-90">
+                          <span className="truncate">{session.customer}</span>
+                          <span className="whitespace-nowrap">
+                            {session.room}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 bg-white/50 rounded">
-                    <MapPin size={12} />
-                    {session.room}
-                  </div>
-                </div>
+                )}
               </div>
             );
           })}
@@ -403,90 +384,299 @@ export default function CalendarPage() {
     );
   };
 
+  const renderMobileWeekList = () => {
+    const sessionsByDay = weekDays.map((d) => {
+      const items = sessions
+        .filter((s) => isSameDay(s.start, d))
+        .sort((a, b) => a.start.getTime() - b.start.getTime());
+      return { date: d, items };
+    });
+
+    return (
+      <div className="space-y-4">
+        {sessionsByDay.map(({ date, items }) => {
+          const isToday = isSameDay(date, new Date());
+          return (
+            <div
+              key={date.toISOString()}
+              className="bg-white rounded-xl border border-beige/60 overflow-hidden"
+            >
+              <div
+                className={`px-4 py-3 flex items-center justify-between border-b border-beige/60 ${
+                  isToday ? "bg-primary/5" : "bg-light/30"
+                }`}
+              >
+                <div className="font-bold text-dark capitalize">
+                  {date.toLocaleDateString("es-ES", {
+                    weekday: "long",
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {items.length} {items.length === 1 ? "sesión" : "sesiones"}
+                </div>
+              </div>
+
+              <div className="p-4 space-y-3">
+                {items.length === 0 ? (
+                  <div className="text-sm text-gray-500">Sin sesiones</div>
+                ) : (
+                  items.map((session) => (
+                    <div
+                      key={session.id}
+                      className="rounded-xl border border-beige/60 bg-white p-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <div className="text-lg font-bold text-dark">
+                              {formatTime(session.start)}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {formatTime(session.end)}
+                            </div>
+                          </div>
+                          <div className="mt-1 font-bold text-dark truncate">
+                            {session.title}
+                          </div>
+                          <div className="mt-2 grid grid-cols-1 gap-1 text-sm text-gray-600">
+                            <div className="flex items-center gap-2">
+                              <Users size={14} className="text-gray-400" />
+                              <span className="truncate">
+                                {session.customer}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <MapPin size={14} className="text-gray-400" />
+                              <span className="truncate">{session.room}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Clock size={14} className="text-gray-400" />
+                              <span>
+                                {formatTime(session.start)} -{" "}
+                                {formatTime(session.end)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="shrink-0">
+                          {getStatusPill(session.status)}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const renderDayView = () => {
+    const daySessions = sessions.filter((s) => isSameDay(s.start, currentDate));
+
+    return (
+      <div className="border rounded-lg overflow-hidden bg-white">
+        <div className="p-4 border-b bg-gray-50 text-center font-bold text-lg capitalize">
+          {currentDate.toLocaleDateString("es-ES", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+        </div>
+        <div className="p-4">
+          {daySessions.length === 0 ? (
+            <div className="text-sm text-gray-500">
+              No hay sesiones para este día.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {daySessions
+                .slice()
+                .sort((a, b) => a.start.getTime() - b.start.getTime())
+                .map((session) => (
+                  <div
+                    key={session.id}
+                    className={`rounded-xl p-4 border shadow-sm ${session.color}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h4 className="font-bold text-sm truncate">
+                          {session.title}
+                        </h4>
+                        <div className="flex items-center gap-2 text-xs mt-1 opacity-90">
+                          <Clock size={12} />
+                          <span>
+                            {formatTime(session.start)} -{" "}
+                            {formatTime(session.end)}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs mt-1 opacity-90">
+                          <Users size={12} />
+                          <span className="truncate">{session.customer}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 bg-white/50 rounded">
+                        <MapPin size={12} />
+                        {session.room}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6 h-full flex flex-col">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
+      {/* Mobile: Weekly list (default current week) */}
+      <div className="md:hidden space-y-4">
+        <div className="bg-white p-4 rounded-xl border border-beige/60 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  setView("week");
+                  handlePrev();
+                }}
+                aria-label="Semana anterior"
+                className="p-2 rounded-lg border border-beige/60 bg-white text-gray-600"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <div className="min-w-0">
+                <div className="text-sm text-gray-500 capitalize">
+                  {formatDate(currentDate)}
+                </div>
+                <div className="font-bold text-dark truncate">
+                  Semana actual: {formatWeekRange(weekStart, weekEnd)}
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setView("week");
+                  handleNext();
+                }}
+                aria-label="Semana siguiente"
+                className="p-2 rounded-lg border border-beige/60 bg-white text-gray-600"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+            <Button onClick={() => router.push("/bookings/create")}>
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              Nueva
+            </Button>
+          </div>
+          <div className="mt-3 flex justify-between">
             <button
-              onClick={handlePrev}
-              aria-label="Anterior"
-              className="p-2 hover:bg-white hover:shadow-sm rounded-md transition-all text-gray-600"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              onClick={handleToday}
-              className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all"
+              onClick={() => {
+                setView("week");
+                handleToday();
+              }}
+              className="text-sm font-medium text-primary"
             >
               Hoy
             </button>
-            <button
-              onClick={handleNext}
-              aria-label="Siguiente"
-              className="p-2 hover:bg-white hover:shadow-sm rounded-md transition-all text-gray-600"
-            >
-              <ChevronRight size={20} />
-            </button>
           </div>
-          <h2 className="text-xl font-bold text-gray-900 capitalize">
-            {view === "month"
-              ? formatDate(currentDate)
-              : view === "day"
-              ? currentDate.toLocaleDateString("es-ES", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })
-              : `Semana del ${currentDate.getDate()}`}
-          </h2>
         </div>
 
-        <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
-          <button
-            onClick={() => setView("month")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              view === "month"
-                ? "bg-white shadow-sm text-primary"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Mes
-          </button>
-          <button
-            onClick={() => setView("week")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              view === "week"
-                ? "bg-white shadow-sm text-primary"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Semana
-          </button>
-          <button
-            onClick={() => setView("day")}
-            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
-              view === "day"
-                ? "bg-white shadow-sm text-primary"
-                : "text-gray-600 hover:text-gray-900"
-            }`}
-          >
-            Día
-          </button>
-        </div>
-
-        <Button onClick={() => router.push("/bookings/create")}>
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          Nueva Reserva
-        </Button>
+        <div className="flex-1">{renderMobileWeekList()}</div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="flex-1 bg-white rounded-xl shadow-sm overflow-hidden">
-        {view === "month" && renderMonthView()}
-        {view === "week" && renderWeekView()}
-        {view === "day" && renderDayView()}
+      {/* Desktop: existing calendar views */}
+      <div className="hidden md:flex flex-col space-y-6 flex-1">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={handlePrev}
+                aria-label="Anterior"
+                className="p-2 hover:bg-white hover:shadow-sm rounded-md transition-all text-gray-600"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={handleToday}
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:shadow-sm rounded-md transition-all"
+              >
+                Hoy
+              </button>
+              <button
+                onClick={handleNext}
+                aria-label="Siguiente"
+                className="p-2 hover:bg-white hover:shadow-sm rounded-md transition-all text-gray-600"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 capitalize">
+              {view === "month"
+                ? formatDate(currentDate)
+                : view === "day"
+                ? currentDate.toLocaleDateString("es-ES", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })
+                : `Semana del ${currentDate.getDate()}`}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg">
+            <button
+              onClick={() => setView("month")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                view === "month"
+                  ? "bg-white shadow-sm text-primary"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Mes
+            </button>
+            <button
+              onClick={() => setView("week")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                view === "week"
+                  ? "bg-white shadow-sm text-primary"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Semana
+            </button>
+            <button
+              onClick={() => setView("day")}
+              className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
+                view === "day"
+                  ? "bg-white shadow-sm text-primary"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              Día
+            </button>
+          </div>
+
+          <Button onClick={() => router.push("/bookings/create")}>
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            Nueva Reserva
+          </Button>
+        </div>
+
+        {/* Calendar Grid */}
+        <div className="flex-1 bg-white rounded-xl shadow-sm overflow-hidden">
+          {view === "month" && renderMonthView()}
+          {view === "week" && renderWeekView()}
+          {view === "day" && renderDayView()}
+        </div>
       </div>
     </div>
   );
