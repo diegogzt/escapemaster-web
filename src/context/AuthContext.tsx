@@ -92,6 +92,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               "/register",
               "/forgot-password",
               "/reset-password",
+              "/privacy",
+              "/cookies",
             ];
             const onboardingRoute = "/onboarding";
 
@@ -122,6 +124,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           "/register",
           "/forgot-password",
           "/reset-password",
+          "/privacy",
+          "/cookies",
         ];
         if (
           !publicRoutes.includes(pathname) &&

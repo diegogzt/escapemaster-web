@@ -4,16 +4,16 @@ import { ArrowLeft } from "lucide-react";
 
 export default function CookiesPolicy() {
   return (
-    <div className="min-h-screen bg-black text-zinc-300 py-20 px-6">
+    <div className="min-h-screen bg-[#051c14] text-emerald-100/80 py-20 px-6">
       <div className="max-w-3xl mx-auto">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-12 transition-colors"
+          className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 mb-12 transition-colors"
         >
           <ArrowLeft size={20} /> Volver al inicio
         </Link>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Política de Cookies</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-emerald-200/50">Política de Cookies</h1>
         
         <div className="space-y-8 leading-relaxed">
           <section>
@@ -33,21 +33,21 @@ export default function CookiesPolicy() {
           <section>
             <h2 className="text-2xl font-semibold text-white mb-4">3. Tipos de Cookies que utilizamos</h2>
             <div className="space-y-4 mt-4">
-              <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+              <div className="p-4 rounded-xl bg-emerald-900/20 border border-emerald-500/10">
                 <h3 className="text-lg font-bold text-white mb-2">Cookies Técnicas (Necesarias)</h3>
                 <p className="text-sm">
                   Son esenciales para que pueda navegar por la plataforma y utilizar sus funciones. Por ejemplo, utilizamos una cookie de <strong>token</strong> para mantener su sesión iniciada de forma segura. Sin estas cookies, no podríamos proporcionar los servicios solicitados.
                 </p>
               </div>
               
-              <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+              <div className="p-4 rounded-xl bg-emerald-900/20 border border-emerald-500/10">
                 <h3 className="text-lg font-bold text-white mb-2">Cookies de Preferencias</h3>
                 <p className="text-sm">
                   Permiten que la plataforma recuerde información que cambia la forma en que se comporta o se ve el sitio, como su idioma preferido o el tema visual seleccionado (Tropical, Twilight, etc.).
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-zinc-900 border border-zinc-800">
+              <div className="p-4 rounded-xl bg-emerald-900/20 border border-emerald-500/10">
                 <h3 className="text-lg font-bold text-white mb-2">Cookies de Análisis</h3>
                 <p className="text-sm">
                   Nos ayudan a comprender cómo los visitantes interactúan con la plataforma, recopilando y proporcionando información de forma anónima. Esto nos permite mejorar continuamente la estructura y el contenido de EscapeMaster.
@@ -74,7 +74,7 @@ export default function CookiesPolicy() {
           </section>
         </div>
 
-        <footer className="mt-20 pt-8 border-t border-zinc-800 text-zinc-500 text-sm">
+        <footer className="mt-20 pt-8 border-t border-emerald-500/10 text-emerald-100/40 text-sm">
           Última actualización: 27 de diciembre de 2025
         </footer>
       </div>

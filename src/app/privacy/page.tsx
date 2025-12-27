@@ -4,16 +4,16 @@ import { ArrowLeft } from "lucide-react";
 
 export default function PrivacyPolicy() {
   return (
-    <div className="min-h-screen bg-black text-zinc-300 py-20 px-6">
+    <div className="min-h-screen bg-[#051c14] text-emerald-100/80 py-20 px-6">
       <div className="max-w-3xl mx-auto">
         <Link 
           href="/" 
-          className="inline-flex items-center gap-2 text-primary hover:text-primary/80 mb-12 transition-colors"
+          className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 mb-12 transition-colors"
         >
           <ArrowLeft size={20} /> Volver al inicio
         </Link>
 
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-8">Política de Privacidad</h1>
+        <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-emerald-200/50">Política de Privacidad</h1>
         
         <div className="space-y-8 leading-relaxed">
           <section>
@@ -66,7 +66,7 @@ export default function PrivacyPolicy() {
           </section>
         </div>
 
-        <footer className="mt-20 pt-8 border-t border-zinc-800 text-zinc-500 text-sm">
+        <footer className="mt-20 pt-8 border-t border-emerald-500/10 text-emerald-100/40 text-sm">
           Última actualización: 27 de diciembre de 2025
         </footer>
       </div>
