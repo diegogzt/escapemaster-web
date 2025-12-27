@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: #1f6357;
+  --color-secondary: #4db8a8;
+  --color-accent: #f4e9cd;
+  --color-dark: #0d3d34;
+  --color-light: #e8f5f3;
+  --color-background: #ffffff;
+}
+
+.theme-twilight {
+  --color-primary: #4338ca;
+  --color-secondary: #6b7280;
+  --color-accent: #f3f4f6;
+  --color-dark: #111827;
+  --color-light: #fafbfc;
+  --color-background: #ffffff;
+}
+
+.theme-tropical {
+  --color-primary: #1f6357;
+  --color-secondary: #4db8a8;
+  --color-accent: #f4e9cd;
+  --color-dark: #0d3d34;
+  --color-light: #e8f5f3;
+  --color-background: #ffffff;
+}
+
+.theme-vista {
+  --color-primary: #d56a34;
+  --color-secondary: #3f170e;
+  --color-accent: #f9f7e9;
+  --color-dark: #2a0f08;
+  --color-light: #fdfcf5;
+  --color-background: #fdfcf5;
+}
+
+.theme-mint {
+  --color-primary: #1f756e;
+  --color-secondary: #5ddcc3;
+  --color-accent: #c8e86c;
+  --color-dark: #163d39;
+  --color-light: #f2fff9;
+  --color-background: #ffffff;
+}
+
+.theme-sunset {
+  --color-primary: #ff6b9d;
+  --color-secondary: #ffa07a;
+  --color-accent: #ffd700;
+  --color-dark: #c73866;
+  --color-light: #fff4e6;
+  --color-background: #ffffff;
+}
+
+.theme-ocean {
+  --color-primary: #006d77;
+  --color-secondary: #83c5be;
+  --color-accent: #edf6f9;
+  --color-dark: #003d47;
+  --color-light: #ffddd2;
+  --color-background: #ffffff;
+}
+
+.theme-lavender {
+  --color-primary: #9d84b7;
+  --color-secondary: #c8b6e2;
+  --color-accent: #e8dff5;
+  --color-dark: #6b5b8e;
+  --color-light: #f7f3fc;
+  --color-background: #ffffff;
+}
+
+.theme-fire {
+  --color-primary: #ff4500;
+  --color-secondary: #ffd700;
+  --color-accent: #ff6347;
+  --color-dark: #8b0000;
+  --color-light: #fff8dc;
+  --color-background: #ffffff;
+}
