@@ -128,7 +128,7 @@ export default function RoomConfigPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       <div className="mb-8 flex justify-between items-end">
         <div>
           <Link

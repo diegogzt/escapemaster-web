@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle } from "@/components/Card";
 
 export default function DocsPage() {
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-primary">Documentación</h1>
         <p className="text-dark opacity-75">
@@ -46,7 +46,7 @@ export default function DocsPage() {
             personalizadas.
           </p>
           <a
-            href="http://localhost:8000/docs"
+            href="https://api.escapemaster.es/docs"
             target="_blank"
             className="text-primary font-semibold hover:underline"
           >

@@ -25,7 +25,7 @@ export interface CardFooterProps {
 const Card = ({ children, className, ...props }: CardProps) => (
   <div
     className={cn(
-      "bg-white border-2 border-light rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg max-w-sm",
+      "bg-white border-2 border-light rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg",
       className
     )}
     {...props}

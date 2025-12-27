@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.escapemaster.es";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -156,6 +156,28 @@ export const roles = {
       return { roles: [], total: 0 };
     }
   },
+  get: async (id: string) => {
+    const response = await api.get(`/roles/${id}`);
+    return response.data;
+  },
+  create: async (data: any) => {
+    const response = await api.post("/roles", data);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.patch(`/roles/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/roles/${id}`);
+    return response.data;
+  },
+  listPermissions: async (category?: string) => {
+    const response = await api.get("/roles/permissions", {
+      params: { category },
+    });
+    return response.data;
+  },
 };
 
 export const users = {
@@ -210,6 +232,52 @@ export const bookings = {
   },
   update: async (id: string, data: any) => {
     const response = await api.put(`/bookings/${id}`, data);
+    return response.data;
+  },
+};
+
+export const timeclock = {
+  checkIn: async (data: { check_in_time?: string; task_description?: string }) => {
+    const response = await api.post("/timeclock/check-in", data);
+    return response.data;
+  },
+  checkOut: async (data: { check_out_time?: string; task_description?: string }) => {
+    const response = await api.post("/timeclock/check-out", data);
+    return response.data;
+  },
+  getMe: async () => {
+    const response = await api.get("/timeclock/me");
+    return response.data;
+  },
+  getSummary: async () => {
+    const response = await api.get("/timeclock/summary");
+    return response.data;
+  },
+  getAll: async (params?: { user_id?: string; limit?: number }) => {
+    const response = await api.get("/timeclock/admin/all", { params });
+    return response.data;
+  },
+};
+
+export const vacations = {
+  request: async (data: { start_date: string; end_date: string; user_notes?: string }) => {
+    const response = await api.post("/vacations", data);
+    return response.data;
+  },
+  getMe: async () => {
+    const response = await api.get("/vacations/me");
+    return response.data;
+  },
+  getAll: async (params?: { user_id?: string; status?: string }) => {
+    const response = await api.get("/vacations/admin/all", { params });
+    return response.data;
+  },
+  updateStatus: async (id: string, data: { status: string; admin_notes?: string }) => {
+    const response = await api.put(`/vacations/${id}`, data);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/vacations/${id}`, data);
     return response.data;
   },
 };

@@ -4,6 +4,22 @@ Este documento resume los cambios recientes realizados en `escapemaster-web` par
 
 ## 1. Cambios Recientes en Escapemaster Web
 
+### Gestión de Roles y Seguridad (Diciembre 2025)
+
+- **Nueva Funcionalidad**: Implementada sección de gestión de Roles y Permisos para administradores de organización.
+- **Base de Datos**: Script de corrección de permisos y roles ejecutado. Ahora todas las organizaciones cuentan con roles por defecto (Admin, Manager, Recepcionista, Game Master).
+- **UI/UX**: Añadido acceso a "Roles" en la barra lateral.
+- **Corrección**: Solucionado problema de dropdown de roles vacío en la creación de usuarios.
+
+### HR y Gestión de Personal (Diciembre 2025)
+
+- **Nueva Funcionalidad**: Implementado sistema de fichaje (Timeclock) para Game Masters.
+- **Nueva Funcionalidad**: Gestión de Vacaciones y Ausencias.
+- **Nueva Funcionalidad**: Panel de Gestión de RRHH para administradores.
+- **Corrección**: Corregidos errores de tipos en el build de producción.
+- **Corrección**: Instalada dependencia `date-fns` faltante.
+- **Despliegue**: Aplicación desplegada exitosamente en Vercel.
+
 ### Correcciones y Mejoras en Reportes (Diciembre 2025)
 
 **Estabilidad y Navegación:**

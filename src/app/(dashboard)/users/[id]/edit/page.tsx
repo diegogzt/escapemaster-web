@@ -6,7 +6,7 @@ import { Card, CardHeader, CardTitle, CardFooter } from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { users, roles } from "@/services/api";
-import { Shield, Mail, User, ArrowLeft, CheckCircle } from "lucide-react";
+import { Shield, Mail, User, ArrowLeft, CheckCircle, Lock } from "lucide-react";
 import Link from "next/link";
 
 export default function EditUserPage() {
@@ -51,6 +51,9 @@ export default function EditUserPage() {
       email: formData.get("email"),
       role_id: formData.get("role_id"),
       is_active: formData.get("is_active") === "true",
+      target_hours: parseFloat(formData.get("target_hours") as string) || 0,
+      hourly_rate: parseFloat(formData.get("hourly_rate") as string) || 0,
+      vacation_days_total: parseInt(formData.get("vacation_days_total") as string) || 0,
     };
 
     try {
@@ -83,7 +86,7 @@ export default function EditUserPage() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="w-full">
       <div className="mb-8">
         <Link
           href="/users"
@@ -174,6 +177,38 @@ export default function EditUserPage() {
                     <option value="false">Inactivo</option>
                   </select>
                 </div>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-beige">
+              <h3 className="text-lg font-bold text-dark mb-4 flex items-center">
+                <Lock size={20} className="mr-2 text-accent" />
+                Configuración de Horas y Salario
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Input
+                  name="target_hours"
+                  label="Horas Mensuales"
+                  type="number"
+                  step="0.5"
+                  defaultValue={userData.target_hours}
+                  placeholder="Ej: 160"
+                />
+                <Input
+                  name="hourly_rate"
+                  label="Precio por Hora (€)"
+                  type="number"
+                  step="0.01"
+                  defaultValue={userData.hourly_rate}
+                  placeholder="Ej: 12.50"
+                />
+                <Input
+                  name="vacation_days_total"
+                  label="Días Vacaciones/Año"
+                  type="number"
+                  defaultValue={userData.vacation_days_total}
+                  placeholder="Ej: 30"
+                />
               </div>
             </div>
           </div>

@@ -123,22 +123,22 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="space-y-4 w-full max-w-[1600px] mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="space-y-8 w-full pb-12 px-4 lg:px-8">
+      {/* Header - More compact and desktop-oriented */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl border border-beige/50 shadow-sm">
         <div>
-          <h1 className="text-3xl font-bold text-primary">
-            Reportes y Finanzas
+          <h1 className="text-4xl font-bold text-primary tracking-tight">
+            Panel de Control Financiero
           </h1>
-          <p className="text-dark opacity-75">
-            Visión general del rendimiento de tu Escape Room
+          <p className="text-dark/60 mt-1 text-lg">
+            Análisis detallado del rendimiento y métricas operativas.
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 items-center">
-          <div className="bg-white border border-beige rounded-lg flex items-center px-3 py-2">
-            <Calendar size={18} className="text-gray-400 mr-2" />
+        <div className="flex flex-wrap gap-3 items-center w-full lg:w-auto">
+          <div className="bg-light/50 border border-beige rounded-xl flex items-center px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+            <Calendar size={18} className="text-primary mr-2" />
             <select
-              className="bg-transparent border-none text-sm focus:outline-none text-dark min-w-[100px]"
+              className="bg-transparent border-none text-sm font-semibold focus:outline-none text-dark w-full lg:min-w-[160px]"
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
             >
@@ -152,567 +152,270 @@ export default function ReportsPage() {
             </select>
           </div>
 
-          {dateRange === "custom" && (
-            <div className="flex gap-2 items-center bg-white border border-beige rounded-lg px-2 py-1">
-              <input
-                type="date"
-                className="text-sm border-none focus:ring-0 p-1"
-                value={customDateStart}
-                onChange={(e) => setCustomDateStart(e.target.value)}
-              />
-              <span className="text-gray-400">-</span>
-              <input
-                type="date"
-                className="text-sm border-none focus:ring-0 p-1"
-                value={customDateEnd}
-                onChange={(e) => setCustomDateEnd(e.target.value)}
-              />
-            </div>
-          )}
-
-          <Button variant="secondary" onClick={() => handleExport("csv")}>
-            <Download size={18} className="mr-2" />
-            Exportar CSV
-          </Button>
-          <Button variant="outline" onClick={() => setShowExpenseForm(true)}>
-            <CreditCard size={18} className="mr-2" />
-            Registrar Gasto
-          </Button>
-          <Button variant="primary" onClick={() => setShowChartForm(true)}>
-            <Plus size={18} className="mr-2" />
-            Crear Gráfica
-          </Button>
-        </div>
-      </div>
-
-      {/* Expense Form Modal */}
-      {showExpenseForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-md relative animate-in fade-in zoom-in duration-200">
-            <button
-              onClick={() => setShowExpenseForm(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-dark"
-            >
-              <X size={20} />
-            </button>
-            <h3 className="text-xl font-bold text-primary mb-4">
-              Registrar Nuevo Gasto
-            </h3>
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setShowExpenseForm(false);
-                alert("Gasto registrado");
-              }}
-            >
-              <Input
-                label="Concepto"
-                placeholder="Ej. Factura de luz"
-                required
-              />
-              <Input
-                label="Monto (€)"
-                type="number"
-                placeholder="0.00"
-                required
-              />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Categoría
-                </label>
-                <select className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                  <option>Alquiler</option>
-                  <option>Nóminas</option>
-                  <option>Marketing</option>
-                  <option>Mantenimiento</option>
-                  <option>Suministros</option>
-                  <option>Otros</option>
-                </select>
-              </div>
-              <Input label="Fecha" type="date" required />
-              <div className="flex justify-end gap-2 mt-6">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setShowExpenseForm(false)}
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit">Guardar Gasto</Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
-
-      {/* Create Chart Modal */}
-      {showChartForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg relative animate-in fade-in zoom-in duration-200">
-            <button
-              onClick={() => setShowChartForm(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-dark"
-            >
-              <X size={20} />
-            </button>
-            <h3 className="text-xl font-bold text-primary mb-4">
-              Crear Nueva Gráfica
-            </h3>
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                setShowChartForm(false);
-                alert("Gráfica creada");
-              }}
-            >
-              <Input
-                label="Título del Gráfico"
-                placeholder="Ej. Reservas por día de la semana"
-                required
-              />
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tipo de Gráfico
-                  </label>
-                  <select className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    <option value="bar">Barras</option>
-                    <option value="line">Líneas</option>
-                    <option value="pie">Circular (Pie)</option>
-                    <option value="area">Área</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Fuente de Datos
-                  </label>
-                  <select className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                    <option value="revenue">Ingresos</option>
-                    <option value="bookings">Reservas</option>
-                    <option value="occupancy">Ocupación</option>
-                    <option value="expenses">Gastos</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Métrica Principal
-                </label>
-                <select className="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
-                  <option>Suma Total</option>
-                  <option>Promedio</option>
-                  <option>Conteo</option>
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 mt-6">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setShowChartForm(false)}
-                >
-                  Cancelar
-                </Button>
-                <Button type="submit">Crear Gráfica</Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
-
-      {/* Financial KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-6 border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-gray-500 mb-1 font-medium">
-                Ingresos Totales
-              </p>
-              <h3 className="text-2xl font-bold text-dark">13.900€</h3>
-              <span className="text-xs text-primary flex items-center mt-1 font-medium">
-                <TrendingUp size={12} className="mr-1" /> +12.5% vs periodo
-                anterior
-              </span>
-            </div>
-            <div className="p-3 bg-primary/10 rounded-xl text-primary">
-              <DollarSign size={24} />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6 border-l-4 border-l-secondary shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-gray-500 mb-1 font-medium">
-                Beneficio Neto
-              </p>
-              <h3 className="text-2xl font-bold text-dark">8.450€</h3>
-              <span className="text-xs text-primary flex items-center mt-1 font-medium">
-                <TrendingUp size={12} className="mr-1" /> +15.2% vs periodo
-                anterior
-              </span>
-            </div>
-            <div className="p-3 bg-secondary/10 rounded-xl text-secondary">
-              <Wallet size={24} />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6 border-l-4 border-l-accent shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-gray-500 mb-1 font-medium">
-                Gastos Operativos
-              </p>
-              <h3 className="text-2xl font-bold text-dark">5.450€</h3>
-              <span className="text-xs text-red-500 flex items-center mt-1 font-medium">
-                <TrendingUp size={12} className="mr-1" /> +2.1% vs periodo
-                anterior
-              </span>
-            </div>
-            <div className="p-3 bg-accent/10 rounded-xl text-accent">
-              <CreditCard size={24} />
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-6 border-l-4 border-l-error shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex justify-between items-start">
-            <div>
-              <p className="text-sm text-gray-500 mb-1 font-medium">
-                Tasa de Cancelación
-              </p>
-              <h3 className="text-2xl font-bold text-dark">4.2%</h3>
-              <span className="text-xs text-primary flex items-center mt-1 font-medium">
-                <TrendingUp size={12} className="mr-1 rotate-180" /> -0.5% vs
-                periodo anterior
-              </span>
-            </div>
-            <div className="p-3 bg-red-100 rounded-xl text-error">
-              <AlertCircle size={24} />
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Operational KPIs */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-beige rounded-full text-dark">
-              <Activity size={20} />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Reservas Totales</p>
-              <p className="text-xl font-bold text-dark">139</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-beige rounded-full text-dark">
-              <Users size={20} />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Jugadores</p>
-              <p className="text-xl font-bold text-dark">642</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-beige rounded-full text-dark">
-              <DollarSign size={20} />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Ticket Medio</p>
-              <p className="text-xl font-bold text-dark">100€</p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="p-3 bg-beige rounded-full text-dark">
-              <Activity size={20} />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Ocupación Media</p>
-              <p className="text-xl font-bold text-dark">78%</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Revenue vs Expenses Chart */}
-        <Card className="p-6 shadow-md">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-lg text-dark">Balance Financiero</h3>
-            <Button variant="ghost" size="sm">
-              <Filter size={16} />
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => handleExport("csv")} className="bg-white">
+              <Download size={18} className="mr-2" />
+              Exportar
+            </Button>
+            <Button variant="primary" onClick={() => setShowExpenseForm(true)} className="shadow-lg shadow-primary/20">
+              <Plus size={18} className="mr-2" />
+              Nuevo Registro
             </Button>
           </div>
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={REVENUE_DATA}
-                margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#E5E5E5"
-                />
-                <XAxis
-                  dataKey="name"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: COLORS.dark }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: COLORS.dark }}
-                />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "8px",
-                    border: "none",
-                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                  }}
-                  cursor={{ fill: "transparent" }}
-                />
-                <Legend />
-                <Bar
-                  dataKey="ingresos"
-                  name="Ingresos"
-                  fill={COLORS.primary}
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  dataKey="gastos"
-                  name="Gastos"
-                  fill={COLORS.error}
-                  radius={[4, 4, 0, 0]}
-                />
-                <Bar
-                  dataKey="beneficio"
-                  name="Beneficio"
-                  fill={COLORS.secondary}
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
+        </div>
+      </div>
 
-        {/* Hourly Occupancy Area Chart */}
-        <Card className="p-6 shadow-md">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-lg text-dark">Ocupación por Hora</h3>
-          </div>
-          <div className="h-[350px] w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={HOURLY_DISTRIBUTION}
-                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient
-                    id="colorOcupacion"
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="1"
-                  >
-                    <stop
-                      offset="5%"
-                      stopColor={COLORS.primary}
-                      stopOpacity={0.8}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor={COLORS.primary}
-                      stopOpacity={0}
-                    />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="time"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: COLORS.dark }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: COLORS.dark }}
-                  unit="%"
-                />
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  vertical={false}
-                  stroke="#E5E5E5"
-                />
-                <Tooltip
-                  contentStyle={{
-                    borderRadius: "8px",
-                    border: "none",
-                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                  }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="ocupacion"
-                  stroke={COLORS.primary}
-                  fillOpacity={1}
-                  fill="url(#colorOcupacion)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
+      {/* Main Dashboard Grid */}
+      <div className="grid grid-cols-12 gap-8">
+        {/* Left Column: KPIs and Main Charts (8 cols) */}
+        <div className="col-span-12 lg:col-span-8 space-y-8">
+          {/* Financial KPIs - 4 per row on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                  <DollarSign size={24} />
+                </div>
+                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">
+                  +12.5%
+                </span>
+              </div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Ingresos Totales</p>
+              <h3 className="text-3xl font-bold text-dark">13.900€</h3>
+            </Card>
 
-        {/* Room Popularity Pie Chart */}
-        <Card className="p-6 shadow-md">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-lg text-dark">
-              Popularidad de Salas
-            </h3>
-            <span className="text-xs text-gray-500">
-              *Colores asignados por sala
-            </span>
+            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-secondary/10 rounded-2xl text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
+                  <Wallet size={24} />
+                </div>
+                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">
+                  +15.2%
+                </span>
+              </div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Beneficio Neto</p>
+              <h3 className="text-3xl font-bold text-dark">8.450€</h3>
+            </Card>
+
+            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-accent/10 rounded-2xl text-accent group-hover:bg-accent group-hover:text-white transition-colors">
+                  <CreditCard size={24} />
+                </div>
+                <span className="text-xs font-bold text-red-500 bg-red-50 px-2 py-1 rounded-full">
+                  +2.1%
+                </span>
+              </div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Gastos</p>
+              <h3 className="text-3xl font-bold text-dark">5.450€</h3>
+            </Card>
+
+            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-red-50 rounded-2xl text-error group-hover:bg-error group-hover:text-white transition-colors">
+                  <AlertCircle size={24} />
+                </div>
+                <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded-full">
+                  -0.5%
+                </span>
+              </div>
+              <p className="text-sm font-medium text-gray-500 mb-1">Cancelaciones</p>
+              <h3 className="text-3xl font-bold text-dark">4.2%</h3>
+            </Card>
           </div>
-          <div className="flex flex-col md:flex-row items-center justify-center h-[350px]">
-            <div className="w-full h-full">
+
+          {/* Main Chart: Balance Financiero */}
+          <Card className="p-8 border-none shadow-sm bg-white">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h3 className="text-xl font-bold text-dark">Balance Financiero Semanal</h3>
+                <p className="text-sm text-gray-500">Comparativa de ingresos vs gastos operativos</p>
+              </div>
+              <div className="flex gap-2">
+                <div className="flex items-center text-xs font-medium text-gray-500 mr-4">
+                  <span className="w-3 h-3 bg-primary rounded-full mr-1.5"></span> Ingresos
+                </div>
+                <div className="flex items-center text-xs font-medium text-gray-500">
+                  <span className="w-3 h-3 bg-error rounded-full mr-1.5"></span> Gastos
+                </div>
+              </div>
+            </div>
+            <div className="h-[400px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={REVENUE_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#9CA3AF', fontSize: 12 }} 
+                    dy={10}
+                  />
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: '#F9FAFB' }}
+                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  />
+                  <Bar dataKey="ingresos" fill={COLORS.primary} radius={[6, 6, 0, 0]} barSize={32} />
+                  <Bar dataKey="gastos" fill={COLORS.error} radius={[6, 6, 0, 0]} barSize={32} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
+          {/* Recent Activity Table */}
+          <Card className="border-none shadow-sm bg-white overflow-hidden">
+            <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-dark">Últimas Transacciones</h3>
+              <Button variant="ghost" size="sm" className="text-primary font-bold">
+                Ver historial completo
+              </Button>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-light/30 text-gray-500 text-xs uppercase tracking-wider">
+                    <th className="px-6 py-4 font-bold">Referencia</th>
+                    <th className="px-6 py-4 font-bold">Cliente</th>
+                    <th className="px-6 py-4 font-bold">Sala / Servicio</th>
+                    <th className="px-6 py-4 font-bold">Fecha</th>
+                    <th className="px-6 py-4 font-bold text-right">Monto</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i} className="hover:bg-light/20 transition-colors group">
+                      <td className="px-6 py-4 text-sm text-gray-500 font-mono">#RES-{1000 + i}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 rounded-full bg-beige/40 flex items-center justify-center text-primary font-bold text-xs mr-3">
+                            C{i}
+                          </div>
+                          <span className="text-sm font-bold text-dark">Cliente {i}</span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
+                          style={{
+                            backgroundColor: ROOM_POPULARITY[i % 3].color + "15",
+                            color: ROOM_POPULARITY[i % 3].color,
+                          }}
+                        >
+                          {ROOM_POPULARITY[i % 3].name}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500">21 Dic, 2025</td>
+                      <td className="px-6 py-4 text-right">
+                        <span className="text-sm font-bold text-primary">+120,00€</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+
+        {/* Right Column: Secondary Charts and Stats (4 cols) */}
+        <div className="col-span-12 lg:col-span-4 space-y-8">
+          {/* Room Popularity */}
+          <Card className="p-8 border-none shadow-sm bg-white">
+            <h3 className="text-xl font-bold text-dark mb-6">Popularidad de Salas</h3>
+            <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={ROOM_POPULARITY}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={80}
-                    outerRadius={120}
-                    paddingAngle={5}
+                    innerRadius={70}
+                    outerRadius={100}
+                    paddingAngle={8}
                     dataKey="value"
                   >
                     {ROOM_POPULARITY.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={entry.color}
-                        strokeWidth={0}
-                      />
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip />
-                  <Legend
-                    verticalAlign="bottom"
-                    height={36}
-                    iconType="circle"
-                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
-          </div>
-        </Card>
-
-        {/* Expenses Breakdown */}
-        <Card className="p-6 shadow-md">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold text-lg text-dark">Desglose de Gastos</h3>
-          </div>
-          <div className="h-[350px] w-full flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={EXPENSES_DATA}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={120}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({
-                    name,
-                    percent,
-                  }: {
-                    name?: string;
-                    percent?: number;
-                  }) =>
-                    `${name || ""} ${(percent ? percent * 100 : 0).toFixed(0)}%`
-                  }
-                >
-                  {EXPENSES_DATA.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={
-                        [
-                          COLORS.primary,
-                          COLORS.secondary,
-                          COLORS.accent,
-                          COLORS.dark,
-                          COLORS.beige,
-                        ][index % 5]
-                      }
-                    />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Recent Activity Table */}
-      <Card className="p-6 shadow-md">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="font-bold text-lg text-dark">Últimas Transacciones</h3>
-          <Button variant="ghost" size="sm" className="text-primary">
-            Ver todas
-          </Button>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="text-gray-500 border-b border-beige">
-                <th className="pb-3 font-medium pl-4">ID</th>
-                <th className="pb-3 font-medium">Cliente</th>
-                <th className="pb-3 font-medium">Sala</th>
-                <th className="pb-3 font-medium">Fecha</th>
-                <th className="pb-3 font-medium text-right pr-4">Monto</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-beige">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <tr key={i} className="hover:bg-beige/20 transition-colors">
-                  <td className="py-3 text-gray-500 pl-4">#RES-{1000 + i}</td>
-                  <td className="py-3 font-medium text-dark">Cliente {i}</td>
-                  <td className="py-3">
-                    <span
-                      className="px-2 py-1 rounded-full text-xs font-medium"
-                      style={{
-                        backgroundColor: ROOM_POPULARITY[i % 3].color + "20",
-                        color: ROOM_POPULARITY[i % 3].color,
-                      }}
-                    >
-                      {ROOM_POPULARITY[i % 3].name}
-                    </span>
-                  </td>
-                  <td className="py-3 text-gray-500">21 Dic, 2025</td>
-                  <td className="py-3 text-right font-bold text-primary pr-4">
-                    +120€
-                  </td>
-                </tr>
+            <div className="mt-6 space-y-3">
+              {ROOM_POPULARITY.map((room, i) => (
+                <div key={i} className="flex justify-between items-center">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: room.color }}></div>
+                    <span className="text-sm font-medium text-dark">{room.name}</span>
+                  </div>
+                  <span className="text-sm font-bold text-dark">{room.value}%</span>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </Card>
+
+          {/* Hourly Occupancy */}
+          <Card className="p-8 border-none shadow-sm bg-white">
+            <h3 className="text-xl font-bold text-dark mb-6">Picos de Ocupación</h3>
+            <div className="h-[250px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={HOURLY_DISTRIBUTION}>
+                  <defs>
+                    <linearGradient id="colorOcc" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
+                  <XAxis dataKey="time" hide />
+                  <Tooltip />
+                  <Area 
+                    type="monotone" 
+                    dataKey="ocupacion" 
+                    stroke={COLORS.primary} 
+                    strokeWidth={3}
+                    fillOpacity={1} 
+                    fill="url(#colorOcc)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="mt-4 p-4 bg-light/30 rounded-xl border border-beige/30">
+              <p className="text-xs text-dark/60 leading-relaxed">
+                <span className="font-bold text-primary">Tip:</span> El pico máximo de ocupación se registra a las <span className="font-bold">20:00h</span>. Considera reforzar el personal en este horario.
+              </p>
+            </div>
+          </Card>
+
+          {/* Expenses Breakdown */}
+          <Card className="p-8 border-none shadow-sm bg-white">
+            <h3 className="text-xl font-bold text-dark mb-6">Distribución de Gastos</h3>
+            <div className="space-y-6">
+              {EXPENSES_DATA.map((expense, i) => {
+                const total = EXPENSES_DATA.reduce((acc, curr) => acc + curr.value, 0);
+                const percentage = (expense.value / total) * 100;
+                return (
+                  <div key={i} className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="font-medium text-gray-600">{expense.name}</span>
+                      <span className="font-bold text-dark">{expense.value}€</span>
+                    </div>
+                    <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-accent rounded-full" 
+                        style={{ width: `${percentage}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Card>
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

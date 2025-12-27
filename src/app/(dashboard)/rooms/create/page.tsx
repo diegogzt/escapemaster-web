@@ -48,7 +48,7 @@ export default function CreateRoomPage() {
   };
 
   return (
-    <main className="max-w-5xl mx-auto p-6">
+    <main className="w-full p-6">
       <header className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Nueva Sala</h1>

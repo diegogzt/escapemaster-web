@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Users,
   LogOut,
+  Clock,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -22,6 +24,13 @@ export function AppSidebar() {
   const { user, updateUser, isAuthenticated } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  // Helper to check permissions
+  const hasPermission = (permission: string) => {
+    if (!user) return false;
+    if (user.is_superuser) return true;
+    return user.permissions?.includes(permission);
+  };
 
   useEffect(() => {
     // 1. Load from localStorage first
@@ -98,6 +107,25 @@ export function AppSidebar() {
           label="Calendario"
           isCollapsed={isCollapsed}
         />
+        
+        {hasPermission("time_tracking") && (
+          <NavItem
+            href="/time-tracking"
+            icon={Clock}
+            label="Registro de Horas"
+            isCollapsed={isCollapsed}
+          />
+        )}
+
+        {hasPermission("manage_timeclock") && (
+          <NavItem
+            href="/hr-management"
+            icon={ShieldCheck}
+            label="Gestión RRHH"
+            isCollapsed={isCollapsed}
+          />
+        )}
+
         <NavItem
           href="/bookings"
           icon={ClipboardList}
@@ -114,6 +142,12 @@ export function AppSidebar() {
           href="/users"
           icon={Users}
           label="Usuarios"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          href="/roles"
+          icon={ShieldCheck}
+          label="Roles"
           isCollapsed={isCollapsed}
         />
         <NavItem

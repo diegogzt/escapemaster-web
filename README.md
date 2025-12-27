@@ -49,10 +49,12 @@ escapemaster-web/
 
 ## 🌟 Recent Milestones (December 2025)
 
+- **Full Rebranding:** Migrated all components and branding to **Escapemaster**.
+- **HR Management:** Launched `/hr-management`, `/time-tracking`, and `/roles` sections.
+- **Mobile Overhaul:** Optimized all dashboard views and calendar for mobile devices.
+- **Next.js Middleware Migration:** Refactored `middleware.ts` to `proxy.ts` for better performance and compliance.
 - **Global Theming Engine**: Implemented a robust theme context supporting multiple color palettes (Twilight, Tropical, Vista, etc.) with local storage persistence.
 - **Widget-Based Dashboard**: Refactored the dashboard to use a modular widget system with drag-and-drop capabilities.
-- **Enhanced Reporting**: Added advanced date filters and new visualization components for financial and occupancy data.
-- **Performance & Stability**: Fixed critical auth hoisting issues and optimized component rendering.
 
 ## 🚀 Development Phases & Roadmap
 
