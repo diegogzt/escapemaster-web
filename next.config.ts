@@ -3,14 +3,6 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const turbopackRoot = (() => {
-  // next.config.ts puede ejecutarse como ESM (sin __dirname)
-  try {
-    // @ts-expect-error __dirname puede no existir en ESM
-    if (typeof __dirname === "string") return __dirname;
-  } catch {
-    // ignore
-  }
-
   try {
     return path.dirname(fileURLToPath(import.meta.url));
   } catch {
