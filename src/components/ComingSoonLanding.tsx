@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import Link from "next/link";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -265,9 +266,9 @@ const ComingSoonLanding = () => {
       {/* Footer */}
       <footer className="py-12 px-6 border-t border-white/5 text-center z-10 relative">
         <div className="mb-8 flex justify-center gap-8 text-zinc-500 text-sm uppercase tracking-widest">
-          <span>Seguridad</span>
-          <span>Privacidad</span>
-          <span>Términos</span>
+          <Link href="/privacy" className="hover:text-primary transition-colors">Privacidad</Link>
+          <Link href="/cookies" className="hover:text-primary transition-colors">Cookies</Link>
+          <span className="cursor-default">Términos</span>
         </div>
         <p className="text-zinc-600 text-xs tracking-widest uppercase">
           © 2025 EscapeMaster. La revolución de las salas de escape.
