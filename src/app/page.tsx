@@ -1,8 +1,8 @@
 "use client";
 
-import LandingPage from "@/components/LandingPage";
+import ComingSoonLanding from "@/components/ComingSoonLanding";
 
 export default function Home() {
   // Middleware handles redirection if authenticated
-  return <LandingPage />;
+  return <ComingSoonLanding />;
 }
