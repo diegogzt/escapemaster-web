@@ -14,6 +14,7 @@ import "../global.css";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useTheme } from "../hooks/useTheme";
 import { View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,7 +50,11 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <SafeAreaProvider>
+      <RootLayoutNav />
+    </SafeAreaProvider>
+  );
 }
 
 function RootLayoutNav() {
@@ -57,15 +62,13 @@ function RootLayoutNav() {
   const { theme } = useTheme();
 
   return (
-    <View className={`flex-1 theme-${theme}`}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <View className={`flex-1 theme-${theme}`}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(dashboard)" />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
         </Stack>
-      </ThemeProvider>
-    </View>
+      </View>
+    </ThemeProvider>
   );
 }

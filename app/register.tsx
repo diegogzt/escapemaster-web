@@ -8,12 +8,11 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
-import { auth } from "../../services/api";
+import { router } from "expo-router";
+import { auth } from "../services/api";
 import { Lock, Mail, User, Building } from "lucide-react-native";
 
 export default function RegisterScreen() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -180,9 +179,9 @@ export default function RegisterScreen() {
 
         <View className="mt-10 flex-row justify-center mb-10">
           <Text className="text-gray-600">¿Ya tienes cuenta? </Text>
-          <Link href="/login">
+          <TouchableOpacity onPress={() => router.push("/login")}>
             <Text className="text-primary font-bold">Inicia sesión</Text>
-          </Link>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

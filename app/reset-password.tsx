@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { KeyRound, Lock, ArrowLeft } from "lucide-react-native";
-import { auth } from "../../services/api";
+import { auth } from "../services/api";
 
 export default function ResetPasswordScreen() {
   const { email: initialEmail } = useLocalSearchParams<{ email: string }>();

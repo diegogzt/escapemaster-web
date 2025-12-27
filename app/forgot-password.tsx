@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { Mail, ArrowLeft } from "lucide-react-native";
-import { auth } from "../../services/api";
+import { auth } from "../services/api";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");

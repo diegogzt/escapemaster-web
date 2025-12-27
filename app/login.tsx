@@ -7,8 +7,8 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { Link, router } from "expo-router";
-import { auth } from "../../services/api";
+import { router } from "expo-router";
+import { auth } from "../services/api";
 import { Lock, Mail } from "lucide-react-native";
 
 export default function LoginScreen() {
@@ -101,9 +101,9 @@ export default function LoginScreen() {
 
       <View className="mt-10 flex-row justify-center">
         <Text className="text-gray-600">¿No tienes cuenta? </Text>
-        <Link href="/register">
+        <TouchableOpacity onPress={() => router.push("/register")}>
           <Text className="text-primary font-bold">Regístrate</Text>
-        </Link>
+        </TouchableOpacity>
       </View>
     </View>
   );
