@@ -6,9 +6,11 @@ interface StatsCardsProps extends WidgetConfigOptions {}
 export function StatsCards({
   showTrends = true,
   columns = 4,
+  visibleStats = ["revenue", "bookings", "customers", "rooms"],
 }: StatsCardsProps) {
-  const stats = [
+  const allStats = [
     {
+      id: "revenue",
       title: "Ingresos Totales",
       value: "€45,231.89",
       change: "+20.1% mes anterior",
@@ -16,6 +18,7 @@ export function StatsCards({
       color: "text-primary",
     },
     {
+      id: "bookings",
       title: "Reservas",
       value: "+2350",
       change: "+180.1% mes anterior",
@@ -23,6 +26,7 @@ export function StatsCards({
       color: "text-primary",
     },
     {
+      id: "customers",
       title: "Clientes Activos",
       value: "+12,234",
       change: "+19% mes anterior",
@@ -30,6 +34,7 @@ export function StatsCards({
       color: "text-primary",
     },
     {
+      id: "rooms",
       title: "Salas Activas",
       value: "5",
       change: "+2 desde ayer",
@@ -38,8 +43,11 @@ export function StatsCards({
     },
   ];
 
+  const stats = allStats.filter(s => visibleStats.includes(s.id));
+
   // Dynamic grid columns based on config
   const gridCols = {
+    1: "grid-cols-1",
     2: "grid-cols-2",
     3: "grid-cols-1 sm:grid-cols-3",
     4: "grid-cols-2 lg:grid-cols-4",

@@ -30,6 +30,7 @@ const CONFIG_LABELS: Record<keyof WidgetConfigOptions, string> = {
   sortBy: "Ordenar por",
   title: "Título personalizado",
   refreshInterval: "Intervalo de actualización (seg)",
+  visibleStats: "Estadísticas visibles",
 };
 
 // Options for select fields
@@ -84,7 +85,7 @@ export function WidgetConfigModal({
 
   const configurableOptions = def.configurableOptions || [];
 
-  const handleChange = (key: keyof WidgetConfigOptions, value: string | number | boolean) => {
+  const handleChange = (key: keyof WidgetConfigOptions, value: any) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -96,6 +97,46 @@ export function WidgetConfigModal({
   const renderField = (optionKey: keyof WidgetConfigOptions) => {
     const value = config[optionKey];
     const label = CONFIG_LABELS[optionKey] || optionKey;
+
+    // Array fields (multi-select/checkboxes)
+    if (optionKey === "visibleStats") {
+      const statsOptions = [
+        { id: "revenue", label: "Ingresos" },
+        { id: "bookings", label: "Reservas" },
+        { id: "customers", label: "Clientes" },
+        { id: "rooms", label: "Salas" },
+      ];
+      const currentStats = (value as string[]) || [];
+
+      return (
+        <div key={optionKey} className="py-2">
+          <label className="block text-sm font-medium text-dark mb-2">
+            {label}
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            {statsOptions.map((opt) => (
+              <label
+                key={opt.id}
+                className="flex items-center gap-2 text-sm cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={currentStats.includes(opt.id)}
+                  onChange={(e) => {
+                    const newStats = e.target.checked
+                      ? [...currentStats, opt.id]
+                      : currentStats.filter((id) => id !== opt.id);
+                    handleChange(optionKey, newStats);
+                  }}
+                  className="rounded border-beige text-primary focus:ring-primary"
+                />
+                {opt.label}
+              </label>
+            ))}
+          </div>
+        </div>
+      );
+    }
 
     // Boolean fields (checkbox)
     if (typeof value === "boolean" || optionKey.startsWith("show")) {

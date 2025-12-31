@@ -17,6 +17,7 @@ export interface WidgetConfigOptions {
   // Stats widget
   showTrends?: boolean;
   columns?: number;
+  visibleStats?: string[]; // e.g. ["revenue", "bookings", "customers", "rooms"]
   // Chart widgets
   chartType?: "bar" | "line" | "area";
   showLegend?: boolean;

@@ -18,8 +18,13 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: StatsCards,
     defaultColSpan: 48,
     defaultRowSpan: 6,
-    configurableOptions: ["showTrends", "columns", "refreshInterval"],
-    defaultConfig: { showTrends: true, columns: 4, refreshInterval: 60 },
+    configurableOptions: ["showTrends", "columns", "refreshInterval", "visibleStats"],
+    defaultConfig: { 
+      showTrends: true, 
+      columns: 4, 
+      refreshInterval: 60,
+      visibleStats: ["revenue", "bookings", "customers", "rooms"]
+    },
   },
   upcoming: {
     type: "upcoming",
