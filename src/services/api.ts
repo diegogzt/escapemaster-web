@@ -86,6 +86,14 @@ export const auth = {
     });
     return response.data;
   },
+  sendVerificationCode: async (email: string) => {
+    const response = await api.post("/auth/send-verification-code", { email });
+    return response.data;
+  },
+  verifyEmailCode: async (email: string, code: string) => {
+    const response = await api.post("/auth/verify-email-code", { email, code });
+    return response.data;
+  },
 };
 
 export const orgs = {

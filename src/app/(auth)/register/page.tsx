@@ -10,29 +10,29 @@ import { auth } from "@/services/api";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [step, setStep] = useState<"register" | "verify">("register");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
   const [registeredEmail, setRegisteredEmail] = useState("");
 
-  // Check if user recently registered and saw confirmation screen
+  // Check if user was in the middle of verification
   useEffect(() => {
-    const confirmationData = localStorage.getItem("email_confirmation");
-    if (confirmationData) {
+    const pendingVerification = localStorage.getItem("pending_email_verification");
+    if (pendingVerification) {
       try {
-        const { timestamp, email } = JSON.parse(confirmationData);
-        const hoursSinceConfirmation =
-          (Date.now() - timestamp) / (1000 * 60 * 60);
-
-        // If less than 24 hours, show the confirmation screen
-        if (hoursSinceConfirmation < 24) {
+        const { email, timestamp } = JSON.parse(pendingVerification);
+        const minutesSince = (Date.now() - timestamp) / (1000 * 60);
+        
+        // If less than 15 minutes, resume verification
+        if (minutesSince < 15) {
           setRegisteredEmail(email);
-          setSuccess(true);
+          setStep("verify");
         } else {
-          localStorage.removeItem("email_confirmation");
+          localStorage.removeItem("pending_email_verification");
         }
       } catch (e) {
-        localStorage.removeItem("email_confirmation");
+        localStorage.removeItem("pending_email_verification");
       }
     }
   }, []);
@@ -48,39 +48,16 @@ export default function RegisterPage() {
     const password = formData.get("password") as string;
     const organizationName = formData.get("organizationName") as string;
 
-    // --- STRIPE PAYMENT LOGIC (COMMENTED OUT) ---
-    /*
     try {
-      // 1. Create Stripe Checkout Session
-      const stripeSession = await stripe.createCheckoutSession({
-        line_items: [{ price: 'price_12345', quantity: 1 }],
-        mode: 'subscription',
-        success_url: `${window.location.origin}/register/success?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${window.location.origin}/register`,
-        customer_email: email,
-        metadata: {
-          organizationName,
-          fullName: name
-        }
-      });
-
-      // 2. Redirect to Stripe
-      window.location.href = stripeSession.url;
-      return; // Stop execution here, registration happens via Webhook or Success Page
-    } catch (stripeError) {
-      setError("Error initiating payment");
-      setLoading(false);
-      return;
-    }
-    */
-    // --------------------------------------------
-
-    try {
+      // 1. Register the user
       await auth.register(name, email, password, organizationName);
+      
+      // 2. Send verification code
+      await auth.sendVerificationCode(email);
 
-      // Save confirmation data with timestamp
+      // Save email for verification step
       localStorage.setItem(
-        "email_confirmation",
+        "pending_email_verification",
         JSON.stringify({
           email,
           timestamp: Date.now(),
@@ -88,7 +65,8 @@ export default function RegisterPage() {
       );
 
       setRegisteredEmail(email);
-      setSuccess(true);
+      setStep("verify");
+      setSuccessMessage("Código enviado. Revisa tu correo.");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Error al registrarse");
     } finally {
@@ -96,10 +74,51 @@ export default function RegisterPage() {
     }
   };
 
-  if (success) {
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccessMessage("");
+
+    const formData = new FormData(e.target as HTMLFormElement);
+    const code = formData.get("code") as string;
+
+    try {
+      await auth.verifyEmailCode(registeredEmail, code);
+      
+      // Clear pending verification
+      localStorage.removeItem("pending_email_verification");
+      
+      setSuccessMessage("¡Email verificado! Redirigiendo al login...");
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Código inválido o expirado");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setLoading(true);
+    setError("");
+    setSuccessMessage("");
+    try {
+      await auth.sendVerificationCode(registeredEmail);
+      setSuccessMessage("Nuevo código enviado. Revisa tu correo.");
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Error al reenviar código");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Step 2: Verify Email Code
+  if (step === "verify") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-light p-4">
-        <Card className="w-full max-w-md text-center">
+        <Card className="w-full max-w-md">
           <CardHeader>
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <svg
@@ -116,26 +135,58 @@ export default function RegisterPage() {
                 />
               </svg>
             </div>
-            <CardTitle level="h2">¡Revisa tu Email!</CardTitle>
+            <CardTitle level="h2">Verifica tu Email</CardTitle>
             <p className="text-dark opacity-75 mt-2">
-              Hemos enviado un enlace de confirmación a{" "}
-              <strong>{registeredEmail}</strong>. Por favor, confirma tu cuenta
-              para continuar.
+              Hemos enviado un código de 6 dígitos a{" "}
+              <strong>{registeredEmail}</strong>
             </p>
           </CardHeader>
-          <CardFooter className="flex justify-center">
-            <Link
-              href="/login"
-              onClick={() => localStorage.removeItem("email_confirmation")}
-            >
-              <Button>Ya confirmé mi email - Ir al Login</Button>
-            </Link>
-          </CardFooter>
+
+          <div className="p-6 space-y-4">
+            {error && (
+              <div className="bg-red-50 text-red-500 p-3 rounded-md text-sm">
+                {error}
+              </div>
+            )}
+            {successMessage && (
+              <div className="bg-green-50 text-green-600 p-3 rounded-md text-sm">
+                {successMessage}
+              </div>
+            )}
+
+            <form onSubmit={handleVerifyCode} className="space-y-4">
+              <Input
+                label="Código de Verificación"
+                name="code"
+                type="text"
+                placeholder="123456"
+                maxLength={6}
+                required
+                className="text-center text-2xl tracking-widest"
+              />
+              <Button type="submit" block loading={loading}>
+                {loading ? "Verificando..." : "Verificar Email"}
+              </Button>
+            </form>
+
+            <div className="text-center space-y-2">
+              <p className="text-sm text-gray-500">¿No recibiste el código?</p>
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={loading}
+                className="text-primary font-semibold hover:underline disabled:opacity-50"
+              >
+                Reenviar código
+              </button>
+            </div>
+          </div>
         </Card>
       </div>
     );
   }
 
+  // Step 1: Registration Form
   return (
     <div className="min-h-screen flex items-center justify-center bg-light p-4">
       <Card className="w-full max-w-md">
