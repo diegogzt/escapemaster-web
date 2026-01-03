@@ -1,13 +1,38 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { WidgetConfigOptions } from "../types";
+import { rooms as roomsApi, bookings as bookingsApi } from "@/services/api";
+
+// Color palette for rooms
+const ROOM_COLORS = [
+  "text-blue-500",
+  "text-green-500",
+  "text-purple-500",
+  "text-pink-500",
+  "text-orange-500",
+  "text-teal-500",
+];
+
+interface Room {
+  id: string;
+  name: string;
+  color: string;
+}
+
+interface Booking {
+  id: string;
+  date: string;
+  room_id?: string;
+  room_name?: string;
+}
 
 interface CalendarWidgetProps extends WidgetConfigOptions {}
 
@@ -17,6 +42,48 @@ export function CalendarWidget({
 }: CalendarWidgetProps) {
   const [view, setView] = useState<"month" | "week" | "day">(defaultView);
   const [date, setDate] = useState(new Date());
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch rooms and bookings from API
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const [roomsData, bookingsData] = await Promise.all([
+          roomsApi.list(),
+          bookingsApi.list(),
+        ]);
+        
+        // Transform rooms with colors
+        const transformedRooms: Room[] = (roomsData || []).map((r: any, index: number) => ({
+          id: r.id,
+          name: r.name,
+          color: ROOM_COLORS[index % ROOM_COLORS.length],
+        }));
+        setRooms(transformedRooms);
+        
+        // Transform bookings
+        // API returns: id, start_time, room_name, room_id
+        const transformedBookings: Booking[] = (bookingsData || []).map((b: any) => {
+          const startTime = b.start_time ? new Date(b.start_time) : null;
+          return {
+            id: b.id,
+            date: startTime ? startTime.toISOString().split("T")[0] : "",
+            room_id: b.room_id,
+            room_name: b.room_name,
+          };
+        });
+        setBookings(transformedBookings);
+      } catch (err) {
+        console.error("Error fetching calendar widget data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   // Sync with prop changes
   useEffect(() => {
@@ -40,24 +107,19 @@ export function CalendarWidget({
     "Diciembre",
   ];
 
-  // Hardcoded room data with colors
-  const rooms = [
-    { id: 1, name: "Sala A", color: "text-blue-500" },
-    { id: 2, name: "Sala B", color: "text-green-500" },
-    { id: 3, name: "Sala C", color: "text-purple-500" },
-  ];
-
-  // Helper to get random session counts for demo
+  // Helper to get session counts for a date from real data
   const getSessionsForDate = (d: Date) => {
-    // Use date to generate deterministic random-like data
-    const seed = d.getDate() + d.getMonth();
+    const dateStr = d.toISOString().split("T")[0];
+    const dayBookings = bookings.filter(b => b.date === dateStr);
+    
+    // Count bookings by room
+    const byRoom = rooms.map(room => 
+      dayBookings.filter(b => b.room_id === room.id || b.room_name === room.name).length
+    );
+    
     return {
-      total: (seed % 5) + 2, // 2 to 6 sessions
-      byRoom: [
-        (seed % 3) + 1, // Room A: 1-3
-        (seed % 2) + 1, // Room B: 1-2
-        seed % 4 === 0 ? 0 : 1, // Room C: 0-1
-      ],
+      total: dayBookings.length,
+      byRoom,
     };
   };
 
@@ -176,6 +238,14 @@ export function CalendarWidget({
       </div>
     );
   };
+
+  if (loading) {
+    return (
+      <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex items-center justify-center min-h-[200px]">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">

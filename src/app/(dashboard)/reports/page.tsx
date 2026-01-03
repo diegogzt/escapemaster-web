@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
+import { bookings as bookingsApi, rooms as roomsApi, dashboard } from "@/services/api";
 import {
   BarChart,
   Bar,
@@ -34,6 +35,7 @@ import {
   AlertCircle,
   Wallet,
   X,
+  Loader2,
 } from "lucide-react";
 
 // Palette Colors
@@ -47,35 +49,35 @@ const COLORS = {
   white: "#ffffff",
 };
 
-// Mock Data
-const REVENUE_DATA = [
-  { name: "Lun", ingresos: 1200, gastos: 400, beneficio: 800 },
-  { name: "Mar", ingresos: 900, gastos: 350, beneficio: 550 },
-  { name: "Mié", ingresos: 1500, gastos: 500, beneficio: 1000 },
-  { name: "Jue", ingresos: 1800, gastos: 600, beneficio: 1200 },
-  { name: "Vie", ingresos: 2500, gastos: 800, beneficio: 1700 },
-  { name: "Sáb", ingresos: 3200, gastos: 1000, beneficio: 2200 },
-  { name: "Dom", ingresos: 2800, gastos: 900, beneficio: 1900 },
-];
+// Room colors palette
+const ROOM_COLORS = ["#FF6B6B", "#4ECDC4", "#FFE66D", "#9B59B6", "#3498DB", "#E67E22"];
 
-// Room colors are user-defined and fixed per room
-const ROOM_POPULARITY = [
-  { name: "La Prisión", value: 45, color: "#FF6B6B" }, // User defined color
-  { name: "El Faraón", value: 30, color: "#4ECDC4" }, // User defined color
-  { name: "Lab. Zombie", value: 25, color: "#FFE66D" }, // User defined color
-];
+interface RevenueData {
+  name: string;
+  ingresos: number;
+  gastos: number;
+  beneficio: number;
+}
 
-const HOURLY_DISTRIBUTION = [
-  { time: "10:00", ocupacion: 20 },
-  { time: "12:00", ocupacion: 45 },
-  { time: "14:00", ocupacion: 30 },
-  { time: "16:00", ocupacion: 65 },
-  { time: "18:00", ocupacion: 90 },
-  { time: "20:00", ocupacion: 95 },
-  { time: "22:00", ocupacion: 80 },
-];
+interface RoomPopularity {
+  name: string;
+  value: number;
+  color: string;
+  [key: string]: string | number;
+}
 
-const EXPENSES_DATA = [
+interface HourlyData {
+  time: string;
+  ocupacion: number;
+}
+
+interface ExpenseData {
+  name: string;
+  value: number;
+}
+
+// Default expenses (no API endpoint yet - can be extended later)
+const DEFAULT_EXPENSES: ExpenseData[] = [
   { name: "Alquiler", value: 2000 },
   { name: "Nóminas", value: 4500 },
   { name: "Marketing", value: 1200 },
@@ -89,11 +91,118 @@ export default function ReportsPage() {
   const [customDateEnd, setCustomDateEnd] = useState("");
   const [showExpenseForm, setShowExpenseForm] = useState(false);
   const [showChartForm, setShowChartForm] = useState(false);
+  
+  // API data states
+  const [loading, setLoading] = useState(true);
+  const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
+  const [roomPopularity, setRoomPopularity] = useState<RoomPopularity[]>([]);
+  const [hourlyDistribution, setHourlyDistribution] = useState<HourlyData[]>([]);
+  const [expensesData] = useState<ExpenseData[]>(DEFAULT_EXPENSES); // TODO: Connect to expenses API
+  const [stats, setStats] = useState({ totalRevenue: 0, totalBookings: 0, profit: 0 });
+
+  // Fetch data from API
+  useEffect(() => {
+    async function fetchReportData() {
+      try {
+        setLoading(true);
+        const [bookingsData, roomsData, dashboardStats] = await Promise.all([
+          bookingsApi.list(),
+          roomsApi.list(),
+          dashboard.getStats(),
+        ]);
+        
+        // Calculate revenue by day of week
+        const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+        const revenueByDay: Record<string, { ingresos: number; count: number }> = {};
+        dayNames.forEach(d => { revenueByDay[d] = { ingresos: 0, count: 0 }; });
+        
+        // Calculate room popularity
+        const roomBookings: Record<string, number> = {};
+        
+        // Calculate hourly distribution
+        const hourlyData: Record<string, number> = {
+          "10:00": 0, "12:00": 0, "14:00": 0, "16:00": 0, "18:00": 0, "20:00": 0, "22:00": 0
+        };
+        
+        let totalRevenue = 0;
+        
+        // API returns: id, start_time, total_price, room_name, booking_status
+        (bookingsData || []).forEach((b: any) => {
+          const price = Number(b.total_price) || 0;
+          totalRevenue += price;
+          
+          // Revenue by day - parse from start_time
+          if (b.start_time) {
+            const startTime = new Date(b.start_time);
+            const day = startTime.getDay();
+            const dayName = dayNames[day];
+            if (revenueByDay[dayName]) {
+              revenueByDay[dayName].ingresos += price;
+              revenueByDay[dayName].count++;
+            }
+            
+            // Hourly distribution
+            const hour = startTime.getHours();
+            const hourSlot = hour < 11 ? "10:00" : hour < 13 ? "12:00" : hour < 15 ? "14:00" : 
+                            hour < 17 ? "16:00" : hour < 19 ? "18:00" : hour < 21 ? "20:00" : "22:00";
+            hourlyData[hourSlot] = (hourlyData[hourSlot] || 0) + 1;
+          }
+          
+          // Room popularity
+          const roomName = b.room_name || "Sin sala";
+          roomBookings[roomName] = (roomBookings[roomName] || 0) + 1;
+        });
+        
+        // Transform to chart data
+        const transformedRevenue: RevenueData[] = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map(d => ({
+          name: d,
+          ingresos: revenueByDay[d]?.ingresos || 0,
+          gastos: Math.round((revenueByDay[d]?.ingresos || 0) * 0.3), // Estimate 30% costs
+          beneficio: Math.round((revenueByDay[d]?.ingresos || 0) * 0.7),
+        }));
+        setRevenueData(transformedRevenue);
+        
+        // Transform room popularity
+        const totalBookingsCount = Object.values(roomBookings).reduce((a, b) => a + b, 0);
+        const transformedRooms: RoomPopularity[] = Object.entries(roomBookings)
+          .map(([name, count], index) => ({
+            name: name.length > 12 ? name.substring(0, 12) + "..." : name,
+            value: totalBookingsCount > 0 ? Math.round((count / totalBookingsCount) * 100) : 0,
+            color: ROOM_COLORS[index % ROOM_COLORS.length],
+          }))
+          .slice(0, 5);
+        setRoomPopularity(transformedRooms);
+        
+        // Transform hourly
+        const transformedHourly: HourlyData[] = Object.entries(hourlyData).map(([time, count]) => {
+          const maxCount = Math.max(...Object.values(hourlyData), 1);
+          return {
+            time,
+            ocupacion: Math.round((count / maxCount) * 100),
+          };
+        });
+        setHourlyDistribution(transformedHourly);
+        
+        // Set stats
+        setStats({
+          totalRevenue,
+          totalBookings: (bookingsData || []).length,
+          profit: Math.round(totalRevenue * 0.7),
+        });
+        
+      } catch (err) {
+        console.error("Error fetching report data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchReportData();
+  }, []);
 
   const handleExport = (format: "csv" | "xlsx") => {
-    // Mock export functionality
+    // Export functionality
     const headers = ["Dia", "Ingresos", "Gastos", "Beneficio"];
-    const rows = REVENUE_DATA.map((d) => [
+    const rows = revenueData.map((d) => [
       d.name,
       d.ingresos,
       d.gastos,
@@ -121,6 +230,18 @@ export default function ReportsPage() {
       handleExport("csv");
     }
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+          <p className="text-gray-600">Cargando reportes...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 w-full pb-12 px-4 lg:px-8">
@@ -242,7 +363,7 @@ export default function ReportsPage() {
             </div>
             <div className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={REVENUE_DATA} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <BarChart data={revenueData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
                   <XAxis 
                     dataKey="name" 
@@ -302,11 +423,11 @@ export default function ReportsPage() {
                         <span
                           className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
                           style={{
-                            backgroundColor: ROOM_POPULARITY[i % 3].color + "15",
-                            color: ROOM_POPULARITY[i % 3].color,
+                            backgroundColor: (roomPopularity[i % roomPopularity.length]?.color || "#ccc") + "15",
+                            color: roomPopularity[i % roomPopularity.length]?.color || "#666",
                           }}
                         >
-                          {ROOM_POPULARITY[i % 3].name}
+                          {roomPopularity[i % roomPopularity.length]?.name || "Sin sala"}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-500">21 Dic, 2025</td>
@@ -330,13 +451,13 @@ export default function ReportsPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={ROOM_POPULARITY}
+                    data={roomPopularity}
                     innerRadius={70}
                     outerRadius={100}
                     paddingAngle={8}
                     dataKey="value"
                   >
-                    {ROOM_POPULARITY.map((entry, index) => (
+                    {roomPopularity.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -345,7 +466,7 @@ export default function ReportsPage() {
               </ResponsiveContainer>
             </div>
             <div className="mt-6 space-y-3">
-              {ROOM_POPULARITY.map((room, i) => (
+              {roomPopularity.map((room, i) => (
                 <div key={i} className="flex justify-between items-center">
                   <div className="flex items-center">
                     <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: room.color }}></div>
@@ -362,7 +483,7 @@ export default function ReportsPage() {
             <h3 className="text-xl font-bold text-dark mb-6">Picos de Ocupación</h3>
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={HOURLY_DISTRIBUTION}>
+                <AreaChart data={hourlyDistribution}>
                   <defs>
                     <linearGradient id="colorOcc" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3}/>
@@ -394,8 +515,8 @@ export default function ReportsPage() {
           <Card className="p-8 border-none shadow-sm bg-white">
             <h3 className="text-xl font-bold text-dark mb-6">Distribución de Gastos</h3>
             <div className="space-y-6">
-              {EXPENSES_DATA.map((expense, i) => {
-                const total = EXPENSES_DATA.reduce((acc, curr) => acc + curr.value, 0);
+              {expensesData.map((expense, i) => {
+                const total = expensesData.reduce((acc, curr) => acc + curr.value, 0);
                 const percentage = (expense.value / total) * 100;
                 return (
                   <div key={i} className="space-y-2">

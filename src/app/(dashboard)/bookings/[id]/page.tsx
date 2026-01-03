@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
+import { bookings as bookingsApi } from "@/services/api";
 import {
   Calendar,
   Clock,
@@ -21,93 +22,122 @@ import {
   Shield,
   FileText,
   Copy,
+  Loader2,
 } from "lucide-react";
 
-// Mock Data for a specific booking
-const MOCK_BOOKING_DETAILS = {
-  id: "1",
-  room_name: "La Prisión de Alcatraz",
-  group_name: "Los Escapistas",
-  date: "2023-12-25",
-  time: "18:00",
-  status: "confirmed",
-  total_price: 120,
-  paid_amount: 30, // Partial payment
-  game_master: "Carlos GM",
-  game_master_id: "gm1",
-  players: [
-    {
-      id: "p1",
-      name: "Juan Pérez",
-      email: "juan@example.com",
-      phone: "+34 600 000 001",
-      gdpr_signed: true,
-      paid: true,
-      amount: 30,
-    },
-    {
-      id: "p2",
-      name: "María García",
-      email: "maria@example.com",
-      phone: "+34 600 000 002",
-      gdpr_signed: false,
-      paid: false,
-      amount: 0,
-    },
-    {
-      id: "p3",
-      name: "Pedro López",
-      email: "pedro@example.com",
-      phone: "+34 600 000 003",
-      gdpr_signed: true,
-      paid: false,
-      amount: 0,
-    },
-    {
-      id: "p4",
-      name: "Ana Martínez",
-      email: "ana@example.com",
-      phone: "+34 600 000 004",
-      gdpr_signed: false,
-      paid: false,
-      amount: 0,
-    },
-  ],
-  custom_fields: [
-    { label: "¿Cómo nos conociste?", value: "Instagram" },
-    { label: "Alergias", value: "Ninguna" },
-    { label: "Ocasión especial", value: "Cumpleaños" },
-  ],
-  comments: [
-    {
-      id: "c1",
-      author: "System",
-      text: "Reserva creada online",
-      date: "2023-12-20 10:00",
-    },
-    {
-      id: "c2",
-      author: "Carlos GM",
-      text: "Llamaron para preguntar por aparcamiento",
-      date: "2023-12-21 15:30",
-    },
-  ],
-};
+// Types for booking details
+interface Player {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  gdpr_signed: boolean;
+  paid: boolean;
+  amount: number;
+}
+
+interface Comment {
+  id: string;
+  author: string;
+  text: string;
+  date: string;
+}
+
+interface CustomField {
+  label: string;
+  value: string;
+}
+
+interface BookingDetails {
+  id: string;
+  room_name: string;
+  group_name: string;
+  date: string;
+  time: string;
+  status: string;
+  total_price: number;
+  paid_amount: number;
+  game_master: string;
+  game_master_id: string;
+  players: Player[];
+  custom_fields: CustomField[];
+  comments: Comment[];
+}
 
 export default function BookingDetailsPage() {
   const params = useParams();
-  const [booking, setBooking] = useState(MOCK_BOOKING_DETAILS);
+  const bookingId = params.id as string;
+  
+  const [booking, setBooking] = useState<BookingDetails | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
-  const [assignedGM, setAssignedGM] = useState(booking.game_master_id);
+  const [assignedGM, setAssignedGM] = useState("");
 
   // Mock current user ID
   const currentUserId = "gm1";
+
+  // Fetch booking details from API
+  useEffect(() => {
+    async function fetchBooking() {
+      try {
+        setLoading(true);
+        const data = await bookingsApi.get(bookingId);
+        
+        // Transform API response to expected format
+        // API returns: id, start_time, end_time, num_people, booking_status, payment_status,
+        //              total_price, remaining_balance, guest, room_name, assigned_users
+        const startTime = data.start_time ? new Date(data.start_time) : null;
+        const paidAmount = Number(data.total_price) - Number(data.remaining_balance) || 0;
+        
+        const transformedBooking: BookingDetails = {
+          id: data.id,
+          room_name: data.room_name || "Sin sala",
+          group_name: data.guest?.full_name || "Sin grupo",
+          date: startTime ? startTime.toISOString().split("T")[0] : "",
+          time: startTime ? startTime.toTimeString().substring(0, 5) : "",
+          status: data.booking_status || "pending",
+          total_price: Number(data.total_price) || 0,
+          paid_amount: paidAmount,
+          game_master: data.assigned_users?.[0]?.full_name || "Sin asignar",
+          game_master_id: data.assigned_users?.[0]?.id || "",
+          // For now, create a single player entry from guest data
+          // TODO: Add proper multi-player support when API supports it
+          players: data.guest ? [{
+            id: data.guest.id,
+            name: data.guest.full_name || "Invitado",
+            email: data.guest.email || "",
+            phone: data.guest.phone || "",
+            gdpr_signed: true, // TODO: Get from API
+            paid: paidAmount >= Number(data.total_price),
+            amount: paidAmount,
+          }] : [],
+          custom_fields: data.custom_fields ? JSON.parse(data.custom_fields) : [],
+          comments: [], // TODO: Add comments endpoint to API
+        };
+        
+        setBooking(transformedBooking);
+        setAssignedGM(transformedBooking.game_master_id);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching booking:", err);
+        setError("Error al cargar los detalles de la reserva");
+      } finally {
+        setLoading(false);
+      }
+    }
+    
+    if (bookingId) {
+      fetchBooking();
+    }
+  }, [bookingId]);
 
   const handleSendPaymentLink = (email: string) => {
     alert(`Enlace de pago enviado a ${email}`);
   };
 
   const handleCopyLink = (id: string) => {
+    if (!booking) return;
     const link = `${window.location.origin}/payment/${booking.id}/${id}`;
     navigator.clipboard.writeText(link);
     alert("Enlace copiado al portapapeles: " + link);
@@ -115,7 +145,7 @@ export default function BookingDetailsPage() {
 
   const handleAddComment = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || !booking) return;
 
     const comment = {
       id: `c${Date.now()}`,
@@ -139,6 +169,33 @@ export default function BookingDetailsPage() {
       setAssignedGM(currentUserId);
     }
   };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+          <p className="text-gray-600">Cargando detalles de la reserva...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !booking) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+          <p className="text-red-600">{error || "Reserva no encontrada"}</p>
+          <Link href="/bookings">
+            <Button className="mt-4">Volver a reservas</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

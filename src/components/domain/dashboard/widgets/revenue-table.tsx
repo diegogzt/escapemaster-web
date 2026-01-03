@@ -1,60 +1,95 @@
 "use client";
 
-import React, { useState } from "react";
-import { Filter, Download, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Filter, Download, Search, Loader2, AlertCircle } from "lucide-react";
 import Input from "@/components/Input";
+import { bookings as bookingsApi } from "@/services/api";
 
-const mockTransactions = [
-  {
-    id: "TRX-9821",
-    date: "2023-12-10",
-    concept: "Reserva #4021 - La Mazmorra",
-    amount: 120,
-    status: "completed",
-    method: "Tarjeta",
-  },
-  {
-    id: "TRX-9822",
-    date: "2023-12-10",
-    concept: "Reserva #4022 - Bunker",
-    amount: 90,
-    status: "completed",
-    method: "Bizum",
-  },
-  {
-    id: "TRX-9823",
-    date: "2023-12-09",
-    concept: "Bono Regalo #55",
-    amount: 60,
-    status: "completed",
-    method: "Web",
-  },
-  {
-    id: "TRX-9824",
-    date: "2023-12-09",
-    concept: "Reserva #4019 - Laboratorio",
-    amount: 100,
-    status: "pending",
-    method: "Efectivo",
-  },
-  {
-    id: "TRX-9825",
-    date: "2023-12-08",
-    concept: "Devolución #3990",
-    amount: -120,
-    status: "refunded",
-    method: "Tarjeta",
-  },
-];
+interface Transaction {
+  id: string;
+  date: string;
+  concept: string;
+  amount: number;
+  status: "completed" | "pending" | "refunded";
+  method: string;
+}
 
 export function RevenueTableWidget() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState("");
 
-  const filteredData = mockTransactions.filter(
+  // Fetch transactions from bookings API
+  useEffect(() => {
+    async function fetchTransactions() {
+      try {
+        setLoading(true);
+        const bookingsData = await bookingsApi.list();
+        
+        // Transform bookings to transactions
+        // API returns: id, start_time, booking_status, payment_status, total_price, remaining_balance, room_name, payment_method
+        const transformedTransactions: Transaction[] = (bookingsData || []).map((b: any) => {
+          const paidAmount = Number(b.total_price) - Number(b.remaining_balance) || 0;
+          const status: "completed" | "pending" | "refunded" = 
+            b.booking_status === "cancelled" ? "refunded" : 
+            b.payment_status === "paid" || paidAmount >= Number(b.total_price) ? "completed" : 
+            "pending";
+          
+          const startTime = b.start_time ? new Date(b.start_time) : null;
+          
+          return {
+            id: `TRX-${b.id?.substring(0, 4) || "0000"}`,
+            date: startTime ? startTime.toISOString().split("T")[0] : "",
+            concept: `Reserva - ${b.room_name || "Sin sala"}`,
+            amount: b.booking_status === "cancelled" ? -paidAmount : Number(b.total_price || 0),
+            status,
+            method: b.payment_method || "Web",
+          };
+        });
+        
+        // Sort by date descending
+        transformedTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        
+        setTransactions(transformedTransactions);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+        setError("Error al cargar transacciones");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTransactions();
+  }, []);
+
+  const filteredData = transactions.filter(
     (t) =>
       t.concept.toLowerCase().includes(filter.toLowerCase()) ||
       t.id.toLowerCase().includes(filter.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex items-center justify-center min-h-[200px]">
+        <div className="text-center">
+          <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-2" />
+          <p className="text-gray-500 text-sm">Cargando transacciones...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex items-center justify-center min-h-[200px]">
+        <div className="text-center">
+          <AlertCircle className="w-6 h-6 text-red-500 mx-auto mb-2" />
+          <p className="text-red-600 text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex flex-col">

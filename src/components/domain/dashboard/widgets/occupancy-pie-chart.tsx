@@ -65,7 +65,7 @@ export function OccupancyPieChartWidget({
         <h3 className="font-semibold text-dark text-sm">Ocupación por Sala</h3>
       </div>
 
-      <div ref={containerRef} className="flex-1 min-h-0">
+      <div ref={containerRef} className="flex-1 min-h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

@@ -163,7 +163,7 @@ export function RevenueBarChartWidget({
         </select>
       </div>
 
-      <div className="flex-1 min-h-0">
+      <div className="flex-1 min-h-[240px]">
         <ResponsiveContainer width="100%" height="100%">
           {renderChart()}
         </ResponsiveContainer>

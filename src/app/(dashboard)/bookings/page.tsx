@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
+import { bookings as bookingsApi, rooms as roomsApi } from "@/services/api";
 import {
   Calendar,
   Clock,
@@ -18,49 +19,28 @@ import {
   Plus,
   LayoutGrid,
   List,
+  Loader2,
 } from "lucide-react";
 
-// Mock Data
-const MOCK_BOOKINGS = [
-  {
-    id: "1",
-    room_name: "La Prisión de Alcatraz",
-    group_name: "Los Escapistas",
-    date: "2023-12-25",
-    time: "18:00",
-    players_count: 4,
-    status: "confirmed",
-    total_price: 120,
-    paid_amount: 120,
-    game_master: "Carlos GM",
-  },
-  {
-    id: "2",
-    room_name: "El Misterio del Faraón",
-    group_name: "Familia Pérez",
-    date: "2023-12-26",
-    time: "16:30",
-    players_count: 6,
-    status: "pending",
-    total_price: 150,
-    paid_amount: 50,
-    game_master: "Ana GM",
-  },
-  {
-    id: "3",
-    room_name: "Laboratorio Zombie",
-    group_name: "Cumpleaños Javi",
-    date: "2023-12-26",
-    time: "20:00",
-    players_count: 5,
-    status: "cancelled",
-    total_price: 125,
-    paid_amount: 0,
-    game_master: "Unassigned",
-  },
-];
+// Types for API response
+interface Booking {
+  id: string;
+  room_name: string;
+  group_name: string;
+  date: string;
+  time: string;
+  players_count: number;
+  status: string;
+  total_price: number;
+  paid_amount: number;
+  game_master: string;
+}
 
 export default function BookingsPage() {
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [allRooms, setAllRooms] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roomFilter, setRoomFilter] = useState("all");
@@ -69,7 +49,49 @@ export default function BookingsPage() {
   const [customEndDate, setCustomEndDate] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "table">("table");
 
-  React.useEffect(() => {
+  // Fetch bookings and rooms from API
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const [bookingsData, roomsData] = await Promise.all([
+          bookingsApi.list(),
+          roomsApi.list(),
+        ]);
+        
+        // Transform bookings data to match expected format
+        // API returns: id, start_time, end_time, num_people, booking_status, payment_status, 
+        //              total_price, remaining_balance, guest, room_name, assigned_users
+        const transformedBookings = (bookingsData || []).map((b: any) => {
+          const startTime = b.start_time ? new Date(b.start_time) : null;
+          return {
+            id: b.id,
+            room_name: b.room_name || "Sin sala",
+            group_name: b.guest?.full_name || "Sin grupo",
+            date: startTime ? startTime.toISOString().split("T")[0] : "",
+            time: startTime ? startTime.toTimeString().substring(0, 5) : "",
+            players_count: b.num_people || 0,
+            status: b.booking_status || "pending",
+            total_price: Number(b.total_price) || 0,
+            paid_amount: Number(b.total_price) - Number(b.remaining_balance) || 0,
+            game_master: b.assigned_users?.[0]?.full_name || "Sin asignar",
+          };
+        });
+        
+        setBookings(transformedBookings);
+        setAllRooms((roomsData || []).map((r: any) => r.name));
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Error al cargar las reservas");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
         setViewMode("table");
@@ -85,9 +107,9 @@ export default function BookingsPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Extract unique rooms
-  const uniqueRooms = Array.from(
-    new Set(MOCK_BOOKINGS.map((b) => b.room_name))
+  // Extract unique rooms from API
+  const uniqueRooms = allRooms.length > 0 ? allRooms : Array.from(
+    new Set(bookings.map((b) => b.room_name))
   );
 
   const getStatusBadge = (status: string) => {
@@ -115,7 +137,7 @@ export default function BookingsPage() {
     }
   };
 
-  const filteredBookings = MOCK_BOOKINGS.filter((booking) => {
+  const filteredBookings = bookings.filter((booking) => {
     // Search Term
     const matchesSearch =
       booking.group_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -159,6 +181,33 @@ export default function BookingsPage() {
 
     return matchesSearch && matchesStatus && matchesRoom && matchesDate;
   });
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+          <p className="text-gray-600">Cargando reservas...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+          <p className="text-red-600">{error}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">
+            Reintentar
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -114,9 +114,11 @@ export const dashboard = {
       console.error("Error fetching dashboard stats:", error);
       // Return default stats structure to prevent UI crash
       return {
-        monthly_revenue: 0,
+        total_revenue: 0,
         total_bookings: 0,
-        active_users: 0,
+        avg_players_per_booking: 0,
+        occupancy_rate: 0,
+        top_rooms: [],
       };
     }
   },
@@ -126,7 +128,8 @@ export const rooms = {
   list: async () => {
     try {
       const response = await api.get("/rooms");
-      return response.data;
+      // API returns { rooms: [...], total, page, ... } - extract rooms array
+      return response.data?.rooms || response.data || [];
     } catch (error) {
       console.error("Error fetching rooms:", error);
       return [];
@@ -216,7 +219,8 @@ export const bookings = {
   list: async () => {
     try {
       const response = await api.get("/bookings");
-      return response.data;
+      // API returns { bookings: [...], total, page, ... } - extract bookings array
+      return response.data?.bookings || response.data || [];
     } catch (error) {
       console.error("Error fetching bookings:", error);
       return [];
@@ -227,8 +231,13 @@ export const bookings = {
     return response.data;
   },
   get: async (id: string) => {
-    const response = await api.get(`/bookings/${id}`);
-    return response.data;
+    try {
+      const response = await api.get(`/bookings/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching booking:", error);
+      throw error;
+    }
   },
   update: async (id: string, data: any) => {
     const response = await api.put(`/bookings/${id}`, data);

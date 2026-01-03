@@ -279,13 +279,13 @@ function SortableWidget({
     gridRow: isMobile
       ? "auto"
       : `span ${widget.rowSpan || 8} / span ${widget.rowSpan || 8}`,
-    height: isMobile ? "auto" : undefined,
+    height: isMobile ? "auto" : "100%",
     marginBottom: isMobile ? "1rem" : undefined,
   };
 
   return (
     // eslint-disable-next-line react-dom/no-unsafe-inline-style
-    <div ref={setNodeRef} style={style} className="relative">
+    <div ref={setNodeRef} style={style} className="relative h-full">
       <WidgetItem
         widget={widget}
         isEditMode={isEditMode}

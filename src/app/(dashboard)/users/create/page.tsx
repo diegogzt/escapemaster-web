@@ -59,12 +59,25 @@ export default function CreateUserPage() {
       vacation_days_total: parseInt(formData.get("vacation_days_total") as string) || 0,
     };
 
+    console.log("Sending user data:", userData);
+
     try {
       await users.create(userData);
       router.push("/users");
     } catch (err: any) {
       console.error("Error creating user:", err);
-      setError(err.response?.data?.detail || "Error al crear el usuario. Por favor, inténtalo de nuevo.");
+      
+      if (err.response?.data?.detail) {
+        const detail = err.response.data.detail;
+        if (Array.isArray(detail)) {
+          const errorMessages = detail.map((e: any) => `${e.loc.join('.')}: ${e.msg}`).join(', ');
+          setError(errorMessages);
+        } else {
+          setError(typeof detail === 'string' ? detail : "Error al crear el usuario");
+        }
+      } else {
+        setError("Error al crear el usuario. Por favor, inténtalo de nuevo.");
+      }
     } finally {
       setLoading(false);
     }

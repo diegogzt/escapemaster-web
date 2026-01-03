@@ -9,8 +9,11 @@ import {
   Clock,
   Users,
   MapPin,
+  Loader2,
+  AlertCircle,
 } from "lucide-react";
 import Button from "@/components/Button";
+import { bookings as bookingsApi, rooms as roomsApi } from "@/services/api";
 
 // Tipos
 type ViewType = "month" | "week" | "day";
@@ -26,94 +29,83 @@ interface Session {
   color: string;
 }
 
-// Datos Mock
-const generateMockSessions = (): Session[] => {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth();
+// Colores para rooms (se asignan dinámicamente)
+const ROOM_COLORS = [
+  "bg-blue-100 text-blue-700 border-blue-200",
+  "bg-green-100 text-green-700 border-green-200",
+  "bg-purple-100 text-purple-700 border-purple-200",
+  "bg-pink-100 text-pink-700 border-pink-200",
+  "bg-orange-100 text-orange-700 border-orange-200",
+  "bg-teal-100 text-teal-700 border-teal-200",
+];
 
-  return [
-    // Mes Actual
-    {
-      id: "1",
-      title: "La Cripta del Faraón",
-      customer: "Ana García",
-      start: new Date(year, month, 10, 10, 0),
-      end: new Date(year, month, 10, 11, 30),
-      room: "Sala 1",
-      status: "confirmed",
-      color: "bg-blue-100 text-blue-700 border-blue-200",
-    },
-    {
-      id: "2",
-      title: "Misión Espacial",
-      customer: "Carlos Ruiz",
-      start: new Date(year, month, 10, 14, 0),
-      end: new Date(year, month, 10, 15, 0),
-      room: "Sala 2",
-      status: "pending",
-      color: "bg-yellow-100 text-yellow-700 border-yellow-200",
-    },
-    {
-      id: "3",
-      title: "El Laboratorio Loco",
-      customer: "Empresa Tech S.L.",
-      start: new Date(year, month, 12, 16, 0),
-      end: new Date(year, month, 12, 17, 30),
-      room: "Sala 3",
-      status: "confirmed",
-      color: "bg-green-100 text-green-700 border-green-200",
-    },
-    {
-      id: "4",
-      title: "La Cripta del Faraón",
-      customer: "Familia López",
-      start: new Date(year, month, 15, 18, 0),
-      end: new Date(year, month, 15, 19, 30),
-      room: "Sala 1",
-      status: "cancelled",
-      color: "bg-red-100 text-red-700 border-red-200",
-    },
-    {
-      id: "5",
-      title: "Misión Espacial",
-      customer: "Grupo de Amigos",
-      start: new Date(year, month, 8, 12, 0),
-      end: new Date(year, month, 8, 13, 30),
-      room: "Sala 2",
-      status: "confirmed",
-      color: "bg-purple-100 text-purple-700 border-purple-200",
-    },
-    // Mes Pasado
-    {
-      id: "6",
-      title: "La Cripta del Faraón",
-      customer: "Cliente Pasado",
-      start: new Date(year, month - 1, 25, 10, 0),
-      end: new Date(year, month - 1, 25, 11, 30),
-      room: "Sala 1",
-      status: "confirmed",
-      color: "bg-gray-100 text-gray-700 border-gray-200",
-    },
-    // Mes Siguiente
-    {
-      id: "7",
-      title: "Misión Espacial",
-      customer: "Cliente Futuro",
-      start: new Date(year, month + 1, 5, 15, 0),
-      end: new Date(year, month + 1, 5, 16, 30),
-      room: "Sala 2",
-      status: "confirmed",
-      color: "bg-blue-100 text-blue-700 border-blue-200",
-    },
-  ];
+const STATUS_COLORS: Record<string, string> = {
+  confirmed: "bg-green-100 text-green-700 border-green-200",
+  pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  cancelled: "bg-red-100 text-red-700 border-red-200",
 };
 
 export default function CalendarPage() {
   const router = useRouter();
   const [view, setView] = useState<ViewType>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [sessions] = useState<Session[]>(generateMockSessions());
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [roomColorMap, setRoomColorMap] = useState<Record<string, string>>({});
+
+  // Fetch sessions from API
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const [bookingsData, roomsData] = await Promise.all([
+          bookingsApi.list(),
+          roomsApi.list(),
+        ]);
+        
+        // Create room color mapping
+        const colorMap: Record<string, string> = {};
+        (roomsData || []).forEach((room: any, index: number) => {
+          colorMap[room.id] = ROOM_COLORS[index % ROOM_COLORS.length];
+          colorMap[room.name] = ROOM_COLORS[index % ROOM_COLORS.length];
+        });
+        setRoomColorMap(colorMap);
+        
+        // Transform bookings to sessions
+        // API returns: id, start_time, end_time, num_people, booking_status, room_name, guest
+        const transformedSessions: Session[] = (bookingsData || []).map((b: any) => {
+          const roomName = b.room_name || "Sin sala";
+          const status = (b.booking_status === "cancelled" ? "cancelled" : 
+                         b.booking_status === "confirmed" ? "confirmed" : "pending") as "confirmed" | "pending" | "cancelled";
+          
+          // Parse start_time and end_time from API (ISO format)
+          const start = b.start_time ? new Date(b.start_time) : new Date();
+          const end = b.end_time ? new Date(b.end_time) : new Date(start.getTime() + 90 * 60000); // Default 90 min
+          
+          return {
+            id: b.id,
+            title: roomName,
+            customer: b.guest?.full_name || "Sin cliente",
+            start,
+            end,
+            room: roomName,
+            status,
+            color: STATUS_COLORS[status] || colorMap[roomName] || ROOM_COLORS[0],
+          };
+        });
+        
+        setSessions(transformedSessions);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching calendar data:", err);
+        setError("Error al cargar el calendario");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -243,6 +235,33 @@ export default function CalendarPage() {
   };
 
   const handleToday = () => setCurrentDate(new Date());
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
+          <p className="text-gray-600">Cargando calendario...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" />
+          <p className="text-red-600">{error}</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">
+            Reintentar
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Renderizadores
   const renderMonthView = () => {
