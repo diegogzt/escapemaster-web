@@ -233,6 +233,94 @@ export const vacations = {
   },
 };
 
+export const rooms = {
+  list: async (params?: any) => {
+    try {
+      const response = await api.get("/rooms", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching rooms:", error);
+      throw error;
+    }
+  },
+  create: async (data: any) => {
+    const response = await api.post("/rooms", data);
+    return response.data;
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/rooms/${id}`);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/rooms/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/rooms/${id}`);
+    return response.data;
+  },
+};
+
+export const users = {
+  list: async (params?: any) => {
+    try {
+      const response = await api.get("/users", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  },
+  create: async (data: any) => {
+    const response = await api.post("/users", data);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/users/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+};
+
+export const roles = {
+  list: async () => {
+    try {
+      const response = await api.get("/roles");
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/roles/${id}`);
+    return response.data;
+  },
+  create: async (data: any) => {
+    const response = await api.post("/roles", data);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.patch(`/roles/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/roles/${id}`);
+    return response.data;
+  },
+  listPermissions: async () => {
+    const response = await api.get("/roles/permissions");
+    return response.data;
+  },
+};
+
 export const admin = {
   login: async (data: any) => {
     const response = await api.post("/admin/login", data);
