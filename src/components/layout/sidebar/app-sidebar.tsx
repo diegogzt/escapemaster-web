@@ -70,13 +70,13 @@ export function AppSidebar() {
   return (
     <aside
       className={cn(
-        "hidden md:flex flex-col border-r bg-background h-screen sticky top-0 transition-all duration-300",
+        "hidden md:flex flex-col border-r border-[var(--color-beige)]  bg-[var(--color-background)] h-screen sticky top-0 transition-all duration-300",
         isCollapsed ? "w-16" : "w-64"
       )}
     >
       <div
         className={cn(
-          "h-16 flex items-center relative",
+          "h-16 flex items-center relative border-b border-[var(--color-beige)] ",
           isCollapsed ? "justify-center" : "px-6"
         )}
       >
@@ -88,13 +88,13 @@ export function AppSidebar() {
 
         <button
           onClick={toggleSidebar}
-          className="absolute -right-3 top-1/2 -translate-y-1/2 bg-background border rounded-full p-1 hover:bg-accent transition-colors z-10"
+          className="absolute -right-3 top-1/2 -translate-y-1/2 bg-[var(--color-background)] border border-[var(--color-beige)]  rounded-full p-1 hover:bg-accent transition-colors z-10"
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </div>
 
-      <nav className="flex-1 px-2 space-y-2 py-4">
+      <nav className="flex-1 px-2 space-y-2 py-4 overflow-y-auto">
         <NavItem
           href="/dashboard"
           icon={LayoutDashboard}

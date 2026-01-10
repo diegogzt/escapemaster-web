@@ -216,7 +216,7 @@ export default function RoomConfigPage() {
                     <select
                       name="difficulty_level"
                       defaultValue={roomData.difficulty_level}
-                      className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                      className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
                     >
                       {[1, 2, 3, 4, 5].map((n) => (
                         <option key={n} value={n}>
@@ -249,7 +249,7 @@ export default function RoomConfigPage() {
                   {customFields.map((field) => (
                     <div
                       key={field.id}
-                      className="flex items-center justify-between bg-light/30 p-3 rounded-lg border border-beige"
+                      className="flex items-center justify-between bg-[var(--color-light)]/30 p-3 rounded-lg border border-beige"
                     >
                       <span className="font-medium text-dark">
                         {field.label}
@@ -340,14 +340,14 @@ export default function RoomConfigPage() {
                   <select
                     name="is_active"
                     defaultValue={roomData.is_active ? "true" : "false"}
-                    className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                    className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
                   >
                     <option value="true">Activa</option>
                     <option value="false">Inactiva</option>
                   </select>
                 </div>
               </div>
-              <CardFooter className="bg-light/30 p-6">
+              <CardFooter className="bg-[var(--color-light)]/30 p-6">
                 <Button type="submit" block loading={saving}>
                   <Save size={18} className="mr-2" />
                   Guardar Cambios

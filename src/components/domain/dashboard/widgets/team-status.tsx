@@ -26,7 +26,7 @@ export function TeamStatus() {
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-full">
+    <div className="bg-[var(--color-background)] rounded-xl border border-[var(--color-beige)] shadow-sm h-full">
       <div className="p-6 border-b border-gray-100 flex justify-between items-center">
         <div>
           <h3 className="text-lg font-semibold text-gray-900">Equipo</h3>
@@ -72,7 +72,7 @@ export function TeamStatus() {
             </div>
           ))}
         </div>
-        <button className="w-full mt-6 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-gray-300 rounded-lg hover:bg-gray-50">
+        <button className="w-full mt-6 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-gray-300 rounded-lg hover:bg-[var(--color-light)]">
           Gestionar equipo
         </button>
       </div>

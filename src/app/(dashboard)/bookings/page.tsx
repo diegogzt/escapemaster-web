@@ -256,7 +256,7 @@ export default function BookingsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="bg-white border border-beige rounded-lg p-1 flex items-center mr-2">
+          <div className="bg-[var(--color-background)] border border-beige rounded-lg p-1 flex items-center mr-2">
             <button
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded-md transition-colors ${
@@ -310,7 +310,7 @@ export default function BookingsPage() {
 
             {/* Status Filter */}
             <select
-              className="px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+              className="px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -322,7 +322,7 @@ export default function BookingsPage() {
 
             {/* Room Filter */}
             <select
-              className="px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+              className="px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
               value={roomFilter}
               onChange={(e) => setRoomFilter(e.target.value)}
             >
@@ -336,7 +336,7 @@ export default function BookingsPage() {
           </div>
 
           {/* Bottom Row: Date Filters */}
-          <div className="flex flex-col md:flex-row gap-4 items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
+          <div className="flex flex-col md:flex-row gap-4 items-center bg-[var(--color-light)] p-3 rounded-lg border border-gray-100">
             <div className="flex items-center gap-2">
               <Filter size={16} className="text-gray-500" />
               <span className="text-sm font-medium text-gray-700">
@@ -350,7 +350,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "all"
                     ? "bg-primary text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
                 }`}
               >
                 Todas
@@ -360,7 +360,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "today"
                     ? "bg-primary text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
                 }`}
               >
                 Hoy
@@ -370,7 +370,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "tomorrow"
                     ? "bg-primary text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
                 }`}
               >
                 Mañana
@@ -380,7 +380,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "custom"
                     ? "bg-primary text-white"
-                    : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50"
+                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
                 }`}
               >
                 Rango Personalizado
@@ -443,7 +443,7 @@ export default function BookingsPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-3 bg-light/30 p-2 rounded">
+                <div className="flex items-center justify-between text-sm text-gray-600 mb-3 bg-[var(--color-light)]/30 p-2 rounded">
                   <div className="flex items-center">
                     <Users size={14} className="mr-1" />
                     {booking.players_count} pax
@@ -478,7 +478,7 @@ export default function BookingsPage() {
               </Card>
             ))
           ) : (
-            <div className="col-span-full text-center py-12 bg-white rounded-xl border border-beige">
+            <div className="col-span-full text-center py-12 bg-[var(--color-background)] rounded-xl border border-beige">
               <p className="text-gray-500">
                 No se encontraron reservas con los filtros seleccionados.
               </p>
@@ -486,10 +486,10 @@ export default function BookingsPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden mb-8">
+        <div className="bg-[var(--color-background)] rounded-xl shadow-sm border border-beige overflow-hidden mb-8">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-light/50 border-b border-beige">
+              <tr className="bg-[var(--color-light)]/50 border-b border-beige">
                 <th className="px-6 py-4 font-bold text-dark">Fecha y Hora</th>
                 <th className="px-6 py-4 font-bold text-dark">Sala</th>
                 <th className="px-6 py-4 font-bold text-dark">Grupo</th>
@@ -508,7 +508,7 @@ export default function BookingsPage() {
                 bookings.map((booking) => (
                   <tr
                     key={booking.id}
-                    className="hover:bg-light/30 transition-colors"
+                    className="hover:bg-[var(--color-light)]/30 transition-colors"
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
@@ -594,7 +594,7 @@ export default function BookingsPage() {
 
       {/* Pagination Controls */}
       {!loading && bookings.length > 0 && (
-        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg shadow-sm">
+        <div className="flex items-center justify-between border-t border-gray-200 bg-[var(--color-background)] px-4 py-3 sm:px-6 rounded-lg shadow-sm">
           <div className="flex flex-1 justify-between sm:hidden">
             <Button
               variant="outline"
@@ -624,19 +624,19 @@ export default function BookingsPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Anterior</span>
                   <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                 </button>
                 {/* Page Indicator */}
-                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0">
                   Página {page} de {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Siguiente</span>
                   <ChevronRight className="h-5 w-5" aria-hidden="true" />

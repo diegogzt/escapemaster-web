@@ -27,7 +27,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     <div className={cn("mb-6", wrapperClassName)}>
       {label && (
         <label
-          className={cn("block mb-2 font-semibold text-dark dark:text-gray-200", labelClassName)}
+          className={cn("block mb-2 font-semibold text-dark ", labelClassName)}
         >
           {label}
         </label>
@@ -41,10 +41,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={cn(
-            "w-full px-3 py-2 border-2 rounded-lg text-base transition-colors bg-white dark:bg-slate-950 text-dark dark:text-white",
+            "w-full px-3 py-2 border-2 rounded-lg text-base transition-colors bg-[var(--color-background)] text-[var(--color-foreground)]",
             icon && "pl-10",
-            error ? "border-red-500" : "border-beige dark:border-slate-800 focus:border-primary",
-            props.disabled && "bg-light dark:bg-slate-900 cursor-not-allowed",
+            error ? "border-red-500" : "border-[var(--color-beige)] focus:border-primary",
+            props.disabled && "bg-[var(--color-background-soft)] cursor-not-allowed opacity-60",
             className
           )}
           {...props}

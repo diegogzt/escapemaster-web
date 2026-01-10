@@ -115,7 +115,7 @@ export default function ProfilePage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="bg-white border-yellow-200 text-yellow-800 hover:bg-yellow-100"
+                    className="bg-[var(--color-background)] border-yellow-200 text-yellow-800 hover:bg-yellow-100"
                   >
                     Cambiar Contraseña
                   </Button>
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${
                       theme === t.id
                         ? "border-primary bg-primary/5 shadow-sm"
-                        : "border-transparent bg-gray-50 hover:bg-gray-100 hover:border-gray-200"
+                        : "border-transparent bg-[var(--color-light)] hover:bg-gray-100 hover:border-gray-200"
                     }`}
                   >
                     <div className="flex -space-x-2 mb-3 overflow-hidden p-1">
@@ -170,7 +170,7 @@ export default function ProfilePage() {
                       {t.name}
                     </span>
                     {theme === t.id && (
-                      <div className="absolute top-2 right-2 text-primary bg-white rounded-full p-0.5 shadow-sm">
+                      <div className="absolute top-2 right-2 text-primary bg-[var(--color-background)] rounded-full p-0.5 shadow-sm">
                         <Check size={14} />
                       </div>
                     )}

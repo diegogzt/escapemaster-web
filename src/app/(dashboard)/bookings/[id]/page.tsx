@@ -234,7 +234,7 @@ export default function BookingDetailsPage() {
         <div className="lg:col-span-2 space-y-6">
           {/* Players List */}
           <Card className="p-0 overflow-hidden">
-            <div className="p-4 border-b border-beige bg-light/30 flex justify-between items-center">
+            <div className="p-4 border-b border-beige bg-[var(--color-light)]/30 flex justify-between items-center">
               <h3 className="font-bold text-lg text-dark flex items-center">
                 <Users size={20} className="mr-2 text-primary" />
                 Integrantes ({booking.players.length})
@@ -245,7 +245,7 @@ export default function BookingDetailsPage() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-gray-50 text-xs uppercase text-gray-500">
+                <thead className="bg-[var(--color-light)] text-xs uppercase text-gray-500">
                   <tr>
                     <th className="px-4 py-3">Jugador</th>
                     <th className="px-4 py-3">Contacto</th>
@@ -256,7 +256,7 @@ export default function BookingDetailsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {booking.players.map((player) => (
-                    <tr key={player.id} className="hover:bg-gray-50">
+                    <tr key={player.id} className="hover:bg-[var(--color-light)]">
                       <td className="px-4 py-3 font-medium text-dark">
                         {player.name}
                       </td>
@@ -331,7 +331,7 @@ export default function BookingDetailsPage() {
               {booking.custom_fields.map((field, index) => (
                 <div
                   key={index}
-                  className="bg-light/30 p-3 rounded-lg border border-beige"
+                  className="bg-[var(--color-light)]/30 p-3 rounded-lg border border-beige"
                 >
                   <span className="text-xs text-gray-500 uppercase font-semibold block mb-1">
                     {field.label}
@@ -379,7 +379,7 @@ export default function BookingDetailsPage() {
                 Asignado a:
               </label>
               <select
-                className="w-full p-2 border border-beige rounded-md bg-white"
+                className="w-full p-2 border border-beige rounded-md bg-[var(--color-background)]"
                 value={assignedGM}
                 onChange={(e) => setAssignedGM(e.target.value)}
               >
@@ -417,7 +417,7 @@ export default function BookingDetailsPage() {
               {booking.comments.map((comment) => (
                 <div
                   key={comment.id}
-                  className="bg-gray-50 p-3 rounded-lg text-sm"
+                  className="bg-[var(--color-light)] p-3 rounded-lg text-sm"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-bold text-primary">

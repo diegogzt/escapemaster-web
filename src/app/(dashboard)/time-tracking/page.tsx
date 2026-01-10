@@ -116,7 +116,7 @@ export default function TimeTrackingPage() {
   return (
     <div className="space-y-8 w-full pb-12 px-4 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl border border-beige/50 shadow-sm">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-[var(--color-background)] p-6 rounded-2xl border border-beige/50 shadow-sm">
         <div>
           <h1 className="text-4xl font-bold text-primary tracking-tight">
             Registro de Horas
@@ -160,13 +160,13 @@ export default function TimeTrackingPage() {
         {/* Left Column: Active Task & Summary */}
         <div className="col-span-12 lg:col-span-8 space-y-8">
           {/* Active Task Input */}
-          <Card className="p-8 border-none shadow-sm bg-white">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <h3 className="text-xl font-bold text-dark mb-6 flex items-center">
               <ClipboardList size={24} className="mr-2 text-primary" />
               ¿En qué estás trabajando?
             </h3>
             <textarea
-              className="w-full p-4 border-2 border-beige/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 bg-light/20 transition-all min-h-[120px] text-lg"
+              className="w-full p-4 border-2 border-beige/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 bg-[var(--color-light)]/20 transition-all min-h-[120px] text-lg"
               placeholder="Describe tu tarea actual..."
               value={taskDescription}
               onChange={(e) => setTaskDescription(e.target.value)}
@@ -180,7 +180,7 @@ export default function TimeTrackingPage() {
 
           {/* KPIs */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                   <Clock size={24} />
@@ -193,7 +193,7 @@ export default function TimeTrackingPage() {
               <h3 className="text-3xl font-bold text-dark">{summary?.total_hours}h <span className="text-sm text-gray-400 font-normal">/ {summary?.target_hours}h</span></h3>
             </Card>
 
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-secondary/10 rounded-2xl text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
                   <DollarSign size={24} />
@@ -203,7 +203,7 @@ export default function TimeTrackingPage() {
               <h3 className="text-3xl font-bold text-dark">{summary?.estimated_earnings}€</h3>
             </Card>
 
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-accent/10 rounded-2xl text-accent group-hover:bg-accent group-hover:text-white transition-colors">
                   <Umbrella size={24} />
@@ -215,7 +215,7 @@ export default function TimeTrackingPage() {
           </div>
 
           {/* History Table */}
-          <Card className="border-none shadow-sm bg-white overflow-hidden">
+          <Card className="border-none shadow-sm bg-[var(--color-background)] overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex justify-between items-center">
               <h3 className="text-xl font-bold text-dark flex items-center">
                 <History size={24} className="mr-2 text-primary" />
@@ -225,7 +225,7 @@ export default function TimeTrackingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-light/30 text-gray-500 text-xs uppercase tracking-wider">
+                  <tr className="bg-[var(--color-light)]/30 text-gray-500 text-xs uppercase tracking-wider">
                     <th className="px-6 py-4 font-bold">Fecha</th>
                     <th className="px-6 py-4 font-bold">Entrada</th>
                     <th className="px-6 py-4 font-bold">Salida</th>
@@ -235,7 +235,7 @@ export default function TimeTrackingPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-50">
                   {entries.filter(e => e.check_out_time).map((entry) => (
-                    <tr key={entry.id} className="hover:bg-light/20 transition-colors">
+                    <tr key={entry.id} className="hover:bg-[var(--color-light)]/20 transition-colors">
                       <td className="px-6 py-4 text-sm font-bold text-dark">
                         {format(new Date(entry.check_in_time), "dd MMM", { locale: es })}
                       </td>
@@ -263,7 +263,7 @@ export default function TimeTrackingPage() {
 
         {/* Right Column: Vacations */}
         <div className="col-span-12 lg:col-span-4 space-y-8">
-          <Card className="p-8 border-none shadow-sm bg-white">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-dark flex items-center">
                 <Umbrella size={24} className="mr-2 text-primary" />
@@ -275,7 +275,7 @@ export default function TimeTrackingPage() {
             </div>
 
             {showVacationForm && (
-              <form onSubmit={handleRequestVacation} className="mb-8 p-4 bg-light/30 rounded-2xl border border-beige/50 space-y-4 animate-in fade-in slide-in-from-top-4">
+              <form onSubmit={handleRequestVacation} className="mb-8 p-4 bg-[var(--color-light)]/30 rounded-2xl border border-beige/50 space-y-4 animate-in fade-in slide-in-from-top-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-gray-500 uppercase">Inicio</label>
@@ -299,7 +299,7 @@ export default function TimeTrackingPage() {
                 <p className="text-center py-8 text-gray-400 text-sm italic">No has solicitado vacaciones aún.</p>
               ) : (
                 myVacations.map((v) => (
-                  <div key={v.id} className="p-4 border border-beige/50 rounded-2xl hover:bg-light/10 transition-colors">
+                  <div key={v.id} className="p-4 border border-beige/50 rounded-2xl hover:bg-[var(--color-light)]/10 transition-colors">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center">
                         <Calendar size={16} className="text-primary mr-2" />
@@ -318,7 +318,7 @@ export default function TimeTrackingPage() {
                     </div>
                     <p className="text-xs text-gray-500">{v.days_count} días solicitados</p>
                     {v.admin_notes && (
-                      <div className="mt-2 p-2 bg-white rounded-lg border border-beige/30 text-[11px] text-gray-600 italic">
+                      <div className="mt-2 p-2 bg-[var(--color-background)] rounded-lg border border-beige/30 text-[11px] text-gray-600 italic">
                         <span className="font-bold not-italic">Admin:</span> {v.admin_notes}
                       </div>
                     )}
@@ -331,7 +331,7 @@ export default function TimeTrackingPage() {
           {/* Tips / Info */}
           <Card className="p-6 bg-primary text-white border-none shadow-lg shadow-primary/20">
             <div className="flex items-start gap-4">
-              <div className="p-2 bg-white/20 rounded-xl">
+              <div className="p-2 bg-[var(--color-background)]/20 rounded-xl">
                 <TrendingUp size={24} />
               </div>
               <div>

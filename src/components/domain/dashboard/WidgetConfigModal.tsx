@@ -128,7 +128,7 @@ export function WidgetConfigModal({
                       : currentStats.filter((id) => id !== opt.id);
                     handleChange(optionKey, newStats);
                   }}
-                  className="rounded border-beige text-primary focus:ring-primary"
+                  className="rounded border-[var(--color-beige)] text-primary focus:ring-primary"
                 />
                 {opt.label}
               </label>
@@ -154,7 +154,7 @@ export function WidgetConfigModal({
           >
             <span
               className={cn(
-                "absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform",
+                "absolute top-0.5 left-0.5 w-5 h-5 bg-[var(--color-background)] rounded-full transition-transform",
                 value && "translate-x-5"
               )}
             />
@@ -174,7 +174,7 @@ export function WidgetConfigModal({
             value={value as string}
             onChange={(e) => handleChange(optionKey, e.target.value)}
             aria-label={label}
-            className="w-full px-3 py-2 border-2 border-beige rounded-lg text-sm focus:border-primary focus:outline-none"
+            className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg text-sm focus:border-primary focus:outline-none"
           >
             {SELECT_OPTIONS[optionKey]!.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -201,7 +201,7 @@ export function WidgetConfigModal({
             }
             min={1}
             aria-label={label}
-            className="w-full px-3 py-2 border-2 border-beige rounded-lg text-sm focus:border-primary focus:outline-none"
+            className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg text-sm focus:border-primary focus:outline-none"
           />
         </div>
       );
@@ -219,7 +219,7 @@ export function WidgetConfigModal({
             value={value}
             onChange={(e) => handleChange(optionKey, e.target.value)}
             aria-label={label}
-            className="w-full px-3 py-2 border-2 border-beige rounded-lg text-sm focus:border-primary focus:outline-none"
+            className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg text-sm focus:border-primary focus:outline-none"
           />
         </div>
       );
@@ -230,7 +230,7 @@ export function WidgetConfigModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+      <div className="bg-[var(--color-background)] rounded-xl p-6 max-w-md w-full shadow-2xl">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">

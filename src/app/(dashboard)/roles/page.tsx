@@ -62,7 +62,7 @@ export default function RolesPage() {
       </div>
 
       <Card className="w-full max-w-none overflow-hidden">
-        <div className="p-6 border-b border-gray-100 bg-gray-50/50">
+        <div className="p-6 border-b border-gray-100 bg-[var(--color-light)]/50">
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
@@ -78,7 +78,7 @@ export default function RolesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 text-gray-600 text-sm uppercase tracking-wider">
+              <tr className="bg-[var(--color-light)] text-gray-600 text-sm uppercase tracking-wider">
                 <th className="px-6 py-4 font-semibold">Rol</th>
                 <th className="px-6 py-4 font-semibold">Descripción</th>
                 <th className="px-6 py-4 font-semibold text-center">Permisos</th>
@@ -99,7 +99,7 @@ export default function RolesPage() {
                 ))
               ) : filteredRoles.length > 0 ? (
                 filteredRoles.map((role) => (
-                  <tr key={role.id} className="hover:bg-gray-50 transition-colors group">
+                  <tr key={role.id} className="hover:bg-[var(--color-light)] transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="p-2 bg-primary/10 rounded-lg text-primary">

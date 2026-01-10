@@ -4,7 +4,7 @@ import { DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
 
 export function RevenueWidget() {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full">
+    <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-primary/10 rounded-lg">

@@ -69,7 +69,7 @@ export default function CreateRoomPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-8 bg-white p-8 rounded-xl shadow-sm border border-gray-200"
+        className="space-y-8 bg-[var(--color-background)] p-8 rounded-xl shadow-sm border border-gray-200"
       >
         {/* Información General */}
         <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -136,7 +136,7 @@ export default function CreateRoomPage() {
               id="description"
               name="description"
               rows={4}
-              className="w-full px-3 py-2 border-2 border-beige rounded-lg text-base focus:border-primary focus:ring-0 outline-none transition-colors resize-y bg-white text-dark"
+              className="w-full px-3 py-2 border-2 border-beige rounded-lg text-base focus:border-primary focus:ring-0 outline-none transition-colors resize-y bg-[var(--color-background)] text-dark"
               placeholder="Describe la historia y el ambiente de la sala..."
               required
             />

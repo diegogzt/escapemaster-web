@@ -116,7 +116,7 @@ export default function CreateRolePage() {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+            <div className="bg-[var(--color-light)] rounded-xl p-6 border border-gray-100">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <CheckSquare size={20} className="text-primary" />
                 Resumen de Selección
@@ -163,7 +163,7 @@ export default function CreateRolePage() {
 
               return (
                 <Card key={category} className="overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-100">
+                  <div className="bg-[var(--color-light)] px-4 py-3 border-b border-gray-100">
                     <h3 className="font-bold text-gray-700 uppercase text-xs tracking-wider">
                       {category || "General"}
                     </h3>
@@ -175,7 +175,7 @@ export default function CreateRolePage() {
                         className={`flex items-start gap-3 p-2 rounded-lg cursor-pointer transition-colors ${
                           selectedPermissions.includes(permission.id) 
                             ? "bg-primary/5 border border-primary/10" 
-                            : "hover:bg-gray-50 border border-transparent"
+                            : "hover:bg-[var(--color-light)] border border-transparent"
                         }`}
                         onClick={() => togglePermission(permission.id)}
                       >

@@ -125,22 +125,22 @@ const Calendar = ({
       header: "text-primary",
       selected: "bg-primary text-white",
       today: "border-2 border-primary",
-      hover: "hover:bg-light hover:text-dark",
-      nav: "text-primary hover:bg-light",
+      hover: "hover:bg-[var(--color-light)] hover:text-dark",
+      nav: "text-primary hover:bg-[var(--color-light)]",
     },
     secondary: {
       header: "text-secondary",
       selected: "bg-secondary text-dark",
       today: "border-2 border-secondary",
-      hover: "hover:bg-light hover:text-dark",
-      nav: "text-secondary hover:bg-light",
+      hover: "hover:bg-[var(--color-light)] hover:text-dark",
+      nav: "text-secondary hover:bg-[var(--color-light)]",
     },
     accent: {
       header: "text-accent",
       selected: "bg-accent text-white",
       today: "border-2 border-accent",
-      hover: "hover:bg-light hover:text-dark",
-      nav: "text-accent hover:bg-light",
+      hover: "hover:bg-[var(--color-light)] hover:text-dark",
+      nav: "text-accent hover:bg-[var(--color-light)]",
     },
   };
 
@@ -179,7 +179,7 @@ const Calendar = ({
   return (
     <div
       className={cn(
-        "bg-white border-2 border-beige rounded-lg p-4 shadow-sm",
+        "bg-[var(--color-background)] border-2 border-[var(--color-beige)] rounded-lg p-4 shadow-sm",
         config.container,
         className
       )}
@@ -273,7 +273,7 @@ const Calendar = ({
       </div>
 
       {/* Footer with selected date */}
-      <div className="mt-4 pt-4 border-t-2 border-beige text-center">
+      <div className="mt-4 pt-4 border-t-2 border-[var(--color-beige)] text-center">
         <p className={cn("text-sm font-semibold", colors.header)}>
           {selected.toLocaleDateString("es-ES", {
             weekday: "long",

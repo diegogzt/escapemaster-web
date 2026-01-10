@@ -25,7 +25,7 @@ export function BottomNav() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 pb-safe">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--color-background)] border-t border-[var(--color-beige)]  z-50 pb-safe">
       <nav className="flex justify-around items-center h-16">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -35,7 +35,7 @@ export function BottomNav() {
               href={item.href}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full space-y-1",
-                isActive ? "text-primary" : "text-gray-500 hover:text-gray-900"
+                isActive ? "text-primary" : "text-gray-500  hover:text-gray-900 dark:hover:text-white"
               )}
             >
               <item.icon size={20} strokeWidth={isActive ? 2.5 : 2} />

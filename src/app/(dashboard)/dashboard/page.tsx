@@ -170,7 +170,7 @@ function WidgetItem({
       ref={elementRef}
       style={style}
       className={cn(
-        "relative group h-full w-full transition-all duration-200 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden",
+        "relative group h-full w-full transition-all duration-200 bg-[var(--color-background)] rounded-xl shadow-sm border border-gray-100 overflow-hidden",
         isEditMode && "ring-2 ring-dashed ring-primary/30 cursor-default",
         isDragging && "opacity-30",
         isBlinking && "ring-4 ring-red-500 ring-opacity-100"
@@ -200,7 +200,7 @@ function WidgetItem({
             </div>
           )}
 
-          <div className="absolute top-2 right-2 z-20 flex gap-1 bg-white shadow-md rounded-full p-1 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-2 right-2 z-20 flex gap-1 bg-[var(--color-background)] shadow-md rounded-full p-1 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               {...dragHandleProps}
               className="p-1 hover:bg-beige rounded-full cursor-grab active:cursor-grabbing group"
@@ -566,7 +566,7 @@ export default function DashboardPage() {
                     setIsEditMode(false);
                   }
                 }}
-                className="bg-white text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+                className="bg-[var(--color-background)] text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                 Restablecer
@@ -577,7 +577,7 @@ export default function DashboardPage() {
                   onClick={() => setShowTemplateSelector(!showTemplateSelector)}
                   variant="outline"
                   size="sm"
-                  className="text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark"
+                  className="text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark"
                   disabled={isLoadingTemplates}
                 >
                   <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
@@ -585,7 +585,7 @@ export default function DashboardPage() {
                   <ChevronDown className="ml-1.5 h-3.5 w-3.5" />
                 </Button>
                 {showTemplateSelector && templates.length > 0 && (
-                  <div className="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
+                  <div className="absolute top-full right-0 mt-2 w-80 bg-[var(--color-background)] rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
                     <div className="p-3 border-b border-gray-100">
                       <h4 className="font-semibold text-dark text-sm">
                         Seleccionar Plantilla
@@ -638,7 +638,7 @@ export default function DashboardPage() {
                 onClick={resetLayout}
                 variant="outline"
                 size="sm"
-                className="text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark"
+                className="text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark"
               >
                 <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
                 Ordenar
@@ -647,7 +647,7 @@ export default function DashboardPage() {
                 onClick={() => setShowCollectionsModal(true)}
                 variant="outline"
                 size="sm"
-                className="text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark"
+                className="text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark"
               >
                 <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
                 Colecciones
@@ -667,7 +667,7 @@ export default function DashboardPage() {
             variant="outline"
             size="sm"
             className={cn(
-              "text-dark border-gray-300 bg-white hover:bg-beige hover:text-dark",
+              "text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark",
               activeCollectionId && "border-primary/30 text-primary"
             )}
             disabled={isSaving}
@@ -704,7 +704,7 @@ export default function DashboardPage() {
       {/* Add Widget Modal/Panel */}
       {showAddWidget && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl p-6 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto">
+          <div className="bg-[var(--color-background)] rounded-xl p-6 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-xl font-bold text-dark">Añadir Widget</h3>
               <button
@@ -727,7 +727,7 @@ export default function DashboardPage() {
                       "flex flex-col items-start p-4 border-2 rounded-lg transition-all text-left relative overflow-hidden",
                       isAdded
                         ? "border-primary/30 bg-primary/5"
-                        : "border-beige hover:border-primary hover:bg-light"
+                        : "border-beige hover:border-primary hover:bg-[var(--color-light)]"
                     )}
                   >
                     <div className="flex justify-between items-start w-full mb-1">

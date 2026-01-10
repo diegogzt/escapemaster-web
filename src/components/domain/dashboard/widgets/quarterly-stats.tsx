@@ -46,7 +46,7 @@ export function QuarterlyStatsWidget({
 
   if (loading) {
     return (
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden animate-pulse">
+      <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden animate-pulse">
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
         <div className="flex-1 grid grid-cols-2 gap-3">
           {[1,2,3,4].map(i => <div key={i} className="bg-gray-100 rounded-lg h-full"></div>)}
@@ -68,7 +68,7 @@ export function QuarterlyStatsWidget({
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">
+    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <CalendarRange className="h-5 w-5 text-primary" />
@@ -80,7 +80,7 @@ export function QuarterlyStatsWidget({
       </div>
 
       <div className="flex-1 min-h-0 grid grid-cols-2 gap-3 auto-rows-fr">
-        <div className="p-3 bg-light rounded-lg flex flex-col justify-center">
+        <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
           <div className="flex items-center gap-2 text-secondary mb-1">
             <DollarSign className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Ingresos</span>
@@ -88,7 +88,7 @@ export function QuarterlyStatsWidget({
           <p className="text-xl font-bold text-dark">{formatCurrency(revenue)}</p>
         </div>
 
-        <div className="p-3 bg-light rounded-lg flex flex-col justify-center">
+        <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
           <div className="flex items-center gap-2 text-secondary mb-1">
             <Users className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Jugadores</span>
@@ -96,7 +96,7 @@ export function QuarterlyStatsWidget({
           <p className="text-xl font-bold text-dark">{totalPlayers.toLocaleString()}</p>
         </div>
 
-        <div className="p-3 bg-light rounded-lg flex flex-col justify-center">
+        <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
           <div className="flex items-center gap-2 text-secondary mb-1">
             <TrendingUp className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Ticket Medio</span>
@@ -104,7 +104,7 @@ export function QuarterlyStatsWidget({
           <p className="text-xl font-bold text-dark">{ticketMedio.toFixed(0)} €</p>
         </div>
 
-        <div className="p-3 bg-light rounded-lg flex flex-col justify-center">
+        <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
           <div className="flex items-center gap-2 text-secondary mb-1">
             <CalendarRange className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Ocupación</span>

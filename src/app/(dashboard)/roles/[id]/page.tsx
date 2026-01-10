@@ -150,7 +150,7 @@ export default function EditRolePage() {
               </div>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+            <div className="bg-[var(--color-light)] rounded-xl p-6 border border-gray-100">
               <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <CheckSquare size={20} className="text-primary" />
                 Resumen de Selección
@@ -197,7 +197,7 @@ export default function EditRolePage() {
 
               return (
                 <Card key={category} className="overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-3 border-b border-gray-100">
+                  <div className="bg-[var(--color-light)] px-4 py-3 border-b border-gray-100">
                     <h3 className="font-bold text-gray-700 uppercase text-xs tracking-wider">
                       {category || "General"}
                     </h3>
@@ -210,7 +210,7 @@ export default function EditRolePage() {
                           selectedPermissions.includes(permission.id) 
                             ? "bg-primary/5 border border-primary/10" 
                             : "border border-transparent"
-                        } ${formData.is_custom ? "cursor-pointer hover:bg-gray-50" : "opacity-75"}`}
+                        } ${formData.is_custom ? "cursor-pointer hover:bg-[var(--color-light)]" : "opacity-75"}`}
                         onClick={() => togglePermission(permission.id)}
                       >
                         <div className="mt-0.5">

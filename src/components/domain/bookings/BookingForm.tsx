@@ -238,7 +238,7 @@ export default function BookingForm({
           label="Fecha creación"
           value={new Date(formData.created_at).toLocaleString()}
           disabled
-          className="bg-light"
+          className="bg-[var(--color-light)]"
         />
         <Input
           label="Fecha reserva"
@@ -312,7 +312,7 @@ export default function BookingForm({
           value={formData.gdpr_link}
           disabled
           placeholder="Enlace a firma RGPD"
-          className="bg-light"
+          className="bg-[var(--color-light)]"
         />
       </div>
 
@@ -321,7 +321,7 @@ export default function BookingForm({
           Comentarios
         </label>
         <textarea
-          className="w-full px-3 py-2 border-2 border-beige rounded-lg focus:border-primary focus:outline-none transition-colors min-h-[80px]"
+          className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg focus:border-primary focus:outline-none transition-colors min-h-[80px]"
           value={formData.notes}
           onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
         />
@@ -332,7 +332,7 @@ export default function BookingForm({
           Comentarios internos
         </label>
         <textarea
-          className="w-full px-3 py-2 border-2 border-beige rounded-lg focus:border-primary focus:outline-none transition-colors min-h-[80px]"
+          className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg focus:border-primary focus:outline-none transition-colors min-h-[80px]"
           value={formData.internal_notes}
           onChange={(e) =>
             setFormData({ ...formData, internal_notes: e.target.value })
@@ -377,7 +377,7 @@ export default function BookingForm({
             setFormData({ ...formData, transaction_id: e.target.value })
           }
           disabled
-          className="bg-light"
+          className="bg-[var(--color-light)]"
         />
       </div>
 
@@ -415,15 +415,15 @@ export default function BookingForm({
             type="number"
             value={formData.promo_amount}
             disabled
-            className="bg-light"
+            className="bg-[var(--color-light)]"
           />
         </div>
       </div>
 
       {/* Tabla de Pagos Mock */}
-      <div className="border border-beige rounded-lg overflow-hidden">
+      <div className="border border-[var(--color-beige)] rounded-lg overflow-hidden">
         <table className="w-full text-sm text-left">
-          <thead className="bg-light text-dark font-semibold">
+          <thead className="bg-[var(--color-light)] text-dark font-semibold">
             <tr>
               <th className="p-3">ID</th>
               <th className="p-3">Origen pago</th>
@@ -550,7 +550,7 @@ export default function BookingForm({
 
   const ChangelogTab = (
     <div className="space-y-6">
-      <div className="bg-light p-4 rounded-lg border border-beige">
+      <div className="bg-[var(--color-light)] p-4 rounded-lg border border-[var(--color-beige)]">
         <p className="text-sm text-secondary mb-2">Creado por usuario</p>
         <div className="font-medium text-dark">system</div>
       </div>
@@ -598,7 +598,7 @@ export default function BookingForm({
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Main Content */}
-        <div className="flex-1 bg-white rounded-xl shadow-sm border border-beige p-6">
+        <div className="flex-1 bg-[var(--color-background)] rounded-xl shadow-sm border border-[var(--color-beige)] p-6">
           {error && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
               {error}
@@ -640,7 +640,7 @@ export default function BookingForm({
 
         {/* Sidebar: Resumen de pago */}
         <div className="w-full lg:w-96 space-y-6">
-          <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
+          <div className="bg-[var(--color-background)] rounded-xl shadow-sm border border-[var(--color-beige)] overflow-hidden">
             <div className="bg-primary text-white p-3 font-semibold">
               Resumen de pago
             </div>
@@ -690,14 +690,14 @@ export default function BookingForm({
                 }
               />
 
-              <div className="pt-4 border-t border-beige space-y-3">
-                <div className="flex justify-between items-center bg-light p-2 rounded">
+              <div className="pt-4 border-t border-[var(--color-beige)] space-y-3">
+                <div className="flex justify-between items-center bg-[var(--color-light)] p-2 rounded">
                   <span className="text-sm font-medium text-dark">
                     Importe pagado
                   </span>
                   <span className="font-bold text-dark">{totalPaid} €</span>
                 </div>
-                <div className="flex justify-between items-center bg-light p-2 rounded">
+                <div className="flex justify-between items-center bg-[var(--color-light)] p-2 rounded">
                   <span className="text-sm font-medium text-dark">
                     Importe pendiente
                   </span>
@@ -714,7 +714,7 @@ export default function BookingForm({
                 <div className="flex gap-2">
                   <input
                     type="number"
-                    className="flex-1 px-3 py-2 border-2 border-beige rounded-lg focus:border-primary focus:outline-none"
+                    className="flex-1 px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg focus:border-primary focus:outline-none"
                     value={formData.discount_amount}
                     onChange={(e) =>
                       setFormData({

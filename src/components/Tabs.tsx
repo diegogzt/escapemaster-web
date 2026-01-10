@@ -18,7 +18,7 @@ export default function Tabs({ tabs, defaultTab, className }: TabsProps) {
 
   return (
     <div className={cn("w-full", className)}>
-      <div className="flex border-b border-beige mb-6 overflow-x-auto">
+      <div className="flex border-b border-[var(--color-beige)] mb-6 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}

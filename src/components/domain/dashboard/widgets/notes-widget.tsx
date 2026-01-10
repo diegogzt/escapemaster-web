@@ -23,7 +23,7 @@ export function NotesWidget() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex flex-col">
+    <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col">
       <div className="flex items-center gap-2 mb-4">
         <StickyNote className="h-5 w-5 text-primary" />
         <h3 className="font-semibold text-dark">Notas Rápidas</h3>
@@ -33,7 +33,7 @@ export function NotesWidget() {
         {notes.map((note, i) => (
           <div
             key={i}
-            className="flex items-start justify-between group bg-light p-2 rounded-lg text-sm"
+            className="flex items-start justify-between group bg-[var(--color-light)] p-2 rounded-lg text-sm"
           >
             <span className="text-dark">{note}</span>
             <button
@@ -55,7 +55,7 @@ export function NotesWidget() {
           value={newNote}
           onChange={(e) => setNewNote(e.target.value)}
           placeholder="Nueva nota..."
-          className="flex-1 px-3 py-2 text-sm border border-beige rounded-lg focus:border-primary focus:outline-none"
+          className="flex-1 px-3 py-2 text-sm border border-[var(--color-beige)] rounded-lg focus:border-primary focus:outline-none"
         />
         <button
           type="submit"

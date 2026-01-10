@@ -39,7 +39,7 @@ export function StatsCards({
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 h-full">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm animate-pulse h-full">
+          <div key={i} className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full">
             <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
             <div className="h-8 bg-gray-200 rounded w-3/4"></div>
           </div>
@@ -99,7 +99,7 @@ export function StatsCards({
       {stats.map((stat, index) => (
         <div
           key={index}
-          className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow h-full flex flex-col justify-between min-h-0"
+          className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm hover:shadow-md transition-shadow h-full flex flex-col justify-between min-h-0"
         >
           <div className="flex items-center justify-between space-y-0 pb-2">
             <h3 className="tracking-tight text-xs font-medium text-gray-500 truncate">

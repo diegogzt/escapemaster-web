@@ -38,8 +38,8 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white border-r border-beige flex flex-col h-screen sticky top-0">
-      <div className="p-6 border-b border-beige">
+    <aside className="w-64 bg-[var(--color-background)] border-r border-[var(--color-beige)] flex flex-col h-screen sticky top-0">
+      <div className="p-6 border-b border-[var(--color-beige)]">
         <h1 className="text-xl font-bold text-primary">EscapeMaster</h1>
       </div>
 
@@ -60,7 +60,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-beige space-y-2">
+      <div className="p-4 border-t border-[var(--color-beige)] space-y-2">
         <button
           onClick={() => setTheme(theme === "tropical" ? "twilight" : "tropical")}
           className="flex items-center space-x-3 px-4 py-3 rounded-lg text-secondary hover:bg-primary/10 hover:text-primary w-full transition-colors"

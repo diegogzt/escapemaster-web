@@ -145,7 +145,7 @@ export default function EditUserPage() {
                   <select
                     name="role_id"
                     defaultValue={userData.role_id}
-                    className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white appearance-none"
+                    className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)] appearance-none"
                     required
                   >
                     <option value="">Selecciona un rol</option>
@@ -170,7 +170,7 @@ export default function EditUserPage() {
                   <select
                     name="is_active"
                     defaultValue={userData.is_active ? "true" : "false"}
-                    className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white appearance-none"
+                    className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)] appearance-none"
                     required
                   >
                     <option value="true">Activo</option>
@@ -219,7 +219,7 @@ export default function EditUserPage() {
             </div>
           )}
 
-          <CardFooter className="bg-light/30 flex justify-end space-x-4 p-6">
+          <CardFooter className="bg-[var(--color-light)]/30 flex justify-end space-x-4 p-6">
             <Button type="button" variant="ghost" onClick={() => router.back()}>
               Cancelar
             </Button>

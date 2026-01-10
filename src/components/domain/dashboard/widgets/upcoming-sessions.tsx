@@ -67,7 +67,7 @@ export function UpcomingSessions({
   const items = sessions.slice(0, limit);
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-full flex flex-col overflow-hidden">
+    <div className="bg-[var(--color-background)] rounded-xl border border-[var(--color-beige)] shadow-sm h-full flex flex-col overflow-hidden">
       <div className="p-4 border-b border-gray-100 flex-shrink-0">
         <h3 className="text-sm font-semibold text-gray-900">
           Próximas Sesiones
@@ -125,7 +125,7 @@ export function UpcomingSessions({
         )}
       </div>
       <div className="p-4 border-t border-gray-100 flex-shrink-0">
-        <button className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-gray-300 rounded-lg hover:bg-gray-50">
+        <button className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-gray-300 rounded-lg hover:bg-[var(--color-light)]">
           Ver calendario completo
         </button>
       </div>

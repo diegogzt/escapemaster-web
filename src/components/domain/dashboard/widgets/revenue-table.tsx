@@ -71,7 +71,7 @@ export function RevenueTableWidget() {
 
   if (loading) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex items-center justify-center min-h-[200px]">
+      <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex items-center justify-center min-h-[200px]">
         <div className="text-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-2" />
           <p className="text-gray-500 text-sm">Cargando transacciones...</p>
@@ -82,7 +82,7 @@ export function RevenueTableWidget() {
 
   if (error) {
     return (
-      <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex items-center justify-center min-h-[200px]">
+      <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex items-center justify-center min-h-[200px]">
         <div className="text-center">
           <AlertCircle className="w-6 h-6 text-red-500 mx-auto mb-2" />
           <p className="text-red-600 text-sm">{error}</p>
@@ -92,7 +92,7 @@ export function RevenueTableWidget() {
   }
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-beige h-full flex flex-col">
+    <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h3 className="font-semibold text-dark">Registro de Transacciones</h3>
         <div className="flex gap-2">
@@ -101,15 +101,15 @@ export function RevenueTableWidget() {
             <input
               type="text"
               placeholder="Buscar..."
-              className="pl-9 pr-4 py-2 text-sm border border-beige rounded-lg focus:border-primary focus:outline-none w-full sm:w-48"
+              className="pl-9 pr-4 py-2 text-sm border border-[var(--color-beige)] rounded-lg focus:border-primary focus:outline-none w-full sm:w-48"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
           </div>
-          <button className="p-2 border border-beige rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Descargar">
+          <button className="p-2 border border-[var(--color-beige)] rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Descargar">
             <Download className="h-4 w-4" />
           </button>
-          <button className="p-2 border border-beige rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Filtrar">
+          <button className="p-2 border border-[var(--color-beige)] rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Filtrar">
             <Download className="h-4 w-4" />
           </button>
         </div>
@@ -117,7 +117,7 @@ export function RevenueTableWidget() {
 
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-sm text-left">
-          <thead className="bg-light text-secondary font-medium">
+          <thead className="bg-[var(--color-light)] text-secondary font-medium">
             <tr>
               <th className="p-3 rounded-l-lg">ID</th>
               <th className="p-3">Fecha</th>
@@ -129,7 +129,7 @@ export function RevenueTableWidget() {
           </thead>
           <tbody className="divide-y divide-beige">
             {filteredData.map((trx) => (
-              <tr key={trx.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={trx.id} className="hover:bg-[var(--color-light)] transition-colors">
                 <td className="p-3 font-mono text-xs text-gray-500">
                   {trx.id}
                 </td>

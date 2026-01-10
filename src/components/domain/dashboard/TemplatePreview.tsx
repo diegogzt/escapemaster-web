@@ -99,7 +99,7 @@ export function TemplatePreview({
   
   return (
     <div
-      className={cn("relative bg-gray-50 rounded overflow-hidden border border-gray-200", className)}
+      className={cn("relative bg-[var(--color-light)] rounded overflow-hidden border border-[var(--color-beige)]", className)}
       style={{
         width: maxCols * colWidth,
         height: totalHeight * rowHeight,

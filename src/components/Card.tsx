@@ -25,7 +25,7 @@ export interface CardFooterProps {
 const Card = ({ children, className, ...props }: CardProps) => (
   <div
     className={cn(
-      "bg-white border-2 border-light rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg",
+      "bg-[var(--color-background)] border-2 border-[var(--color-beige)] rounded-xl p-6 transition-all hover:-translate-y-1 hover:shadow-lg",
       className
     )}
     {...props}
@@ -35,7 +35,7 @@ const Card = ({ children, className, ...props }: CardProps) => (
 );
 
 const CardHeader = ({ children, className }: CardHeaderProps) => (
-  <div className={cn("border-b border-beige pb-4 mb-4", className)}>
+  <div className={cn("border-b border-[var(--color-beige)] pb-4 mb-4", className)}>
     {children}
   </div>
 );
@@ -50,7 +50,7 @@ const CardTitle = ({ children, level = "h4", className }: CardTitleProps) => {
 };
 
 export const CardFooter = ({ children, className }: CardFooterProps) => (
-  <div className={cn("mt-6 pt-6 border-t border-beige", className)}>
+  <div className={cn("mt-6 pt-6 border-t border-[var(--color-beige)]", className)}>
     {children}
   </div>
 );

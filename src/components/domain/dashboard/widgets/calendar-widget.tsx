@@ -241,26 +241,26 @@ export function CalendarWidget({
 
   if (loading) {
     return (
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex items-center justify-center min-h-[200px]">
+      <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex items-center justify-center min-h-[200px]">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">
+    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
           <h3 className="font-semibold text-dark text-sm">Calendario</h3>
         </div>
-        <div className="flex gap-1 bg-light rounded-lg p-1">
+        <div className="flex gap-1 bg-[var(--color-light)] rounded-lg p-1">
           <button
             onClick={() => setView("month")}
             className={cn(
               "px-2 py-1 text-xs rounded-md transition-colors",
               view === "month"
-                ? "bg-white shadow-sm text-dark font-medium"
+                ? "bg-[var(--color-background)] shadow-sm text-dark font-medium"
                 : "text-gray-500 hover:text-dark"
             )}
           >
@@ -271,7 +271,7 @@ export function CalendarWidget({
             className={cn(
               "px-2 py-1 text-xs rounded-md transition-colors",
               view === "week"
-                ? "bg-white shadow-sm text-dark font-medium"
+                ? "bg-[var(--color-background)] shadow-sm text-dark font-medium"
                 : "text-gray-500 hover:text-dark"
             )}
           >

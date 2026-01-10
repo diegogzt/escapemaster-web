@@ -121,7 +121,7 @@ export default function CreateUserPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Column: Main Information (8 cols) */}
           <div className="lg:col-span-8 space-y-8">
-            <Card className="border-none shadow-xl shadow-primary/5 bg-white overflow-hidden">
+            <Card className="border-none shadow-xl shadow-primary/5 bg-[var(--color-background)] overflow-hidden">
               <div className="h-2 bg-primary w-full" />
               <CardHeader className="px-8 pt-8 pb-4">
                 <CardTitle className="flex items-center text-2xl font-bold text-dark">
@@ -138,7 +138,7 @@ export default function CreateUserPage() {
                     placeholder="Ej: Juan Pérez"
                     required
                     icon={<User size={18} />}
-                    className="bg-white py-3"
+                    className="bg-[var(--color-background)] py-3"
                   />
                   <Input
                     name="email"
@@ -147,7 +147,7 @@ export default function CreateUserPage() {
                     placeholder="ejemplo@correo.com"
                     required
                     icon={<Mail size={18} />}
-                    className="bg-white py-3"
+                    className="bg-[var(--color-background)] py-3"
                   />
                 </div>
 
@@ -159,13 +159,13 @@ export default function CreateUserPage() {
                     placeholder="••••••••"
                     required
                     icon={<Lock size={18} />}
-                    className="bg-white py-3"
+                    className="bg-[var(--color-background)] py-3"
                   />
                   <div className="space-y-3">
                     <label className="block text-sm font-bold text-gray-700">
                       Estado de la Cuenta
                     </label>
-                    <div className="flex items-center space-x-6 p-3.5 bg-light/20 rounded-xl border border-beige/40">
+                    <div className="flex items-center space-x-6 p-3.5 bg-[var(--color-light)]/20 rounded-xl border border-beige/40">
                       <label className="flex items-center cursor-pointer group">
                         <input
                           type="radio"
@@ -197,7 +197,7 @@ export default function CreateUserPage() {
               </div>
             </Card>
 
-            <Card className="border-none shadow-xl shadow-primary/5 bg-white overflow-hidden">
+            <Card className="border-none shadow-xl shadow-primary/5 bg-[var(--color-background)] overflow-hidden">
               <div className="h-2 bg-accent w-full" />
               <CardHeader className="px-8 pt-8 pb-4">
                 <CardTitle className="flex items-center text-2xl font-bold text-dark">
@@ -214,7 +214,7 @@ export default function CreateUserPage() {
                     step="0.5"
                     placeholder="Ej: 160"
                     icon={<Lock size={18} />}
-                    className="bg-white py-3"
+                    className="bg-[var(--color-background)] py-3"
                   />
                   <Input
                     name="hourly_rate"
@@ -223,7 +223,7 @@ export default function CreateUserPage() {
                     step="0.01"
                     placeholder="Ej: 12.50"
                     icon={<Lock size={18} />}
-                    className="bg-white py-3"
+                    className="bg-[var(--color-background)] py-3"
                   />
                   <Input
                     name="vacation_days_total"
@@ -231,7 +231,7 @@ export default function CreateUserPage() {
                     type="number"
                     placeholder="Ej: 30"
                     icon={<Lock size={18} />}
-                    className="bg-white py-3"
+                    className="bg-[var(--color-background)] py-3"
                   />
                 </div>
               </div>
@@ -257,7 +257,7 @@ export default function CreateUserPage() {
 
           {/* Right Column: Role & Permissions (4 cols) */}
           <div className="lg:col-span-4 space-y-8">
-            <Card className="border-none shadow-xl shadow-primary/5 bg-white overflow-hidden">
+            <Card className="border-none shadow-xl shadow-primary/5 bg-[var(--color-background)] overflow-hidden">
               <div className="h-2 bg-secondary w-full" />
               <CardHeader className="px-8 pt-8 pb-4">
                 <CardTitle className="flex items-center text-2xl font-bold text-dark">
@@ -285,7 +285,7 @@ export default function CreateUserPage() {
                     />
                     <select
                       name="role_id"
-                      className="w-full pl-12 pr-10 py-4 border-2 border-beige/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 bg-white appearance-none transition-all hover:border-primary/30 font-medium text-dark"
+                      className="w-full pl-12 pr-10 py-4 border-2 border-beige/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 bg-[var(--color-background)] appearance-none transition-all hover:border-primary/30 font-medium text-dark"
                       required
                       disabled={loadingRoles}
                     >

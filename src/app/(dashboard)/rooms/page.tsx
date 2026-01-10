@@ -50,7 +50,7 @@ export default function RoomsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="bg-white border border-beige rounded-lg p-1 flex items-center mr-2">
+          <div className="bg-[var(--color-background)] border border-beige rounded-lg p-1 flex items-center mr-2">
             <button
               onClick={() => setViewMode("grid")}
               className={`p-2 rounded-md transition-colors ${
@@ -111,7 +111,7 @@ export default function RoomsPage() {
               <div className="absolute inset-0 bg-primary/95 text-white p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="font-bold text-lg">Próximas Sesiones</h4>
-                  <span className="bg-white/20 px-2 py-1 rounded text-xs">
+                  <span className="bg-[var(--color-background)]/20 px-2 py-1 rounded text-xs">
                     {room.pending_bookings_count || 0} pendientes
                   </span>
                 </div>
@@ -121,7 +121,7 @@ export default function RoomsPage() {
                     room.next_bookings.map((booking: any) => (
                       <div
                         key={booking.id}
-                        className="bg-white/10 p-2 rounded text-sm"
+                        className="bg-[var(--color-background)]/10 p-2 rounded text-sm"
                       >
                         <div className="flex justify-between font-medium">
                           <span>
@@ -156,7 +156,7 @@ export default function RoomsPage() {
                     <Button
                       variant="secondary"
                       block
-                      className="bg-white text-primary hover:bg-white/90"
+                      className="bg-[var(--color-background)] text-primary hover:bg-[var(--color-background)]/90"
                     >
                       <Settings size={16} className="mr-2" />
                       Configurar
@@ -216,7 +216,7 @@ export default function RoomsPage() {
                   </div>
                 </div>
                 {room.theme && (
-                  <span className="inline-block mt-2 px-2 py-1 text-xs bg-light rounded">
+                  <span className="inline-block mt-2 px-2 py-1 text-xs bg-[var(--color-light)] rounded">
                     {room.theme}
                   </span>
                 )}
@@ -225,10 +225,10 @@ export default function RoomsPage() {
           ))}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
+        <div className="bg-[var(--color-background)] rounded-xl shadow-sm border border-beige overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-light/50 border-b border-beige">
+              <tr className="bg-[var(--color-light)]/50 border-b border-beige">
                 <th className="px-6 py-4 font-bold text-dark">Nombre</th>
                 <th className="px-6 py-4 font-bold text-dark">Jugadores</th>
                 <th className="px-6 py-4 font-bold text-dark">Duración</th>
@@ -243,7 +243,7 @@ export default function RoomsPage() {
               {roomsList.map((room) => (
                 <tr
                   key={room.id}
-                  className="hover:bg-light/30 transition-colors"
+                  className="hover:bg-[var(--color-light)]/30 transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center">

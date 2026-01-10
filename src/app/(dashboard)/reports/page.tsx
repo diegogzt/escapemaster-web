@@ -253,7 +253,7 @@ export default function ReportsPage() {
   return (
     <div className="space-y-8 w-full pb-12 px-4 lg:px-8">
       {/* Header - More compact and desktop-oriented */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl border border-beige/50 shadow-sm">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-[var(--color-background)] p-6 rounded-2xl border border-beige/50 shadow-sm">
         <div>
           <h1 className="text-4xl font-bold text-primary tracking-tight">
             Panel de Control Financiero
@@ -263,7 +263,7 @@ export default function ReportsPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-3 items-center w-full lg:w-auto">
-          <div className="bg-light/50 border border-beige rounded-xl flex items-center px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+          <div className="bg-[var(--color-light)]/50 border border-beige rounded-xl flex items-center px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
             <Calendar size={18} className="text-primary mr-2" />
             <select
               className="bg-transparent border-none text-sm font-semibold focus:outline-none text-dark w-full lg:min-w-[160px]"
@@ -281,7 +281,7 @@ export default function ReportsPage() {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => handleExport("csv")} className="bg-white">
+            <Button variant="outline" onClick={() => handleExport("csv")} className="bg-[var(--color-background)]">
               <Download size={18} className="mr-2" />
               Exportar
             </Button>
@@ -299,7 +299,7 @@ export default function ReportsPage() {
         <div className="col-span-12 lg:col-span-8 space-y-8">
           {/* Financial KPIs - 4 per row on desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
                   <DollarSign size={24} />
@@ -310,7 +310,7 @@ export default function ReportsPage() {
               <h3 className="text-3xl font-bold text-dark">{stats.totalRevenue.toLocaleString()}€</h3>
             </Card>
 
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-secondary/10 rounded-2xl text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
                   <Wallet size={24} />
@@ -320,7 +320,7 @@ export default function ReportsPage() {
               <h3 className="text-3xl font-bold text-dark">{stats.profit.toLocaleString()}€</h3>
             </Card>
 
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-accent/10 rounded-2xl text-accent group-hover:bg-accent group-hover:text-white transition-colors">
                   <CreditCard size={24} />
@@ -330,7 +330,7 @@ export default function ReportsPage() {
               <h3 className="text-3xl font-bold text-dark">{(stats.totalRevenue - stats.profit).toLocaleString()}€</h3>
             </Card>
 
-            <Card className="p-6 border-none shadow-sm bg-white hover:shadow-md transition-all group">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
               <div className="flex justify-between items-start mb-4">
                 <div className="p-3 bg-red-50 rounded-2xl text-error group-hover:bg-error group-hover:text-white transition-colors">
                   <AlertCircle size={24} />
@@ -343,7 +343,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Main Chart: Balance Financiero */}
-          <Card className="p-8 border-none shadow-sm bg-white">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <div className="flex justify-between items-center mb-8">
               <div>
                 <h3 className="text-xl font-bold text-dark">Balance Financiero Semanal</h3>
@@ -386,7 +386,7 @@ export default function ReportsPage() {
           </Card>
 
           {/* Recent Activity Table */}
-          <Card className="border-none shadow-sm bg-white overflow-hidden">
+          <Card className="border-none shadow-sm bg-[var(--color-background)] overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex justify-between items-center">
               <h3 className="text-xl font-bold text-dark">Últimas Transacciones</h3>
               <Button variant="ghost" size="sm" className="text-primary font-bold">
@@ -396,7 +396,7 @@ export default function ReportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-light/30 text-gray-500 text-xs uppercase tracking-wider">
+                  <tr className="bg-[var(--color-light)]/30 text-gray-500 text-xs uppercase tracking-wider">
                     <th className="px-6 py-4 font-bold">Referencia</th>
                     <th className="px-6 py-4 font-bold">Cliente</th>
                     <th className="px-6 py-4 font-bold">Sala / Servicio</th>
@@ -407,7 +407,7 @@ export default function ReportsPage() {
                 <tbody className="divide-y divide-gray-50">
                   {recentBookings.length > 0 ? (
                     recentBookings.map((booking, i) => (
-                      <tr key={booking.id} className="hover:bg-light/20 transition-colors group">
+                      <tr key={booking.id} className="hover:bg-[var(--color-light)]/20 transition-colors group">
                         <td className="px-6 py-4 text-sm text-gray-500 font-mono">#{booking.id.substring(0, 8)}</td>
                         <td className="px-6 py-4">
                           <div className="flex items-center">
@@ -452,7 +452,7 @@ export default function ReportsPage() {
         {/* Right Column: Secondary Charts and Stats (4 cols) */}
         <div className="col-span-12 lg:col-span-4 space-y-8">
           {/* Room Popularity */}
-          <Card className="p-8 border-none shadow-sm bg-white">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <h3 className="text-xl font-bold text-dark mb-6">Popularidad de Salas</h3>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -486,7 +486,7 @@ export default function ReportsPage() {
           </Card>
 
           {/* Hourly Occupancy */}
-          <Card className="p-8 border-none shadow-sm bg-white">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <h3 className="text-xl font-bold text-dark mb-6">Picos de Ocupación</h3>
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -511,7 +511,7 @@ export default function ReportsPage() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 p-4 bg-light/30 rounded-xl border border-beige/30">
+            <div className="mt-4 p-4 bg-[var(--color-light)]/30 rounded-xl border border-beige/30">
               <p className="text-xs text-dark/60 leading-relaxed">
                 <span className="font-bold text-primary">Tip:</span> El pico máximo de ocupación se registra a las <span className="font-bold">20:00h</span>. Considera reforzar el personal en este horario.
               </p>
@@ -519,7 +519,7 @@ export default function ReportsPage() {
           </Card>
 
           {/* Expenses Breakdown */}
-          <Card className="p-8 border-none shadow-sm bg-white">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <h3 className="text-xl font-bold text-dark mb-6">Distribución de Gastos</h3>
             <div className="space-y-6">
               {expensesData.map((expense, i) => {

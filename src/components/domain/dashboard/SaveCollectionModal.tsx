@@ -143,7 +143,7 @@ export function SaveCollectionModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl p-6 max-w-lg w-full shadow-2xl max-h-[80vh] flex flex-col">
+      <div className="bg-[var(--color-background)] rounded-xl p-6 max-w-lg w-full shadow-2xl max-h-[80vh] flex flex-col">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
@@ -177,7 +177,7 @@ export function SaveCollectionModal({
               {collections.map((collection) => (
                 <div
                   key={collection.id}
-                  className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-beige transition-colors"
+                  className="flex items-center justify-between p-3 border border-[var(--color-beige)] rounded-lg hover:bg-beige transition-colors"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
@@ -238,14 +238,14 @@ export function SaveCollectionModal({
               placeholder="Nombre de la colección"
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
-              className="w-full px-3 py-2 border-2 border-beige rounded-lg text-sm focus:border-primary focus:outline-none"
+              className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg text-sm focus:border-primary focus:outline-none"
             />
             <input
               type="text"
               placeholder="Descripción (opcional)"
               value={newDescription}
               onChange={(e) => setNewDescription(e.target.value)}
-              className="w-full px-3 py-2 border-2 border-beige rounded-lg text-sm focus:border-primary focus:outline-none"
+              className="w-full px-3 py-2 border-2 border-[var(--color-beige)] rounded-lg text-sm focus:border-primary focus:outline-none"
             />
             <div className="flex justify-end gap-2">
               <Button

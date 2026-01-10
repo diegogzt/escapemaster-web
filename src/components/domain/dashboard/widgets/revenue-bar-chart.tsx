@@ -197,7 +197,7 @@ export function RevenueBarChartWidget({
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">
+    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
@@ -206,7 +206,7 @@ export function RevenueBarChartWidget({
           </h3>
         </div>
         <select
-          className="text-xs border border-beige rounded-md px-2 py-1 text-secondary"
+          className="text-xs border border-[var(--color-beige)] rounded-md px-2 py-1 text-secondary"
           aria-label="Período de tiempo"
           value={localDateRange}
           onChange={(e) =>

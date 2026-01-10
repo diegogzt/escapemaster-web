@@ -91,7 +91,7 @@ export default function UsersPage() {
           </div>
           <div className="flex gap-2">
             <select
-              className="px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+              className="px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
               value={filterRole}
               onChange={(e) => setFilterRole(e.target.value)}
             >
@@ -125,10 +125,10 @@ export default function UsersPage() {
           </Link>
         </Card>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
+        <div className="bg-[var(--color-background)] rounded-xl shadow-sm border border-beige overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-light/50 border-b border-beige">
+              <tr className="bg-[var(--color-light)]/50 border-b border-beige">
                 <th className="px-6 py-4 font-bold text-dark">Usuario</th>
                 <th className="px-6 py-4 font-bold text-dark">Rol</th>
                 <th className="px-6 py-4 font-bold text-dark">Estado</th>
@@ -141,7 +141,7 @@ export default function UsersPage() {
               {usersList.map((user) => (
                 <tr
                   key={user.id}
-                  className="hover:bg-light/30 transition-colors"
+                  className="hover:bg-[var(--color-light)]/30 transition-colors"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">

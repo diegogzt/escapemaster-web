@@ -35,8 +35,6 @@ export default function SettingsPage() {
   const { 
     theme, 
     setTheme, 
-    useCustomBackground, 
-    setUseCustomBackground,
     isDarkMode,
     setIsDarkMode
   } = useTheme();
@@ -45,7 +43,7 @@ export default function SettingsPage() {
     <div className="w-full pb-20">
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-primary mb-2">Ajustes de Organización</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
+        <p className="text-lg text-gray-600 ">
           Gestiona los detalles y la configuración de tu empresa.
         </p>
       </div>
@@ -55,18 +53,18 @@ export default function SettingsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Palette className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">
               Personalización Visual
             </h2>
           </div>
-          <Card className="w-full max-w-none bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800">
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-gray-100">
             <CardHeader>
-              <CardTitle className="dark:text-white">Tema y Colores</CardTitle>
+              <CardTitle>Tema y Colores</CardTitle>
             </CardHeader>
             <div className="p-6 pt-0 space-y-8">
               {/* Palette Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                <label className="block text-sm font-medium text-[var(--color-foreground)] opacity-80 mb-4">
                   Selecciona la paleta de colores de tu organización
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
@@ -79,59 +77,38 @@ export default function SettingsPage() {
                       className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all cursor-pointer ${
                         theme === t.id
                           ? "border-primary bg-primary/5 ring-4 ring-primary/10"
-                          : "border-gray-100 dark:border-slate-800 hover:border-gray-200 dark:hover:border-slate-700"
+                          : "border-[var(--color-beige)] hover:border-primary/30"
                       }`}
                     >
                       <div className="flex gap-1 mb-3 pointer-events-none">
                         <div className="w-6 h-6 rounded-full shadow-sm" style={{ backgroundColor: t.primary }} />
                         <div className="w-6 h-6 rounded-full shadow-sm" style={{ backgroundColor: t.secondary }} />
                       </div>
-                      <span className="text-sm font-medium text-gray-900 dark:text-white pointer-events-none">{t.name}</span>
+                      <span className="text-sm font-medium text-[var(--color-foreground)] pointer-events-none">{t.name}</span>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Background Toggle */}
-                <div className="flex items-center justify-between p-4 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/50">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2 rounded-lg ${useCustomBackground ? 'bg-primary/10 text-primary' : 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500'}`}>
-                      <Layout size={20} />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white">Fondo personalizado</h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">Usa el color de la paleta</p>
-                    </div>
-                  </div>
-                  <button 
-                    type="button"
-                    onClick={() => setUseCustomBackground(!useCustomBackground)}
-                    aria-label="Toggle fondo personalizado"
-                    className={`w-14 h-8 rounded-full transition-all relative outline-hidden ${useCustomBackground ? 'bg-primary' : 'bg-gray-200 dark:bg-slate-700'}`}
-                  >
-                    <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-all ${useCustomBackground ? 'left-7' : 'left-1'}`} />
-                  </button>
-                </div>
-
                 {/* Dark Mode Toggle */}
-                <div className="flex items-center justify-between p-4 border border-gray-100 dark:border-slate-800 rounded-xl bg-gray-50/50 dark:bg-slate-800/50">
+                <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg ${isDarkMode ? 'bg-indigo-100 text-indigo-600' : 'bg-amber-100 text-amber-600'}`}>
                       {isDarkMode ? <Moon size={20} /> : <Sun size={20} />}
                     </div>
                     <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white">Modo Oscuro</h4>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{isDarkMode ? 'Activado' : 'Desactivado'}</p>
+                      <h4 className="font-bold text-[var(--color-foreground)]">Modo Oscuro</h4>
+                      <p className="text-sm text-[var(--color-foreground)] opacity-60">{isDarkMode ? 'Activado' : 'Desactivado'}</p>
                     </div>
                   </div>
                   <button 
                     type="button"
                     onClick={() => setIsDarkMode(!isDarkMode)}
                     aria-label="Toggle modo oscuro"
-                    className={`w-14 h-8 rounded-full transition-all relative outline-hidden ${isDarkMode ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-700'}`}
+                    className={`w-14 h-8 rounded-full transition-all relative outline-hidden ${isDarkMode ? 'bg-indigo-600' : 'bg-gray-200'}`}
                   >
-                    <div className={`absolute top-1 w-6 h-6 bg-white rounded-full shadow-md transition-all ${isDarkMode ? 'left-7' : 'left-1'}`} />
+                    <div className={`absolute top-1 w-6 h-6 bg-[var(--color-background)] rounded-full shadow-md transition-all ${isDarkMode ? 'left-7' : 'left-1'}`} />
                   </button>
                 </div>
               </div>
@@ -143,11 +120,11 @@ export default function SettingsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Building className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Datos Generales</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Datos Generales</h2>
           </div>
-          <Card className="w-full max-w-none bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800">
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-gray-100">
             <CardHeader>
-              <CardTitle className="dark:text-white">Información de la Organización</CardTitle>
+              <CardTitle>Información de la Organización</CardTitle>
             </CardHeader>
             <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input label="Nombre de la Organización" defaultValue="Mi Escape Room" />
@@ -162,11 +139,11 @@ export default function SettingsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">Ubicación</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 ">Ubicación</h2>
           </div>
-          <Card className="w-full max-w-none bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800">
+          <Card className="w-full max-w-none bg-[var(--color-background)]  border-gray-100 ">
             <CardHeader>
-              <CardTitle className="dark:text-white">Dirección y Horario</CardTitle>
+              <CardTitle className="">Dirección y Horario</CardTitle>
             </CardHeader>
             <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="md:col-span-2">
@@ -201,43 +178,43 @@ export default function SettingsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <CreditCard className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+            <h2 className="text-2xl font-semibold text-gray-800 ">
               Integraciones
             </h2>
           </div>
-          <Card className="w-full max-w-none bg-white dark:bg-slate-900 border-gray-100 dark:border-slate-800">
+          <Card className="w-full max-w-none bg-[var(--color-background)]  border-gray-100 ">
             <CardHeader>
-              <CardTitle className="dark:text-white">Servicios Conectados</CardTitle>
+              <CardTitle className="">Servicios Conectados</CardTitle>
             </CardHeader>
             <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex items-center justify-between p-5 border border-gray-100 dark:border-slate-800 rounded-xl hover:border-primary/30 transition-colors bg-gray-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center justify-between p-5 border border-gray-100  rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-light)]/50 /50">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-lg shadow-sm flex items-center justify-center text-xl font-bold text-indigo-600 border border-gray-100 dark:border-slate-600">
+                  <div className="w-12 h-12 bg-[var(--color-background)]  rounded-lg shadow-sm flex items-center justify-center text-xl font-bold text-indigo-600 border border-gray-100 ">
                     S
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white">Stripe</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Pagos y facturación</p>
+                    <h4 className="font-bold text-gray-900 ">Stripe</h4>
+                    <p className="text-sm text-gray-500 ">Pagos y facturación</p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="border-gray-300 dark:border-slate-600 dark:text-gray-300">
+                <Button variant="outline" size="sm" className="border-gray-300  ">
                   Configurar
                 </Button>
               </div>
 
-              <div className="flex items-center justify-between p-5 border border-gray-100 dark:border-slate-800 rounded-xl hover:border-primary/30 transition-colors bg-gray-50/50 dark:bg-slate-800/50">
+              <div className="flex items-center justify-between p-5 border border-gray-100  rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-light)]/50 /50">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-white dark:bg-slate-700 rounded-lg shadow-sm flex items-center justify-center text-xl font-bold text-black dark:text-white border border-gray-100 dark:border-slate-600">
+                  <div className="w-12 h-12 bg-[var(--color-background)]  rounded-lg shadow-sm flex items-center justify-center text-xl font-bold text-black  border border-gray-100 ">
                     R
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white">Resend</h4>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <h4 className="font-bold text-gray-900 ">Resend</h4>
+                    <p className="text-sm text-gray-500 ">
                       Notificaciones por email
                     </p>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="border-gray-300 dark:border-slate-600 dark:text-gray-300">
+                <Button variant="outline" size="sm" className="border-gray-300  ">
                   Conectar
                 </Button>
               </div>

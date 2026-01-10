@@ -79,7 +79,7 @@ export function OccupancyPieChartWidget({
   const innerRadius = Math.max(20, outerRadius * 0.6);
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">
+    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 mb-2 flex-shrink-0">
         <PieChartIcon className="h-5 w-5 text-primary" />
         <h3 className="font-semibold text-dark text-sm">Ocupación por Sala (Top 5)</h3>

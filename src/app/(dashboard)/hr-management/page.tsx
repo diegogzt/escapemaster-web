@@ -93,7 +93,7 @@ export default function HRManagementPage() {
   return (
     <div className="space-y-8 w-full pb-12 px-4 lg:px-8">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-2xl border border-beige/50 shadow-sm">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-[var(--color-background)] p-6 rounded-2xl border border-beige/50 shadow-sm">
         <div>
           <h1 className="text-4xl font-bold text-primary tracking-tight">
             Gestión de RRHH
@@ -148,11 +148,11 @@ export default function HRManagementPage() {
 
       {/* Content */}
       {activeTab === "entries" && (
-        <Card className="border-none shadow-sm bg-white overflow-hidden">
+        <Card className="border-none shadow-sm bg-[var(--color-background)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-light/30 text-gray-500 text-xs uppercase tracking-wider">
+                <tr className="bg-[var(--color-light)]/30 text-gray-500 text-xs uppercase tracking-wider">
                   <th className="px-6 py-4 font-bold">Empleado</th>
                   <th className="px-6 py-4 font-bold">Fecha</th>
                   <th className="px-6 py-4 font-bold">Entrada</th>
@@ -163,7 +163,7 @@ export default function HRManagementPage() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {allEntries.map((entry) => (
-                  <tr key={entry.id} className="hover:bg-light/20 transition-colors">
+                  <tr key={entry.id} className="hover:bg-[var(--color-light)]/20 transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
@@ -206,13 +206,13 @@ export default function HRManagementPage() {
       {activeTab === "vacations" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pendingVacations.length === 0 ? (
-            <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-beige">
+            <div className="col-span-full py-12 text-center bg-[var(--color-background)] rounded-2xl border border-dashed border-beige">
               <Umbrella size={48} className="mx-auto text-beige mb-4" />
               <p className="text-gray-500 font-medium">No hay solicitudes de vacaciones pendientes.</p>
             </div>
           ) : (
             pendingVacations.map((v) => (
-              <Card key={v.id} className="p-6 border-none shadow-sm bg-white flex flex-col justify-between">
+              <Card key={v.id} className="p-6 border-none shadow-sm bg-[var(--color-background)] flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
@@ -223,7 +223,7 @@ export default function HRManagementPage() {
                       <p className="text-xs text-gray-500">Solicitado el {format(new Date(v.created_at), "dd MMM")}</p>
                     </div>
                   </div>
-                  <div className="bg-light/30 p-4 rounded-xl mb-4">
+                  <div className="bg-[var(--color-light)]/30 p-4 rounded-xl mb-4">
                     <div className="flex justify-between text-sm mb-2">
                       <span className="text-gray-500">Periodo:</span>
                       <span className="font-bold text-dark">
@@ -270,7 +270,7 @@ export default function HRManagementPage() {
       {activeTab === "stats" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((user, idx) => (
-            <Card key={idx} className="p-6 border-none shadow-sm bg-white">
+            <Card key={idx} className="p-6 border-none shadow-sm bg-[var(--color-background)]">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xl">
                   {user.name.charAt(0)}
@@ -286,7 +286,7 @@ export default function HRManagementPage() {
                     <span className="text-gray-500 font-medium">Horas Totales</span>
                     <span className="font-bold text-dark">{user.total_hours.toFixed(1)}h</span>
                   </div>
-                  <div className="w-full h-2 bg-light rounded-full overflow-hidden">
+                  <div className="w-full h-2 bg-[var(--color-light)] rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-primary rounded-full" 
                       style={{ width: `${Math.min((user.total_hours / 160) * 100, 100)}%` }}
