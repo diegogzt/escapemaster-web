@@ -1,8 +1,25 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import { router } from "expo-router";
 import { rooms } from "../../services/api";
-import { ArrowLeft, Save, DoorOpen, Users, Clock, Euro } from "lucide-react-native";
+import {
+  ArrowLeft,
+  Save,
+  DoorOpen,
+  Users,
+  Clock,
+  Euro,
+} from "lucide-react-native";
 
 export default function CreateRoomScreen() {
   const [loading, setLoading] = useState(false);
@@ -41,7 +58,7 @@ export default function CreateRoomScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1 bg-gray-50"
     >
@@ -56,7 +73,9 @@ export default function CreateRoomScreen() {
 
           <View className="space-y-4">
             <View>
-              <Text className="text-gray-700 font-medium mb-1">Nombre de la sala</Text>
+              <Text className="text-gray-700 font-medium mb-1">
+                Nombre de la sala
+              </Text>
               <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3">
                 <DoorOpen size={20} color="#64748b" className="mr-2" />
                 <TextInput
@@ -69,7 +88,9 @@ export default function CreateRoomScreen() {
             </View>
 
             <View>
-              <Text className="text-gray-700 font-medium mb-1">Descripción</Text>
+              <Text className="text-gray-700 font-medium mb-1">
+                Descripción
+              </Text>
               <TextInput
                 className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 h-24"
                 placeholder="Describe la temática de la sala..."
@@ -82,26 +103,34 @@ export default function CreateRoomScreen() {
 
             <View className="flex-row space-x-4">
               <View className="flex-1">
-                <Text className="text-gray-700 font-medium mb-1">Min. Pers.</Text>
+                <Text className="text-gray-700 font-medium mb-1">
+                  Min. Pers.
+                </Text>
                 <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3">
                   <Users size={18} color="#64748b" className="mr-2" />
                   <TextInput
                     className="flex-1 text-gray-900"
                     keyboardType="numeric"
                     value={form.min_capacity}
-                    onChangeText={(text) => setForm({ ...form, min_capacity: text })}
+                    onChangeText={(text) =>
+                      setForm({ ...form, min_capacity: text })
+                    }
                   />
                 </View>
               </View>
               <View className="flex-1">
-                <Text className="text-gray-700 font-medium mb-1">Max. Pers.</Text>
+                <Text className="text-gray-700 font-medium mb-1">
+                  Max. Pers.
+                </Text>
                 <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3">
                   <Users size={18} color="#64748b" className="mr-2" />
                   <TextInput
                     className="flex-1 text-gray-900"
                     keyboardType="numeric"
                     value={form.max_capacity}
-                    onChangeText={(text) => setForm({ ...form, max_capacity: text })}
+                    onChangeText={(text) =>
+                      setForm({ ...form, max_capacity: text })
+                    }
                   />
                 </View>
               </View>
@@ -109,33 +138,43 @@ export default function CreateRoomScreen() {
 
             <View className="flex-row space-x-4">
               <View className="flex-1">
-                <Text className="text-gray-700 font-medium mb-1">Duración (min)</Text>
+                <Text className="text-gray-700 font-medium mb-1">
+                  Duración (min)
+                </Text>
                 <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3">
                   <Clock size={18} color="#64748b" className="mr-2" />
                   <TextInput
                     className="flex-1 text-gray-900"
                     keyboardType="numeric"
                     value={form.duration_minutes}
-                    onChangeText={(text) => setForm({ ...form, duration_minutes: text })}
+                    onChangeText={(text) =>
+                      setForm({ ...form, duration_minutes: text })
+                    }
                   />
                 </View>
               </View>
               <View className="flex-1">
-                <Text className="text-gray-700 font-medium mb-1">Precio Base (€)</Text>
+                <Text className="text-gray-700 font-medium mb-1">
+                  Precio Base (€)
+                </Text>
                 <View className="flex-row items-center bg-white border border-gray-200 rounded-xl px-4 py-3">
                   <Euro size={18} color="#64748b" className="mr-2" />
                   <TextInput
                     className="flex-1 text-gray-900"
                     keyboardType="numeric"
                     value={form.base_price}
-                    onChangeText={(text) => setForm({ ...form, base_price: text })}
+                    onChangeText={(text) =>
+                      setForm({ ...form, base_price: text })
+                    }
                   />
                 </View>
               </View>
             </View>
 
             <TouchableOpacity
-              className={`bg-blue-600 rounded-xl py-4 items-center mt-6 flex-row justify-center ${loading ? 'opacity-70' : ''}`}
+              className={`bg-blue-600 rounded-xl py-4 items-center mt-6 flex-row justify-center ${
+                loading ? "opacity-70" : ""
+              }`}
               onPress={handleCreate}
               disabled={loading}
             >

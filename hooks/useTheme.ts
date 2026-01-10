@@ -2,14 +2,14 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export type ThemeType = 
-  | "tropical" 
-  | "twilight" 
-  | "vista" 
-  | "mint" 
-  | "sunset" 
-  | "ocean" 
-  | "lavender" 
+export type ThemeType =
+  | "tropical"
+  | "twilight"
+  | "vista"
+  | "mint"
+  | "sunset"
+  | "ocean"
+  | "lavender"
   | "fire";
 
 interface ThemeState {

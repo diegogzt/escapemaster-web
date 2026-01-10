@@ -9,6 +9,10 @@
   --color-dark: #0d3d34;
   --color-light: #e8f5f3;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-twilight {
@@ -18,6 +22,10 @@
   --color-dark: #111827;
   --color-light: #fafbfc;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-tropical {
@@ -27,6 +35,10 @@
   --color-dark: #0d3d34;
   --color-light: #e8f5f3;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-vista {
@@ -36,6 +48,10 @@
   --color-dark: #2a0f08;
   --color-light: #fdfcf5;
   --color-background: #fdfcf5;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-mint {
@@ -45,6 +61,10 @@
   --color-dark: #163d39;
   --color-light: #f2fff9;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-sunset {
@@ -54,6 +74,10 @@
   --color-dark: #c73866;
   --color-light: #fff4e6;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-ocean {
@@ -63,6 +87,10 @@
   --color-dark: #003d47;
   --color-light: #ffddd2;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-lavender {
@@ -72,6 +100,10 @@
   --color-dark: #6b5b8e;
   --color-light: #f7f3fc;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }
 
 .theme-fire {
@@ -81,4 +113,8 @@
   --color-dark: #8b0000;
   --color-light: #fff8dc;
   --color-background: #ffffff;
+  --color-success: #16a34a;
+  --color-warning: #ca8a04;
+  --color-error: #dc2626;
+  --color-info: #2563eb;
 }

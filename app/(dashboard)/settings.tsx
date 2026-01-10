@@ -1,9 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, Alert, ScrollView, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { auth } from "../../services/api";
 import { useTheme, ThemeType } from "../../hooks/useTheme";
-import { LogOut, User, Bell, Shield, CircleHelp, Palette, Check, Building, Copy } from "lucide-react-native";
-import * as Clipboard from 'expo-clipboard';
+import {
+  LogOut,
+  User,
+  Bell,
+  Shield,
+  CircleHelp,
+  Palette,
+  Check,
+  Building,
+  Copy,
+} from "lucide-react-native";
+import * as Clipboard from "expo-clipboard";
 
 const THEMES: { id: ThemeType; name: string; color: string }[] = [
   { id: "tropical", name: "Tropical", color: "#1f6357" },
@@ -26,8 +43,11 @@ export default function SettingsScreen() {
       try {
         const userData = await auth.me();
         setUser(userData);
-      } catch (error) {
-        console.error("Error fetching user", error);
+      } catch (error: any) {
+        // Don't log 401 errors as they are handled by the API interceptor
+        if (error.response?.status !== 401) {
+          console.error("Error fetching user", error);
+        }
       } finally {
         setLoading(false);
       }
@@ -63,12 +83,16 @@ export default function SettingsScreen() {
           <View className="flex-row items-center">
             <Building size={20} color="#64748b" />
             <View className="ml-3">
-              <Text className="text-gray-900 font-medium">{user?.organization_name || "Sin organización"}</Text>
-              <Text className="text-gray-500 text-sm">Código: {user?.invitation_code || "N/A"}</Text>
+              <Text className="text-gray-900 font-medium">
+                {user?.organization_name || "Sin organización"}
+              </Text>
+              <Text className="text-gray-500 text-sm">
+                Código: {user?.invitation_code || "N/A"}
+              </Text>
             </View>
           </View>
           {user?.invitation_code && (
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => copyToClipboard(user.invitation_code)}
               className="bg-gray-100 p-2 rounded-lg"
             >
@@ -95,9 +119,11 @@ export default function SettingsScreen() {
       <View className="bg-white rounded-2xl border border-gray-100 p-4 mb-6">
         <View className="flex-row items-center mb-4">
           <Palette size={20} color="#64748b" />
-          <Text className="text-gray-900 font-medium ml-3">Tema de la aplicación</Text>
+          <Text className="text-gray-900 font-medium ml-3">
+            Tema de la aplicación
+          </Text>
         </View>
-        
+
         <View className="flex-row flex-wrap -mx-1">
           {THEMES.map((theme) => (
             <TouchableOpacity
@@ -105,19 +131,29 @@ export default function SettingsScreen() {
               onPress={() => setTheme(theme.id)}
               className={`w-1/2 p-1`}
             >
-              <View className={`flex-row items-center p-3 rounded-xl border ${
-                currentTheme === theme.id ? 'border-primary bg-light' : 'border-gray-100 bg-gray-50'
-              }`}>
-                <View 
-                  className="w-4 h-4 rounded-full mr-2" 
-                  style={{ backgroundColor: theme.color }} 
+              <View
+                className={`flex-row items-center p-3 rounded-xl border ${
+                  currentTheme === theme.id
+                    ? "border-primary bg-light"
+                    : "border-gray-100 bg-gray-50"
+                }`}
+              >
+                <View
+                  className="w-4 h-4 rounded-full mr-2"
+                  style={{ backgroundColor: theme.color }}
                 />
-                <Text className={`flex-1 text-sm ${
-                  currentTheme === theme.id ? 'text-primary font-bold' : 'text-gray-600'
-                }`}>
+                <Text
+                  className={`flex-1 text-sm ${
+                    currentTheme === theme.id
+                      ? "text-primary font-bold"
+                      : "text-gray-600"
+                  }`}
+                >
                   {theme.name}
                 </Text>
-                {currentTheme === theme.id && <Check size={16} color={theme.color} />}
+                {currentTheme === theme.id && (
+                  <Check size={16} color={theme.color} />
+                )}
               </View>
             </TouchableOpacity>
           ))}

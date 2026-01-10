@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { router } from "expo-router";
-import { Mail, ArrowLeft } from "lucide-react-native";
+import { Mail, ArrowLeft, KeyRound, Send } from "lucide-react-native";
 import { auth } from "../services/api";
+import { SEMANTIC_COLORS } from "../constants/Colors";
 
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState("");
@@ -46,56 +49,73 @@ export default function ForgotPasswordScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white p-6">
-      <TouchableOpacity
-        className="mt-10 mb-6 flex-row items-center"
-        onPress={() => router.back()}
-      >
-        <ArrowLeft size={20} color="#2563eb" />
-        <Text className="text-blue-600 ml-2 font-medium">Volver</Text>
-      </TouchableOpacity>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      className="flex-1 bg-white"
+    >
+      <View className="p-6 pt-12">
+        <TouchableOpacity
+          className="mb-8 flex-row items-center py-2"
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+        >
+          <ArrowLeft size={20} color={SEMANTIC_COLORS.primary} />
+          <Text className="text-primary ml-2 font-bold text-base">Volver</Text>
+        </TouchableOpacity>
 
-      <View className="mb-10">
-        <Text className="text-3xl font-bold text-gray-900">
-          Recuperar contraseña
-        </Text>
-        <Text className="text-gray-500 mt-2">
-          Introduce tu email y te enviaremos un código
-        </Text>
-      </View>
-
-      <View className="space-y-4">
-        <View>
-          <Text className="text-sm font-medium text-gray-700 mb-1">Email</Text>
-          <View className="flex-row items-center border border-gray-300 rounded-lg px-3 py-2">
-            <Mail size={20} color="#6B7280" />
-            <TextInput
-              className="flex-1 ml-2 text-gray-900"
-              placeholder="tu@email.com"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
+        <View className="mb-10 items-center">
+          <View className="w-16 h-16 bg-primary/10 rounded-2xl items-center justify-center mb-6">
+            <KeyRound size={32} color={SEMANTIC_COLORS.primary} />
           </View>
+          <Text className="text-3xl font-bold text-gray-900 tracking-tight">
+            Recuperar contraseña
+          </Text>
+          <Text className="text-gray-500 mt-2 text-center text-base">
+            Introduce tu email y te enviaremos un código para restablecer tu
+            acceso
+          </Text>
         </View>
 
-        <TouchableOpacity
-          className={`mt-6 py-3 rounded-lg items-center ${
-            loading ? "bg-blue-400" : "bg-blue-600"
-          }`}
-          onPress={handleReset}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator color="white" />
-          ) : (
-            <Text className="text-white font-bold text-lg">
-              Enviar instrucciones
+        <View className="space-y-5">
+          <View>
+            <Text className="text-sm font-semibold text-gray-700 mb-2 ml-1">
+              Email
             </Text>
-          )}
-        </TouchableOpacity>
+            <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4">
+              <Mail size={20} color={SEMANTIC_COLORS.gray[400]} />
+              <TextInput
+                className="flex-1 ml-3 text-gray-900 text-base"
+                placeholder="tu@email.com"
+                value={email}
+                onChangeText={setEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholderTextColor={SEMANTIC_COLORS.gray[400]}
+              />
+            </View>
+          </View>
+
+          <TouchableOpacity
+            className={`mt-8 py-4 rounded-2xl items-center flex-row justify-center shadow-sm ${
+              loading ? "bg-primary/70" : "bg-primary"
+            }`}
+            onPress={handleReset}
+            disabled={loading}
+            activeOpacity={0.8}
+          >
+            {loading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <>
+                <Text className="text-white font-bold text-lg mr-2">
+                  Enviar instrucciones
+                </Text>
+                <Send size={18} color="white" />
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

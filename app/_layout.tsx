@@ -66,6 +66,11 @@ function RootLayoutNav() {
       <View className={`flex-1 theme-${theme}`}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
+          <Stack.Screen name="login" />
+          <Stack.Screen name="register" />
+          <Stack.Screen name="forgot-password" />
+          <Stack.Screen name="reset-password" />
+          <Stack.Screen name="(dashboard)" />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
         </Stack>
       </View>

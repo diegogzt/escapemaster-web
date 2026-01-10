@@ -1,10 +1,9 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import { router } from "expo-router";
 
 const API_URL = "https://api.escapemaster.es";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
   headers: {
@@ -28,7 +27,13 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       await SecureStore.deleteItemAsync("token");
-      router.replace("/login");
+      // Delayed import to avoid navigation context issues during module initialization
+      try {
+        const { router } = await import("expo-router");
+        router.replace("/login");
+      } catch (e) {
+        console.warn("Navigation not available yet");
+      }
     }
     return Promise.reject(error);
   }
@@ -120,7 +125,15 @@ export const stats = {
     return response.data;
   },
   getRevenue: async (period: string = "month") => {
-    const response = await api.get("/dashboard/revenue", { params: { period } });
+    const response = await api.get("/dashboard/revenue", {
+      params: { period },
+    });
+    return response.data;
+  },
+  getBookingsChart: async (period: string = "month") => {
+    const response = await api.get("/dashboard/bookings-chart", {
+      params: { period },
+    });
     return response.data;
   },
 };

@@ -11,8 +11,15 @@ import {
   Platform,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { KeyRound, Lock, ArrowLeft } from "lucide-react-native";
+import {
+  KeyRound,
+  Lock,
+  ArrowLeft,
+  Mail,
+  CheckCircle2,
+} from "lucide-react-native";
 import { auth } from "../services/api";
+import { SEMANTIC_COLORS } from "../constants/Colors";
 
 export default function ResetPasswordScreen() {
   const { email: initialEmail } = useLocalSearchParams<{ email: string }>();
@@ -41,13 +48,12 @@ export default function ResetPasswordScreen() {
     setLoading(true);
     try {
       await auth.resetPassword(email, code, newPassword);
-      Alert.alert(
-        "Éxito",
-        "Tu contraseña ha sido actualizada correctamente.",
-        [{ text: "Ir al Login", onPress: () => router.replace("/login") }]
-      );
+      Alert.alert("Éxito", "Tu contraseña ha sido actualizada correctamente.", [
+        { text: "Ir al Login", onPress: () => router.replace("/login") },
+      ]);
     } catch (error: any) {
-      const message = error.response?.data?.detail || "Error al restablecer la contraseña";
+      const message =
+        error.response?.data?.detail || "Error al restablecer la contraseña";
       Alert.alert("Error", message);
     } finally {
       setLoading(false);
@@ -55,107 +61,131 @@ export default function ResetPasswordScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1 bg-white"
     >
-      <ScrollView 
-        className="flex-1" 
+      <ScrollView
+        className="flex-1"
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ padding: 24 }}
+        contentContainerStyle={{ paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
       >
-        <TouchableOpacity
-          className="mt-10 mb-6 flex-row items-center"
-          onPress={() => router.back()}
-        >
-          <ArrowLeft size={20} color="#2563eb" />
-          <Text className="text-blue-600 ml-2 font-medium">Volver</Text>
-        </TouchableOpacity>
-
-        <View className="mb-10">
-          <Text className="text-3xl font-bold text-gray-900">
-            Nueva contraseña
-          </Text>
-          <Text className="text-gray-500 mt-2">
-            Introduce el código que recibiste y tu nueva contraseña
-          </Text>
-        </View>
-
-        <View>
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-1">Email</Text>
-            <TextInput
-              className="border border-gray-300 rounded-lg px-3 py-2 text-gray-900 bg-gray-50"
-              value={email}
-              editable={false}
-            />
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-1">Código de verificación</Text>
-            <View className="flex-row items-center border border-gray-300 rounded-lg px-3 py-2">
-              <KeyRound size={20} color="#6B7280" />
-              <TextInput
-                className="flex-1 ml-2 text-gray-900"
-                placeholder="123456"
-                value={code}
-                onChangeText={setCode}
-                keyboardType="number-pad"
-                maxLength={6}
-                textContentType="oneTimeCode"
-              />
-            </View>
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-1">Nueva contraseña</Text>
-            <View className="flex-row items-center border border-gray-300 rounded-lg px-3 py-2">
-              <Lock size={20} color="#6B7280" />
-              <TextInput
-                className="flex-1 ml-2 text-gray-900"
-                placeholder="••••••••"
-                value={newPassword}
-                onChangeText={setNewPassword}
-                secureTextEntry
-                textContentType="newPassword"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-          </View>
-
-          <View className="mb-4">
-            <Text className="text-sm font-medium text-gray-700 mb-1">Confirmar contraseña</Text>
-            <View className="flex-row items-center border border-gray-300 rounded-lg px-3 py-2">
-              <Lock size={20} color="#6B7280" />
-              <TextInput
-                className="flex-1 ml-2 text-gray-900"
-                placeholder="••••••••"
-                value={confirmPassword}
-                onChangeText={setConfirmPassword}
-                secureTextEntry
-                textContentType="newPassword"
-                autoCapitalize="none"
-                autoCorrect={false}
-              />
-            </View>
-          </View>
-
+        <View className="p-6 pt-12">
           <TouchableOpacity
-            className={`mt-4 py-3 rounded-lg items-center ${
-              loading ? "bg-blue-400" : "bg-blue-600"
-            }`}
-            onPress={handleReset}
-            disabled={loading}
+            className="mb-8 flex-row items-center py-2"
+            onPress={() => router.back()}
+            activeOpacity={0.7}
           >
-            {loading ? (
-              <ActivityIndicator color="white" />
-            ) : (
-              <Text className="text-white font-bold text-lg">
-                Actualizar contraseña
-              </Text>
-            )}
+            <ArrowLeft size={20} color={SEMANTIC_COLORS.primary} />
+            <Text className="text-primary ml-2 font-bold text-base">
+              Volver
+            </Text>
           </TouchableOpacity>
+
+          <View className="mb-10 items-center">
+            <View className="w-16 h-16 bg-primary/10 rounded-2xl items-center justify-center mb-6">
+              <CheckCircle2 size={32} color={SEMANTIC_COLORS.primary} />
+            </View>
+            <Text className="text-3xl font-bold text-gray-900 tracking-tight">
+              Nueva contraseña
+            </Text>
+            <Text className="text-gray-500 mt-2 text-center text-base">
+              Introduce el código que recibiste y tu nueva contraseña
+            </Text>
+          </View>
+
+          <View className="space-y-5">
+            <View>
+              <Text className="text-sm font-semibold text-gray-700 mb-2 ml-1">
+                Email
+              </Text>
+              <View className="flex-row items-center bg-gray-100 border border-gray-200 rounded-2xl px-4 py-4 opacity-60">
+                <Mail size={20} color={SEMANTIC_COLORS.gray[400]} />
+                <TextInput
+                  className="flex-1 ml-3 text-gray-900 text-base"
+                  value={email}
+                  editable={false}
+                />
+              </View>
+            </View>
+
+            <View className="mt-4">
+              <Text className="text-sm font-semibold text-gray-700 mb-2 ml-1">
+                Código de verificación
+              </Text>
+              <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4">
+                <KeyRound size={20} color={SEMANTIC_COLORS.gray[400]} />
+                <TextInput
+                  className="flex-1 ml-3 text-gray-900 text-base"
+                  placeholder="123456"
+                  value={code}
+                  onChangeText={setCode}
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  textContentType="oneTimeCode"
+                  placeholderTextColor={SEMANTIC_COLORS.gray[400]}
+                />
+              </View>
+            </View>
+
+            <View className="mt-4">
+              <Text className="text-sm font-semibold text-gray-700 mb-2 ml-1">
+                Nueva contraseña
+              </Text>
+              <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4">
+                <Lock size={20} color={SEMANTIC_COLORS.gray[400]} />
+                <TextInput
+                  className="flex-1 ml-3 text-gray-900 text-base"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  secureTextEntry
+                  textContentType="newPassword"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholderTextColor={SEMANTIC_COLORS.gray[400]}
+                />
+              </View>
+            </View>
+
+            <View className="mt-4">
+              <Text className="text-sm font-semibold text-gray-700 mb-2 ml-1">
+                Confirmar contraseña
+              </Text>
+              <View className="flex-row items-center bg-gray-50 border border-gray-200 rounded-2xl px-4 py-4">
+                <Lock size={20} color={SEMANTIC_COLORS.gray[400]} />
+                <TextInput
+                  className="flex-1 ml-3 text-gray-900 text-base"
+                  placeholder="••••••••"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry
+                  textContentType="newPassword"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  placeholderTextColor={SEMANTIC_COLORS.gray[400]}
+                />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              className={`mt-8 py-4 rounded-2xl items-center flex-row justify-center shadow-sm ${
+                loading ? "bg-primary/70" : "bg-primary"
+              }`}
+              onPress={handleReset}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator color="white" />
+              ) : (
+                <Text className="text-white font-bold text-lg">
+                  Actualizar contraseña
+                </Text>
+              )}
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>

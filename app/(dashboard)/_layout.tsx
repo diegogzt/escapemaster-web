@@ -7,13 +7,18 @@ import {
   Settings,
   DoorOpen,
 } from "lucide-react-native";
+import { useTheme } from "../../hooks/useTheme";
+import { THEME_COLORS, SEMANTIC_COLORS } from "../../constants/Colors";
 
 export default function DashboardLayout() {
+  const { theme } = useTheme();
+  const activeColor = THEME_COLORS[theme] || THEME_COLORS.tropical;
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#2563eb",
-        tabBarInactiveTintColor: "#64748b",
+        tabBarActiveTintColor: activeColor,
+        tabBarInactiveTintColor: SEMANTIC_COLORS.gray[500],
         headerShown: true,
       }}
     >
