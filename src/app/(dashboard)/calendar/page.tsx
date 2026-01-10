@@ -29,20 +29,14 @@ interface Session {
   color: string;
 }
 
-// Colores para rooms (se asignan dinámicamente)
-const ROOM_COLORS = [
-  "bg-blue-100 text-blue-700 border-blue-200",
-  "bg-green-100 text-green-700 border-green-200",
-  "bg-purple-100 text-purple-700 border-purple-200",
-  "bg-pink-100 text-pink-700 border-pink-200",
-  "bg-orange-100 text-orange-700 border-orange-200",
-  "bg-teal-100 text-teal-700 border-teal-200",
-];
-
-const STATUS_COLORS: Record<string, string> = {
-  confirmed: "bg-green-100 text-green-700 border-green-200",
-  pending: "bg-yellow-100 text-yellow-700 border-yellow-200",
-  cancelled: "bg-red-100 text-red-700 border-red-200",
+// Utility to check if color is light or dark for text contrast
+const getContrastColor = (hexcolor: string) => {
+  if (!hexcolor || hexcolor[0] !== '#') return '#000000';
+  const r = parseInt(hexcolor.substr(1, 2), 16);
+  const g = parseInt(hexcolor.substr(3, 2), 16);
+  const b = parseInt(hexcolor.substr(5, 2), 16);
+  const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+  return yiq >= 128 ? '#000000' : '#ffffff';
 };
 
 export default function CalendarPage() {
@@ -81,14 +75,14 @@ export default function CalendarPage() {
           roomsApi.list(),
         ]);
         
-        // Create room color mapping
-        const colorMap: Record<string, string> = {};
+        // Create room color map
+        const roomsMap: Record<string, any> = {};
         const rooms = roomsData?.rooms || roomsData || [];
-        (rooms).forEach((room: any, index: number) => {
-          colorMap[room.id] = ROOM_COLORS[index % ROOM_COLORS.length];
-          colorMap[room.name] = ROOM_COLORS[index % ROOM_COLORS.length];
+        (rooms).forEach((room: any) => {
+          roomsMap[room.id] = room;
+          // Fallback map by name if needed
+          roomsMap[room.name] = room;
         });
-        setRoomColorMap(colorMap);
         
         // Transform bookings to sessions
         // Handle object vs array response
@@ -102,6 +96,18 @@ export default function CalendarPage() {
           // Parse start_time and end_time from API (ISO format)
           const start = b.start_time ? new Date(b.start_time) : new Date();
           const end = b.end_time ? new Date(b.end_time) : new Date(start.getTime() + 90 * 60000); // Default 90 min
+
+          // Determine color
+          let color = b.room_color || "#3B82F6"; // Use backend provided room color or default
+          
+          // Fallback or Status override logic (if needed in future, but prioritizing room_color now)
+          if (b.room_id && roomsMap[b.room_id]) {
+            const room = roomsMap[b.room_id];
+             // Only override if there is a SPECIFIC status color configured that overrides the base room color
+             if (room.status_colors && room.status_colors[status]) {
+               color = room.status_colors[status];
+             }
+          }
           
           return {
             id: b.id,
@@ -111,7 +117,7 @@ export default function CalendarPage() {
             end,
             room: roomName,
             status,
-            color: STATUS_COLORS[status] || colorMap[roomName] || ROOM_COLORS[0],
+            color,
           };
         });
         
@@ -312,7 +318,7 @@ export default function CalendarPage() {
       days.push(
         <div
           key={day}
-          className={`h-32 border border-gray-100 p-2 overflow-y-auto transition-colors hover:bg-gray-50 ${
+          className={`h-32 border border-gray-100 p-2 overflow-y-auto transition-colors hover:bg-gray-50 custom-scrollbar ${
             isToday ? "bg-blue-50/30" : "bg-white"
           }`}
         >
@@ -334,7 +340,12 @@ export default function CalendarPage() {
             {daySessions.map((session) => (
               <div
                 key={session.id}
-                className={`text-xs p-1 rounded truncate border ${session.color}`}
+                className="text-xs p-1 rounded truncate border shadow-sm"
+                style={{ 
+                  backgroundColor: session.color, 
+                  borderColor: session.color,
+                  color: getContrastColor(session.color)
+                }}
               >
                 {session.start.getHours()}:
                 {session.start.getMinutes().toString().padStart(2, "0")}{" "}
@@ -395,7 +406,12 @@ export default function CalendarPage() {
                     {daySessions.map((session) => (
                       <div
                         key={session.id}
-                        className={`text-xs rounded-lg border p-2 ${session.color}`}
+                        className="text-xs rounded-lg border p-2 shadow-sm"
+                        style={{ 
+                          backgroundColor: session.color, 
+                          borderColor: session.color,
+                          color: getContrastColor(session.color)
+                        }}
                       >
                         <div className="flex items-center justify-between gap-2">
                           <div className="font-bold truncate">
@@ -541,7 +557,12 @@ export default function CalendarPage() {
                 .map((session) => (
                   <div
                     key={session.id}
-                    className={`rounded-xl p-4 border shadow-sm ${session.color}`}
+                    className="rounded-xl p-4 border shadow-sm"
+                    style={{ 
+                          backgroundColor: session.color, 
+                          borderColor: session.color,
+                          color: getContrastColor(session.color)
+                    }}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -560,7 +581,7 @@ export default function CalendarPage() {
                           <span className="truncate">{session.customer}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 bg-white/50 rounded">
+                      <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 bg-white/50 rounded text-black">
                         <MapPin size={12} />
                         {session.room}
                       </div>

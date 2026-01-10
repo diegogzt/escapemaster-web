@@ -16,15 +16,15 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, options, children, className, ...props }, ref) => (
     <div className="mb-6">
       {label && (
-        <label className="block mb-2 font-semibold text-dark">{label}</label>
+        <label className="block mb-2 font-semibold text-dark dark:text-gray-200">{label}</label>
       )}
       <select
         ref={ref}
         className={cn(
-          "w-full px-3 py-2 border-2 rounded-lg text-base transition-colors bg-white text-dark cursor-pointer",
+          "w-full px-3 py-2 border-2 rounded-lg text-base transition-colors bg-white dark:bg-slate-950 text-dark dark:text-white cursor-pointer",
           error
             ? "border-red-500"
-            : "border-beige focus:border-primary focus:outline-none",
+            : "border-beige dark:border-slate-800 focus:border-primary focus:outline-none",
           className
         )}
         {...props}

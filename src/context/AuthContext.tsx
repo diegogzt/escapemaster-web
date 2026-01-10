@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [router]);
 
   const updateUser = useCallback(async (data: any) => {
-    setUser(data);
+    setUser((prev: any) => ({ ...prev, ...data }));
   }, []);
 
   useEffect(() => {

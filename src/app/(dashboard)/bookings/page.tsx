@@ -34,6 +34,7 @@ interface Booking {
   total_price: number;
   paid_amount: number;
   game_master: string;
+  room_color: string;
 }
 
 interface Room {
@@ -147,6 +148,7 @@ export default function BookingsPage() {
           total_price: Number(b.total_price) || 0,
           paid_amount: Number(b.total_price) - Number(b.remaining_balance) || 0,
           game_master: b.assigned_users?.[0]?.full_name || "Sin asignar",
+          room_color: b.room_color || "#3B82F6",
         };
       });
       
@@ -413,7 +415,11 @@ export default function BookingsPage() {
             Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />)
           ) : bookings.length > 0 ? (
             bookings.map((booking) => (
-              <Card key={booking.id} className="p-4 border-beige/50 hover:shadow-md transition-shadow">
+              <Card 
+                key={booking.id} 
+                className="p-4 border-beige/50 hover:shadow-md transition-shadow"
+                style={{ borderLeft: `4px solid ${booking.room_color}` }}
+              >
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="flex items-center font-bold text-dark mb-1">
@@ -517,7 +523,13 @@ export default function BookingsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 font-medium text-dark">
-                      {booking.room_name}
+                      <div className="flex items-center">
+                        <span 
+                          className="w-3 h-3 rounded-full mr-2" 
+                          style={{ backgroundColor: booking.room_color }}
+                        />
+                        {booking.room_name}
+                      </div>
                     </td>
                     <td className="px-6 py-4">
                       <div className="font-medium text-dark">

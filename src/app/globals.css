@@ -58,10 +58,15 @@
   --color-dark: #111827;
   --color-light: #fafbfc;
   --color-beige: #e5e7eb;
-  --color-background: #ffffff;
+  --theme-background: #ffffff;
   --color-foreground: #111827;
   --color-muted: #f3f4f6;
   --color-muted-foreground: #6b7280;
+}
+
+.dark .theme-twilight {
+  --theme-background: #0f172a;
+  --color-foreground: #f8fafc;
 }
 
 .theme-tropical {
@@ -71,10 +76,15 @@
   --color-dark: #0d3d34;
   --color-light: #e8f5f3;
   --color-beige: #d4c5a0;
-  --color-background: #ffffff;
+  --theme-background: #f0f9f8;
   --color-foreground: #0d3d34;
   --color-muted: #e8f5f3;
   --color-muted-foreground: #1f6357;
+}
+
+.dark .theme-tropical {
+  --theme-background: #051a17;
+  --color-foreground: #4db8a8;
 }
 
 .theme-vista {
@@ -84,10 +94,15 @@
   --color-dark: #2a0f08;
   --color-light: #fdfcf5;
   --color-beige: #f4f1e0;
-  --color-background: #fdfcf5;
+  --theme-background: #fdfcf5;
   --color-foreground: #2a0f08;
   --color-muted: #f4f1e0;
   --color-muted-foreground: #3f170e;
+}
+
+.dark .theme-vista {
+  --theme-background: #2a0f08;
+  --color-foreground: #fdfcf5;
 }
 
 .theme-mint {
@@ -97,6 +112,13 @@
   --color-dark: #163d39;
   --color-light: #f2fff9;
   --color-beige: #e8f5f2;
+  --theme-background: #f0faf7;
+  --color-foreground: #0d332f;
+}
+
+.dark .theme-mint {
+  --theme-background: #031412;
+  --color-foreground: #5ddcc3;
 }
 
 .theme-sunset {
@@ -106,6 +128,13 @@
   --color-dark: #c73866;
   --color-light: #fff4e6;
   --color-beige: #ffe4e1;
+  --theme-background: #fff8f0;
+  --color-foreground: #4a1a0b;
+}
+
+.dark .theme-sunset {
+  --theme-background: #1a0a05;
+  --color-foreground: #ffa07a;
 }
 
 .theme-ocean {
@@ -115,6 +144,28 @@
   --color-dark: #003d47;
   --color-light: #ffddd2;
   --color-beige: #e29578;
+  --theme-background: #f0f8f9;
+  --color-foreground: #003d42;
+}
+
+.dark .theme-ocean {
+  --theme-background: #001517;
+  --color-foreground: #83c5be;
+}
+
+.theme-nature {
+  --color-primary: #2d6a4f;
+  --color-secondary: #52b788;
+  --color-accent: #f0fdf4;
+  --color-dark: #112d21;
+  --color-light: #f0f9f1;
+  --theme-background: #f0f9f1;
+  --color-foreground: #112d21;
+}
+
+.dark .theme-nature {
+  --theme-background: #05140e;
+  --color-foreground: #52b788;
 }
 
 .theme-lavender {
@@ -124,6 +175,13 @@
   --color-dark: #6b5b8e;
   --color-light: #f7f3fc;
   --color-beige: #e5d9f2;
+  --theme-background: #f7f3fc;
+  --color-foreground: #6b5b8e;
+}
+
+.dark .theme-lavender {
+  --theme-background: #1a1625;
+  --color-foreground: #c8b6e2;
 }
 
 .theme-fire {
@@ -133,11 +191,18 @@
   --color-dark: #8b0000;
   --color-light: #fff8dc;
   --color-beige: #ffe4b5;
+  --theme-background: #fff8eb;
+  --color-foreground: #8b0000;
+}
+
+.dark .theme-fire {
+  --theme-background: #1a0a05;
+  --color-foreground: #ffd700;
 }
 
 @layer base {
   body {
-    @apply bg-white text-[var(--color-dark)] leading-relaxed;
+    @apply bg-[var(--color-background)] text-[var(--color-foreground)] leading-relaxed transition-colors duration-300;
   }
 }
 
@@ -158,4 +223,23 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-accent);
+}
+
+/* Custom thin scrollbar for specific areas like Calendar cells */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px !important;
+  height: 4px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1 !important; /* Light gray (slate-300) */
+  border-radius: 4px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8 !important; /* slightly darker on hover */
 }
