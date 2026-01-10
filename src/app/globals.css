@@ -7,6 +7,8 @@
   --color-dark: var(--color-dark);
   --color-light: var(--color-light);
   --color-beige: var(--color-beige);
+  --color-background: var(--color-background);
+  --color-foreground: var(--color-foreground);
 
   --color-success: #f6e6c4;
   --color-warning: #ffe5cc;

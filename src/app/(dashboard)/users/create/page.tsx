@@ -6,7 +6,15 @@ import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import api, { users, roles } from "@/services/api";
-import { Shield, Mail, User, Lock, ArrowLeft, UserPlus, AlertCircle } from "lucide-react";
+import {
+  Shield,
+  Mail,
+  User,
+  Lock,
+  ArrowLeft,
+  UserPlus,
+  AlertCircle,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function CreateUserPage() {
@@ -22,16 +30,16 @@ export default function CreateUserPage() {
         setLoadingRoles(true);
         setError("");
         const data = await roles.list();
-        
+
         // Handle both object {roles: []} and array [] responses
         const list = data.roles || (Array.isArray(data) ? data : []);
         setRolesList(list);
-        
+
         if (list.length === 0) {
-          console.warn('No roles found in API response');
+          console.warn("No roles found in API response");
         }
       } catch (err: any) {
-        console.error('Error fetching roles:', err);
+        console.error("Error fetching roles:", err);
         const detail = err.response?.data?.detail || err.message;
         setError(`Error al cargar roles: ${detail}`);
       } finally {
@@ -56,7 +64,8 @@ export default function CreateUserPage() {
       is_active: formData.get("is_active") === "true",
       target_hours: parseFloat(formData.get("target_hours") as string) || 0,
       hourly_rate: parseFloat(formData.get("hourly_rate") as string) || 0,
-      vacation_days_total: parseInt(formData.get("vacation_days_total") as string) || 0,
+      vacation_days_total:
+        parseInt(formData.get("vacation_days_total") as string) || 0,
     };
 
     console.log("Sending user data:", userData);
@@ -66,14 +75,18 @@ export default function CreateUserPage() {
       router.push("/users");
     } catch (err: any) {
       console.error("Error creating user:", err);
-      
+
       if (err.response?.data?.detail) {
         const detail = err.response.data.detail;
         if (Array.isArray(detail)) {
-          const errorMessages = detail.map((e: any) => `${e.loc.join('.')}: ${e.msg}`).join(', ');
+          const errorMessages = detail
+            .map((e: any) => `${e.loc.join(".")}: ${e.msg}`)
+            .join(", ");
           setError(errorMessages);
         } else {
-          setError(typeof detail === 'string' ? detail : "Error al crear el usuario");
+          setError(
+            typeof detail === "string" ? detail : "Error al crear el usuario"
+          );
         }
       } else {
         setError("Error al crear el usuario. Por favor, inténtalo de nuevo.");
@@ -259,7 +272,11 @@ export default function CreateUserPage() {
                     <label className="block text-sm font-bold text-gray-700">
                       Rol del Sistema
                     </label>
-                    {loadingRoles && <span className="text-[10px] text-primary animate-pulse font-bold uppercase tracking-widest">Cargando...</span>}
+                    {loadingRoles && (
+                      <span className="text-[10px] text-primary animate-pulse font-bold uppercase tracking-widest">
+                        Cargando...
+                      </span>
+                    )}
                   </div>
                   <div className="relative">
                     <Shield
@@ -273,7 +290,9 @@ export default function CreateUserPage() {
                       disabled={loadingRoles}
                     >
                       <option value="">
-                        {loadingRoles ? "Cargando roles..." : "Selecciona un rol"}
+                        {loadingRoles
+                          ? "Cargando roles..."
+                          : "Selecciona un rol"}
                       </option>
                       {rolesList.map((role) => (
                         <option key={role.id} value={role.id}>
@@ -287,12 +306,16 @@ export default function CreateUserPage() {
                       </svg>
                     </div>
                   </div>
-                  
+
                   {rolesList.length === 0 && !loadingRoles && (
                     <div className="p-4 bg-red-50 border border-red-100 rounded-xl flex items-start">
-                      <AlertCircle size={16} className="text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                      <AlertCircle
+                        size={16}
+                        className="text-red-500 mr-2 mt-0.5 flex-shrink-0"
+                      />
                       <p className="text-xs text-red-600 font-medium">
-                        No se encontraron roles disponibles. Verifica tus permisos o contacta a soporte.
+                        No se encontraron roles disponibles. Verifica tus
+                        permisos o contacta a soporte.
                       </p>
                     </div>
                   )}
@@ -306,22 +329,33 @@ export default function CreateUserPage() {
                   <div className="space-y-4">
                     <div>
                       <p className="text-xs font-bold text-dark">Admin</p>
-                      <p className="text-[11px] text-dark/60">Acceso total a configuración, finanzas y usuarios.</p>
+                      <p className="text-[11px] text-dark/60">
+                        Acceso total a configuración, finanzas y usuarios.
+                      </p>
                     </div>
                     <div>
                       <p className="text-xs font-bold text-dark">Manager</p>
-                      <p className="text-[11px] text-dark/60">Gestión de salas, reservas y reportes básicos.</p>
+                      <p className="text-[11px] text-dark/60">
+                        Gestión de salas, reservas y reportes básicos.
+                      </p>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-dark">Staff / Recepción</p>
-                      <p className="text-[11px] text-dark/60">Gestión de reservas diarias y check-in de clientes.</p>
+                      <p className="text-xs font-bold text-dark">
+                        Staff / Recepción
+                      </p>
+                      <p className="text-[11px] text-dark/60">
+                        Gestión de reservas diarias y check-in de clientes.
+                      </p>
                     </div>
                   </div>
                 </div>
 
                 {error && (
                   <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-xl text-red-700 text-sm flex items-start shadow-sm">
-                    <AlertCircle size={20} className="mr-3 mt-0.5 flex-shrink-0" />
+                    <AlertCircle
+                      size={20}
+                      className="mr-3 mt-0.5 flex-shrink-0"
+                    />
                     <div>
                       <p className="font-bold">Ha ocurrido un error</p>
                       <p className="opacity-90">{error}</p>

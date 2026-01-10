@@ -1,56 +1,70 @@
+import { useEffect, useState } from "react";
 import { Clock, User } from "lucide-react";
 import { WidgetConfigOptions } from "../types";
+import { dashboard } from "@/services/api";
 
 interface UpcomingSessionsProps extends WidgetConfigOptions {}
+
+interface Session {
+  id: string;
+  room_name: string;
+  customer_name: string;
+  start_time: string;
+  status: string;
+}
 
 export function UpcomingSessions({
   limit = 5,
   showPastSessions = false,
 }: UpcomingSessionsProps) {
-  const allSessions = [
-    {
-      id: 1,
-      room: "La Cripta del Faraón",
-      customer: "Ana García",
-      time: "14:00 - 15:00",
-      status: "Confirmada",
-      statusColor: "bg-primary/10 text-primary",
-    },
-    {
-      id: 2,
-      room: "Misión Espacial",
-      customer: "Carlos Ruiz",
-      time: "15:30 - 16:30",
-      status: "Pendiente",
-      statusColor: "bg-gray-100 text-gray-600",
-    },
-    {
-      id: 3,
-      room: "El Laboratorio Loco",
-      customer: "Grupo Empresa Tech",
-      time: "17:00 - 18:30",
-      status: "Confirmada",
-      statusColor: "bg-primary/10 text-primary",
-    },
-    {
-      id: 4,
-      room: "La Cripta del Faraón",
-      customer: "Familia López",
-      time: "19:00 - 20:00",
-      status: "Confirmada",
-      statusColor: "bg-primary/10 text-primary",
-    },
-    {
-      id: 5,
-      room: "Bunker Secreto",
-      customer: "Team Building Co.",
-      time: "20:30 - 22:00",
-      status: "Confirmada",
-      statusColor: "bg-primary/10 text-primary",
-    },
-  ];
+  const [sessions, setSessions] = useState<Session[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const sessions = allSessions.slice(0, limit);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const summary = await dashboard.getSummary();
+        setSessions(summary.upcoming_bookings || []);
+      } catch (error) {
+        console.error("Failed to fetch summary", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "confirmed": return "Confirmada";
+      case "pending": return "Pendiente";
+      case "cancelled": return "Cancelada";
+      case "completed": return "Completada";
+      default: return status;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "confirmed": return "bg-primary/10 text-primary";
+      case "pending": return "bg-yellow-100 text-yellow-800";
+      case "cancelled": return "bg-red-100 text-red-800";
+      case "completed": return "bg-gray-100 text-gray-800";
+      default: return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const formatTime = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      const end = new Date(date.getTime() + 60 * 60 * 1000); // Assume 1 hour
+      return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')} - ${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}`;
+    } catch (e) {
+      return isoString;
+    }
+  };
+
+  const items = sessions.slice(0, limit);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-full flex flex-col overflow-hidden">
@@ -58,11 +72,26 @@ export function UpcomingSessions({
         <h3 className="text-sm font-semibold text-gray-900">
           Próximas Sesiones
         </h3>
-        <p className="text-xs text-gray-500">Sesiones programadas para hoy</p>
+        <p className="text-xs text-gray-500">Sesiones programadas</p>
       </div>
       <div className="flex-1 p-4 overflow-auto min-h-0">
+        {loading ? (
+             <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex gap-3 animate-pulse">
+                  <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+        ) : items.length === 0 ? (
+          <div className="text-center text-gray-500 py-8 text-sm">No hay sesiones próximas.</div>
+        ) : (
         <div className="space-y-4">
-          {sessions.map((session) => (
+          {items.map((session) => (
             <div
               key={session.id}
               className="flex items-start justify-between group"
@@ -72,27 +101,28 @@ export function UpcomingSessions({
                   <Clock size={16} />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="font-medium text-gray-900 text-sm truncate">{session.room}</h4>
+                  <h4 className="font-medium text-gray-900 text-sm truncate">{session.room_name}</h4>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1 text-xs text-gray-500">
                     <span className="flex items-center gap-1 truncate">
                       <User size={12} className="flex-shrink-0" />
-                      {session.customer}
+                      {session.customer_name}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock size={12} className="flex-shrink-0" />
-                      {session.time}
+                      {formatTime(session.start_time)}
                     </span>
                   </div>
                 </div>
               </div>
               <span
-                className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${session.statusColor}`}
+                className={`px-2 py-0.5 rounded-full text-xs font-medium flex-shrink-0 ${getStatusColor(session.status)}`}
               >
-                {session.status}
+                {getStatusLabel(session.status)}
               </span>
             </div>
           ))}
         </div>
+        )}
       </div>
       <div className="p-4 border-t border-gray-100 flex-shrink-0">
         <button className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-gray-300 rounded-lg hover:bg-gray-50">

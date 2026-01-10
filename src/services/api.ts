@@ -114,124 +114,58 @@ export const orgs = {
 };
 
 export const dashboard = {
-  getStats: async () => {
+  getStats: async (period: string = "month") => {
     try {
-      const response = await api.get("/dashboard/stats");
+      const response = await api.get("/dashboard/stats", { params: { period } });
       return response.data;
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
-      // Return default stats structure to prevent UI crash
-      return {
-        total_revenue: 0,
-        total_bookings: 0,
-        avg_players_per_booking: 0,
-        occupancy_rate: 0,
-        top_rooms: [],
-      };
+      throw error; // Propagate error to let UI handle it, instead of returning incomplete data
     }
   },
-};
-
-export const rooms = {
-  list: async () => {
+  getSummary: async () => {
     try {
-      const response = await api.get("/rooms");
-      // API returns { rooms: [...], total, page, ... } - extract rooms array
-      return response.data?.rooms || response.data || [];
-    } catch (error) {
-      console.error("Error fetching rooms:", error);
-      return [];
-    }
-  },
-  create: async (data: any) => {
-    const response = await api.post("/rooms", data);
-    return response.data;
-  },
-  update: async (id: string, data: any) => {
-    const response = await api.put(`/rooms/${id}`, data);
-    return response.data;
-  },
-  delete: async (id: string) => {
-    const response = await api.delete(`/rooms/${id}`);
-    return response.data;
-  },
-};
-
-export const roles = {
-  list: async (params?: any) => {
-    try {
-      const response = await api.get("/roles", { params });
+      const response = await api.get("/dashboard/summary");
       return response.data;
     } catch (error) {
-      console.error("Error fetching roles:", error);
-      return { roles: [], total: 0 };
+       console.error("Error fetching dashboard summary:", error);
+       throw error;
     }
   },
-  get: async (id: string) => {
-    const response = await api.get(`/roles/${id}`);
-    return response.data;
-  },
-  create: async (data: any) => {
-    const response = await api.post("/roles", data);
-    return response.data;
-  },
-  update: async (id: string, data: any) => {
-    const response = await api.patch(`/roles/${id}`, data);
-    return response.data;
-  },
-  delete: async (id: string) => {
-    const response = await api.delete(`/roles/${id}`);
-    return response.data;
-  },
-  listPermissions: async (category?: string) => {
-    const response = await api.get("/roles/permissions", {
-      params: { category },
-    });
-    return response.data;
-  },
-};
-
-export const users = {
-  list: async (params?: any) => {
+  getRevenue: async (period: string = "month") => {
     try {
-      const response = await api.get("/users", { params });
+      const response = await api.get("/dashboard/revenue", { params: { period } });
       return response.data;
     } catch (error) {
-      console.error("Error fetching users:", error);
-      return { users: [], total: 0 };
+      console.error("Error fetching revenue data:", error);
+      throw error;
     }
   },
-  get: async (id: string) => {
-    const response = await api.get(`/users/${id}`);
-    return response.data;
-  },
-  create: async (data: any) => {
-    const response = await api.post("/users", data);
-    return response.data;
-  },
-  update: async (id: string, data: any) => {
-    const response = await api.put(`/users/${id}`, data);
-    return response.data;
-  },
-  delete: async (id: string) => {
-    const response = await api.delete(`/users/${id}`);
-    return response.data;
-  },
-  changePassword: async (id: string, data: any) => {
-    const response = await api.put(`/users/${id}/password`, data);
-    return response.data;
-  },
+  getBookingsChart: async (period: string = "month") => {
+     try {
+      const response = await api.get("/dashboard/bookings-chart", { params: { period } });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching bookings chart:", error);
+      throw error;
+    }
+  }
 };
 
 export const bookings = {
-  list: async () => {
+  list: async (params?: any) => {
     try {
-      const response = await api.get("/bookings");
+      const response = await api.get("/bookings", { params });
       // API returns { bookings: [...], total, page, ... } - extract bookings array
+      // If we need the full envelope, we should return response.data 
+      // But preserving compat with existing callers who expect array
+      
+      // However, if the caller needs pagination metadata, this current implementation hides it.
+      // For now, let's keep the array return but fix the error swallow.
       return response.data?.bookings || response.data || [];
     } catch (error) {
       console.error("Error fetching bookings:", error);
-      return [];
+      throw error; // Don't swallow errors!
     }
   },
   create: async (data: any) => {

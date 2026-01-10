@@ -11,19 +11,14 @@ import {
 } from "recharts";
 import { PieChart as PieChartIcon } from "lucide-react";
 import { WidgetConfigOptions } from "../types";
-
-const data = [
-  { name: "La Mazmorra", value: 400 },
-  { name: "El Laboratorio", value: 300 },
-  { name: "La Mansión", value: 300 },
-  { name: "Bunker", value: 200 },
-];
+import { dashboard } from "@/services/api";
 
 const COLORS = [
   "var(--color-primary)",
   "var(--color-secondary)",
   "#F59E0B",
   "#EF4444",
+  "#10B981",
 ];
 
 interface OccupancyPieChartWidgetProps extends WidgetConfigOptions {}
@@ -33,6 +28,8 @@ export function OccupancyPieChartWidget({
 }: OccupancyPieChartWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 200, height: 200 });
+  const [data, setData] = useState<{ name: string; value: number }[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -43,7 +40,7 @@ export function OccupancyPieChartWidget({
     };
 
     updateDimensions();
-    
+
     // Use ResizeObserver for responsive updates
     const resizeObserver = new ResizeObserver(updateDimensions);
     if (containerRef.current) {
@@ -53,8 +50,31 @@ export function OccupancyPieChartWidget({
     return () => resizeObserver.disconnect();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const stats = await dashboard.getStats("month"); // Default to month for occupancy
+        if (stats.top_rooms) {
+             const chartData = stats.top_rooms.map((room: any) => ({
+                 name: room.name,
+                 value: room.count
+             }));
+             setData(chartData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch occupancy stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   // Calculate dynamic radii based on available space
-  const minDim = Math.min(dimensions.width, dimensions.height - (showLegend ? 40 : 0));
+  const minDim = Math.min(
+    dimensions.width,
+    dimensions.height - (showLegend ? 40 : 0)
+  );
   const outerRadius = Math.max(30, minDim * 0.35);
   const innerRadius = Math.max(20, outerRadius * 0.6);
 
@@ -62,10 +82,15 @@ export function OccupancyPieChartWidget({
     <div className="bg-white p-4 rounded-xl shadow-sm border border-beige h-full flex flex-col overflow-hidden">
       <div className="flex items-center gap-2 mb-2 flex-shrink-0">
         <PieChartIcon className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold text-dark text-sm">Ocupación por Sala</h3>
+        <h3 className="font-semibold text-dark text-sm">Ocupación por Sala (Top 5)</h3>
       </div>
 
       <div ref={containerRef} className="flex-1 min-h-[240px]">
+        {loading ? (
+             <div className="h-full w-full flex items-center justify-center text-gray-400">Cargando...</div>
+        ) : data.length === 0 ? (
+             <div className="h-full w-full flex items-center justify-center text-gray-400 text-sm p-4 text-center">No hay reservas registradas en este periodo.</div>
+        ) : (
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -87,14 +112,15 @@ export function OccupancyPieChartWidget({
             </Pie>
             <Tooltip />
             {showLegend && (
-              <Legend 
-                verticalAlign="bottom" 
+              <Legend
+                verticalAlign="bottom"
                 height={36}
                 wrapperStyle={{ fontSize: "12px" }}
               />
             )}
           </PieChart>
         </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

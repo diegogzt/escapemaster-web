@@ -17,33 +17,15 @@ import {
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 import { WidgetConfigOptions } from "../types";
-
-// Datos mensuales (últimos 6 meses)
-const dataMonthly = [
-  { name: "Ene", ingresos: 4000, gastos: 2400 },
-  { name: "Feb", ingresos: 3000, gastos: 1398 },
-  { name: "Mar", ingresos: 2000, gastos: 9800 },
-  { name: "Abr", ingresos: 2780, gastos: 3908 },
-  { name: "May", ingresos: 1890, gastos: 4800 },
-  { name: "Jun", ingresos: 2390, gastos: 3800 },
-];
-
-// Datos trimestrales
-const dataQuarterly = [
-  { name: "Q1", ingresos: 9000, gastos: 13598 },
-  { name: "Q2", ingresos: 7060, gastos: 12508 },
-  { name: "Q3", ingresos: 8280, gastos: 11900 },
-  { name: "Q4", ingresos: 9500, gastos: 10200 },
-];
-
-// Datos anuales
-const dataYearly = [
-  { name: "2022", ingresos: 28000, gastos: 35000 },
-  { name: "2023", ingresos: 32000, gastos: 30000 },
-  { name: "2024", ingresos: 38000, gastos: 32000 },
-];
+import { dashboard } from "@/services/api";
 
 interface RevenueBarChartWidgetProps extends WidgetConfigOptions {}
+
+interface RevenueDataPoint {
+  name: string;
+  ingresos: number;
+  gastos: number;
+}
 
 export function RevenueBarChartWidget({
   chartType = "bar",
@@ -51,26 +33,35 @@ export function RevenueBarChartWidget({
   dateRange = "month",
 }: RevenueBarChartWidgetProps) {
   const [localDateRange, setLocalDateRange] = useState(dateRange);
+  const [data, setData] = useState<RevenueDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Sync with prop changes
   useEffect(() => {
     setLocalDateRange(dateRange);
   }, [dateRange]);
 
-  // Select data based on date range
-  const getData = () => {
-    switch (localDateRange) {
-      case "quarter":
-        return dataQuarterly;
-      case "year":
-        return dataYearly;
-      case "month":
-      default:
-        return dataMonthly;
-    }
-  };
-
-  const data = getData();
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await dashboard.getRevenue(localDateRange);
+        if (response && response.labels) {
+          const chartData = response.labels.map((label: string, index: number) => ({
+            name: label,
+            ingresos: response.data[index] || 0,
+            gastos: 0, // Expenses not yet tracked in backend
+          }));
+          setData(chartData);
+        }
+      } catch (error) {
+        console.error("Failed to fetch revenue", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [localDateRange]);
 
   const renderChart = () => {
     const commonProps = {
@@ -84,10 +75,22 @@ export function RevenueBarChartWidget({
       tick: { fill: "#6B7280", fontSize: 12 },
     };
 
+    if (loading) {
+        return <div className="h-full w-full flex items-center justify-center text-gray-400">Cargando datos...</div>;
+    }
+    
+    if (data.length === 0) {
+        return <div className="h-full w-full flex items-center justify-center text-gray-400">No hay datos de ingresos disponibles.</div>;
+    }
+
     if (chartType === "line") {
       return (
         <LineChart {...commonProps}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#E5E7EB"
+          />
           <XAxis dataKey="name" {...commonAxisProps} />
           <YAxis {...commonAxisProps} width={50} />
           <Tooltip
@@ -98,8 +101,23 @@ export function RevenueBarChartWidget({
             }}
           />
           {showLegend && <Legend />}
-          <Line type="monotone" dataKey="ingresos" stroke="var(--color-primary)" strokeWidth={2} name="Ingresos" dot={{ r: 4 }} />
-          <Line type="monotone" dataKey="gastos" stroke="var(--color-secondary)" strokeWidth={2} name="Gastos" dot={{ r: 4 }} />
+          <Line
+            type="monotone"
+            dataKey="ingresos"
+            stroke="var(--color-primary)"
+            strokeWidth={2}
+            name="Ingresos"
+            dot={{ r: 4 }}
+          />
+          {/* Hide expenses line if all 0? Or just show flat line at 0 */}
+           <Line
+            type="monotone"
+            dataKey="gastos"
+            stroke="var(--color-secondary)"
+            strokeWidth={2}
+            name="Gastos"
+            dot={{ r: 4 }}
+          />
         </LineChart>
       );
     }
@@ -107,7 +125,11 @@ export function RevenueBarChartWidget({
     if (chartType === "area") {
       return (
         <AreaChart {...commonProps}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+          <CartesianGrid
+            strokeDasharray="3 3"
+            vertical={false}
+            stroke="#E5E7EB"
+          />
           <XAxis dataKey="name" {...commonAxisProps} />
           <YAxis {...commonAxisProps} width={50} />
           <Tooltip
@@ -118,8 +140,24 @@ export function RevenueBarChartWidget({
             }}
           />
           {showLegend && <Legend />}
-          <Area type="monotone" dataKey="ingresos" fill="var(--color-primary)" fillOpacity={0.3} stroke="var(--color-primary)" strokeWidth={2} name="Ingresos" />
-          <Area type="monotone" dataKey="gastos" fill="var(--color-secondary)" fillOpacity={0.3} stroke="var(--color-secondary)" strokeWidth={2} name="Gastos" />
+          <Area
+            type="monotone"
+            dataKey="ingresos"
+            fill="var(--color-primary)"
+            fillOpacity={0.3}
+            stroke="var(--color-primary)"
+            strokeWidth={2}
+            name="Ingresos"
+          />
+           <Area
+            type="monotone"
+            dataKey="gastos"
+            fill="var(--color-secondary)"
+            fillOpacity={0.3}
+            stroke="var(--color-secondary)"
+            strokeWidth={2}
+            name="Gastos"
+          />
         </AreaChart>
       );
     }
@@ -127,7 +165,11 @@ export function RevenueBarChartWidget({
     // Default: bar chart
     return (
       <BarChart {...commonProps}>
-        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+        <CartesianGrid
+          strokeDasharray="3 3"
+          vertical={false}
+          stroke="#E5E7EB"
+        />
         <XAxis dataKey="name" {...commonAxisProps} />
         <YAxis {...commonAxisProps} width={50} />
         <Tooltip
@@ -138,8 +180,18 @@ export function RevenueBarChartWidget({
           }}
         />
         {showLegend && <Legend />}
-        <Bar dataKey="ingresos" fill="var(--color-primary)" radius={[4, 4, 0, 0]} name="Ingresos" />
-        <Bar dataKey="gastos" fill="var(--color-secondary)" radius={[4, 4, 0, 0]} name="Gastos" />
+        <Bar
+          dataKey="ingresos"
+          fill="var(--color-primary)"
+          radius={[4, 4, 0, 0]}
+          name="Ingresos"
+        />
+         <Bar
+          dataKey="gastos"
+          fill="var(--color-secondary)"
+          radius={[4, 4, 0, 0]}
+          name="Gastos"
+        />
       </BarChart>
     );
   };
@@ -149,15 +201,19 @@ export function RevenueBarChartWidget({
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-dark text-sm">Ingresos vs Gastos</h3>
+          <h3 className="font-semibold text-dark text-sm">
+            Ingresos vs Gastos
+          </h3>
         </div>
         <select
           className="text-xs border border-beige rounded-md px-2 py-1 text-secondary"
           aria-label="Período de tiempo"
           value={localDateRange}
-          onChange={(e) => setLocalDateRange(e.target.value as "month" | "quarter" | "year")}
+          onChange={(e) =>
+            setLocalDateRange(e.target.value as "month" | "quarter" | "year")
+          }
         >
-          <option value="month">Últimos 6 meses</option>
+          <option value="month">Últimos 6 meses (Mes)</option>
           <option value="quarter">Trimestral</option>
           <option value="year">Anual</option>
         </select>

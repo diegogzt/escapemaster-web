@@ -13,14 +13,43 @@ export default function CalendarView() {
   const [events, setEvents] = useState<any[]>([]);
 
   useEffect(() => {
-    bookings.list()
-      .then(setEvents)
-      .catch((err) => {
+    const fetchBookings = async () => {
+      try {
+        let start = new Date(currentDate);
+        let end = new Date(currentDate);
+
+        if (view === "month") {
+          start = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+          end = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0, 23, 59, 59);
+        } else if (view === "week") {
+          const day = currentDate.getDay();
+          const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // adjust when day is sunday
+           start = new Date(currentDate.setDate(diff));
+           start.setHours(0,0,0,0);
+           end = new Date(start);
+           end.setDate(start.getDate() + 6);
+           end.setHours(23,59,59,999);
+        } else { // day
+           start.setHours(0,0,0,0);
+           end.setHours(23,59,59,999);
+        }
+
+        // Fetch bookings for the range. Max 100 for now.
+        // TODO: Handle pagination if > 100 bookings in view
+        const data = await bookings.list({
+          date_from: start.toISOString(),
+          date_to: end.toISOString(),
+          page_size: 100 
+        });
+        setEvents(data);
+      } catch (err) {
         console.error("Failed to load bookings:", err);
-        // Set empty array on error to prevent breaking the UI
         setEvents([]);
-      });
-  }, []);
+      }
+    };
+
+    fetchBookings();
+  }, [currentDate, view]);
 
   const monthName = currentDate.toLocaleDateString("es-ES", {
     month: "long",

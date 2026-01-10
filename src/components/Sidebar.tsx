@@ -16,6 +16,8 @@ import {
   LogOut,
   Sun,
   Moon,
+  User,
+  Building,
 } from "lucide-react";
 import { cn } from "@/utils";
 
@@ -30,7 +32,8 @@ export default function Sidebar() {
     { href: "/dashboard/rooms", icon: Layers, label: "Salas" },
     { href: "/dashboard/schedules", icon: Clock, label: "Horarios" },
     { href: "/dashboard/coupons", icon: Tag, label: "Cupones" },
-    { href: "/settings", icon: Settings, label: "Configuración" },
+    { href: "/settings", icon: Building, label: "Organización" },
+    { href: "/profile", icon: User, label: "Mi Cuenta" },
     { href: "/docs", icon: FileText, label: "Documentación" },
   ];
 
