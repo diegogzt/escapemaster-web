@@ -212,7 +212,7 @@ function WidgetItem({
               def.configurableOptions &&
               def.configurableOptions.length > 0 && (
                 <>
-                  <div className="w-px bg-gray-200 mx-1" />
+                  <div className="w-px bg-[var(--color-background-soft)] mx-1" />
                   <button
                     onClick={() => onConfigure(widget)}
                     className="p-1 hover:bg-blue-50 text-blue-500 rounded-full"
@@ -222,7 +222,7 @@ function WidgetItem({
                   </button>
                 </>
               )}
-            <div className="w-px bg-gray-200 mx-1" />
+            <div className="w-px bg-[var(--color-background-soft)] mx-1" />
             {onRemove && (
               <button
                 onClick={() => onRemove(widget.id)}

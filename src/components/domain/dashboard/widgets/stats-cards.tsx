@@ -40,8 +40,8 @@ export function StatsCards({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 h-full">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full">
-            <div className="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-            <div className="h-8 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-[var(--color-background-soft)] rounded w-1/2 mb-4"></div>
+            <div className="h-8 bg-[var(--color-background-soft)] rounded w-3/4"></div>
           </div>
         ))}
       </div>

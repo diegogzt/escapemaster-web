@@ -172,8 +172,8 @@ export default function RoomsPage() {
                   <span
                     className={`px-2 py-1 text-xs rounded ${
                       room.is_active
-                        ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-[var(--color-foreground)]"
+                        ? "bg-green-500/10 text-green-500"
+                        : "bg-[var(--color-light)] text-[var(--color-foreground)]"
                     }`}
                   >
                     {room.is_active ? "Activa" : "Inactiva"}
@@ -209,7 +209,7 @@ export default function RoomsPage() {
                         className={`w-2 h-2 rounded-full ${
                           level <= room.difficulty_level
                             ? "bg-primary"
-                            : "bg-gray-200"
+                            : "bg-[var(--color-background-soft)]"
                         }`}
                       />
                     ))}
@@ -247,7 +247,7 @@ export default function RoomsPage() {
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-lg bg-gray-200 mr-3 overflow-hidden flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg bg-[var(--color-background-soft)] mr-3 overflow-hidden flex-shrink-0">
                         {room.image_url ? (
                           <img
                             src={room.image_url}
@@ -281,8 +281,8 @@ export default function RoomsPage() {
                     <span
                       className={`px-2 py-1 text-xs rounded ${
                         room.is_active
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-[var(--color-foreground)]"
+                          ? "bg-green-500/10 text-green-500"
+                          : "bg-[var(--color-light)] text-[var(--color-foreground)]"
                       }`}
                     >
                       {room.is_active ? "Activa" : "Inactiva"}

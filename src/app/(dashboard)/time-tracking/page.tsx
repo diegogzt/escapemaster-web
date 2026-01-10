@@ -308,7 +308,7 @@ export default function TimeTrackingPage() {
                         </span>
                       </div>
                       <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full ${
-                        v.status === "approved" ? "bg-green-100 text-green-700" :
+                        v.status === "approved" ? "bg-green-500/10 text-green-500" :
                         v.status === "rejected" ? "bg-red-100 text-red-700" :
                         "bg-yellow-100 text-yellow-700"
                       }`}>

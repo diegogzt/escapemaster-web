@@ -90,11 +90,11 @@ export default function RolesPage() {
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-24"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-48"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-12 mx-auto"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div></td>
-                    <td className="px-6 py-4"><div className="h-4 bg-gray-200 rounded w-8 ml-auto"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-[var(--color-background-soft)] rounded w-24"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-[var(--color-background-soft)] rounded w-48"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-[var(--color-background-soft)] rounded w-12 mx-auto"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-[var(--color-background-soft)] rounded w-20 mx-auto"></div></td>
+                    <td className="px-6 py-4"><div className="h-4 bg-[var(--color-background-soft)] rounded w-8 ml-auto"></div></td>
                   </tr>
                 ))
               ) : filteredRoles.length > 0 ? (
@@ -112,17 +112,17 @@ export default function RolesPage() {
                       {role.description || "Sin descripción"}
                     </td>
                     <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-[var(--color-foreground)]">
                         {role.permissions?.length || 0} permisos
                       </span>
                     </td>
                     <td className="px-6 py-4 text-center">
                       {role.is_custom ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary/20 text-primary">
                           Personalizado
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-[var(--color-foreground)]">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--color-light)] text-[var(--color-foreground)]">
                           Sistema
                         </span>
                       )}
@@ -158,9 +158,9 @@ export default function RolesPage() {
         </div>
       </Card>
 
-      <div className="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-6 flex gap-4">
-        <Info className="text-blue-500 shrink-0" size={24} />
-        <div className="text-sm text-blue-800">
+      <div className="mt-8 bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 rounded-xl p-6 flex gap-4">
+        <Info className="text-primary shrink-0" size={24} />
+        <div className="text-sm text-[var(--color-foreground)]">
           <p className="font-semibold mb-1">Sobre los Roles del Sistema</p>
           <p>
             Los roles de sistema (Admin, Manager, Recepcionista, Game Master) vienen preconfigurados con permisos estándar. 

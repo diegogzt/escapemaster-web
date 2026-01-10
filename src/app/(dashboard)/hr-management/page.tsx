@@ -187,7 +187,7 @@ export default function HRManagementPage() {
                           {Math.floor(entry.duration_minutes / 60)}h {entry.duration_minutes % 60}m
                         </span>
                       ) : (
-                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-lg animate-pulse">
+                        <span className="px-2 py-1 bg-green-500/10 text-green-500 text-xs font-bold rounded-lg animate-pulse">
                           En curso
                         </span>
                       )}

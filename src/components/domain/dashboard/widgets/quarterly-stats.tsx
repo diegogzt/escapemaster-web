@@ -47,9 +47,9 @@ export function QuarterlyStatsWidget({
   if (loading) {
     return (
       <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden animate-pulse">
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+        <div className="h-6 bg-[var(--color-background-soft)] rounded w-1/3 mb-4"></div>
         <div className="flex-1 grid grid-cols-2 gap-3">
-          {[1,2,3,4].map(i => <div key={i} className="bg-gray-100 rounded-lg h-full"></div>)}
+          {[1,2,3,4].map(i => <div key={i} className="bg-[var(--color-light)] rounded-lg h-full"></div>)}
         </div>
       </div>
     );

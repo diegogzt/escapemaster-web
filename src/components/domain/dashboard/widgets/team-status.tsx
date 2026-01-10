@@ -46,7 +46,7 @@ export function TeamStatus() {
             <div key={member.id} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-sm font-bold text-[var(--color-muted-foreground)]">
+                  <div className="w-10 h-10 rounded-full bg-[var(--color-light)] flex items-center justify-center text-sm font-bold text-[var(--color-muted-foreground)]">
                     {member.avatar}
                   </div>
                   <div

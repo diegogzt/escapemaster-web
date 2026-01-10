@@ -179,7 +179,7 @@ export default function BookingsPage() {
     switch (status) {
       case "confirmed":
         return (
-          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-500/10 text-green-400">
             <CheckCircle size={12} className="mr-1" /> Confirmada
           </span>
         );
@@ -204,31 +204,31 @@ export default function BookingsPage() {
     <Card className="p-4 border-beige/50 animate-pulse">
       <div className="flex justify-between items-start mb-3">
         <div className="space-y-2">
-          <div className="h-4 w-24 bg-gray-200 rounded"></div>
-          <div className="h-3 w-16 bg-gray-200 rounded"></div>
+          <div className="h-4 w-24 bg-[var(--color-background-soft)] rounded"></div>
+          <div className="h-3 w-16 bg-[var(--color-background-soft)] rounded"></div>
         </div>
-        <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
+        <div className="h-5 w-20 bg-[var(--color-background-soft)] rounded-full"></div>
       </div>
       <div className="mb-3 space-y-2">
-        <div className="h-6 w-32 bg-gray-200 rounded"></div>
-        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+        <div className="h-6 w-32 bg-[var(--color-background-soft)] rounded"></div>
+        <div className="h-4 w-24 bg-[var(--color-background-soft)] rounded"></div>
       </div>
       <div className="flex justify-between pt-3 border-t border-beige">
-        <div className="h-3 w-20 bg-gray-200 rounded"></div>
-        <div className="h-8 w-24 bg-gray-200 rounded"></div>
+        <div className="h-3 w-20 bg-[var(--color-background-soft)] rounded"></div>
+        <div className="h-8 w-24 bg-[var(--color-background-soft)] rounded"></div>
       </div>
     </Card>
   );
 
   const TableSkeleton = () => (
     <tr className="animate-pulse border-b border-beige">
-      <td className="px-6 py-4"><div className="h-4 w-32 bg-gray-200 rounded"></div></td>
-      <td className="px-6 py-4"><div className="h-4 w-24 bg-gray-200 rounded"></div></td>
-      <td className="px-6 py-4"><div className="h-4 w-32 bg-gray-200 rounded"></div></td>
-      <td className="px-6 py-4"><div className="h-4 w-16 bg-gray-200 rounded"></div></td>
-      <td className="px-6 py-4"><div className="h-5 w-20 bg-gray-200 rounded-full"></div></td>
-      <td className="px-6 py-4"><div className="h-4 w-20 bg-gray-200 rounded"></div></td>
-      <td className="px-6 py-4 text-right"><div className="h-8 w-8 bg-gray-200 rounded ml-auto"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-32 bg-[var(--color-background-soft)] rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-24 bg-[var(--color-background-soft)] rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-32 bg-[var(--color-background-soft)] rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-16 bg-[var(--color-background-soft)] rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-5 w-20 bg-[var(--color-background-soft)] rounded-full"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-20 bg-[var(--color-background-soft)] rounded"></div></td>
+      <td className="px-6 py-4 text-right"><div className="h-8 w-8 bg-[var(--color-background-soft)] rounded ml-auto"></div></td>
     </tr>
   );
 

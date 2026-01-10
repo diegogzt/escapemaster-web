@@ -149,7 +149,7 @@ export function WidgetConfigModal({
             aria-label={label}
             className={cn(
               "relative w-11 h-6 rounded-full transition-colors",
-              value ? "bg-primary" : "bg-gray-300"
+              value ? "bg-primary" : "bg-[var(--color-muted)]"
             )}
           >
             <span

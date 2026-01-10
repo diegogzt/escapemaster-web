@@ -37,7 +37,7 @@ export default function PlayerPaymentPage() {
 
   if (isPaid) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--color-background-soft)] flex flex-col items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full text-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle size={40} className="text-green-600" />
@@ -49,7 +49,7 @@ export default function PlayerPaymentPage() {
             Gracias {bookingData.player_name}, tu plaza para{" "}
             <strong>{bookingData.room_name}</strong> está confirmada.
           </p>
-          <div className="bg-gray-50 p-4 rounded-lg text-left mb-6">
+          <div className="bg-[var(--color-background-soft)] p-4 rounded-lg text-left mb-6">
             <div className="flex items-center text-sm text-[var(--color-muted-foreground)] mb-2">
               <Calendar size={16} className="mr-2" /> {bookingData.date}
             </div>
@@ -66,7 +66,7 @@ export default function PlayerPaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--color-background-soft)] flex flex-col items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden max-w-md w-full">
         {/* Header */}
         <div className="bg-primary p-6 text-white text-center">
@@ -86,7 +86,7 @@ export default function PlayerPaymentPage() {
           </div>
 
           <div className="space-y-4 mb-8">
-            <div className="flex items-start p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-start p-4 bg-[var(--color-background-soft)] rounded-lg">
               <div className="bg-white p-2 rounded shadow-sm mr-4">
                 <MapPin size={20} className="text-primary" />
               </div>

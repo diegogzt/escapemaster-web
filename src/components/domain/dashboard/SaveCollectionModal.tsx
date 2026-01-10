@@ -198,7 +198,7 @@ export function SaveCollectionModal({
                   <div className="flex gap-1">
                     <button
                       onClick={() => handleLoadCollection(collection)}
-                      className="p-2 hover:bg-blue-50 text-blue-500 rounded-lg"
+                      className="p-2 hover:bg-primary/10 text-primary rounded-lg"
                       title="Cargar colección"
                     >
                       <Check className="h-4 w-4" />

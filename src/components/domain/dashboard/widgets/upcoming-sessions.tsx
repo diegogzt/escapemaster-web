@@ -49,8 +49,8 @@ export function UpcomingSessions({
       case "confirmed": return "bg-primary/10 text-primary";
       case "pending": return "bg-yellow-100 text-yellow-800";
       case "cancelled": return "bg-red-100 text-red-800";
-      case "completed": return "bg-gray-100 text-[var(--color-foreground)]";
-      default: return "bg-gray-100 text-[var(--color-muted-foreground)]";
+      case "completed": return "bg-[var(--color-light)] text-[var(--color-foreground)]";
+      default: return "bg-[var(--color-light)] text-[var(--color-muted-foreground)]";
     }
   };
 
@@ -79,10 +79,10 @@ export function UpcomingSessions({
              <div className="space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="flex gap-3 animate-pulse">
-                  <div className="w-8 h-8 bg-gray-200 rounded-lg"></div>
+                  <div className="w-8 h-8 bg-[var(--color-background-soft)] rounded-lg"></div>
                   <div className="flex-1 space-y-2">
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-4 bg-[var(--color-background-soft)] rounded w-1/2"></div>
+                    <div className="h-3 bg-[var(--color-background-soft)] rounded w-1/3"></div>
                   </div>
                 </div>
               ))}

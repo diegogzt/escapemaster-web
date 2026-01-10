@@ -28,7 +28,7 @@ export function RevenueWidget() {
           <span className="text-[var(--color-muted-foreground)]">Meta mensual</span>
           <span className="font-medium text-[var(--color-foreground)]">€10,000</span>
         </div>
-        <div className="mt-2 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+        <div className="mt-2 h-2 w-full bg-[var(--color-light)] rounded-full overflow-hidden">
           <div
             className="h-full bg-primary rounded-full"
             style={{ width: "84.5%" }}

@@ -170,7 +170,7 @@ export default function UsersPage() {
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         user.is_active
-                          ? "bg-green-100 text-green-800"
+                          ? "bg-green-500/10 text-green-400"
                           : "bg-red-100 text-red-800"
                       }`}
                     >

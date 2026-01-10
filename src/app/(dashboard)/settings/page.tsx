@@ -120,7 +120,7 @@ export default function SettingsPage() {
                     type="button"
                     onClick={() => setIsDarkMode(!isDarkMode)}
                     aria-label="Toggle modo oscuro"
-                    className={`w-14 h-8 rounded-full transition-all relative outline-hidden ${isDarkMode ? 'bg-indigo-600' : 'bg-gray-200'}`}
+                    className={`w-14 h-8 rounded-full transition-all relative outline-hidden ${isDarkMode ? 'bg-indigo-600' : 'bg-[var(--color-background-soft)]'}`}
                   >
                     <div className={`absolute top-1 w-6 h-6 bg-[var(--color-background)] rounded-full shadow-md transition-all ${isDarkMode ? 'left-7' : 'left-1'}`} />
                   </button>
@@ -249,7 +249,7 @@ export default function SettingsPage() {
                       <p className="text-sm text-[var(--color-foreground)] opacity-80">Añade una capa extra de seguridad</p>
                     </div>
                   </div>
-                  <button className="w-12 h-6 bg-gray-200 rounded-full relative"><div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></button>
+                  <button className="w-12 h-6 bg-[var(--color-background-soft)] rounded-full relative"><div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></button>
                 </div>
                 <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
                   <div className="flex items-center gap-3">
@@ -261,7 +261,7 @@ export default function SettingsPage() {
                       <p className="text-sm text-[var(--color-foreground)] opacity-80">Datos de clientes 100% protegidos</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full uppercase">Activo</span>
+                  <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-1 rounded-full uppercase">Activo</span>
                 </div>
               </div>
             </div>

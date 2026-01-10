@@ -531,9 +531,9 @@ export default function ReportsPage() {
                       <span className="font-medium text-[var(--color-muted-foreground)]">{expense.name}</span>
                       <span className="font-bold text-[var(--color-foreground)]">{expense.value}€</span>
                     </div>
-                    <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-[var(--color-light)] h-2 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-accent rounded-full" 
+                        className="h-full bg-primary rounded-full" 
                         style={{ width: `${percentage}%` }}
                       ></div>
                     </div>

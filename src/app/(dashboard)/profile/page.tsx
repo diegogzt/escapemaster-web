@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${
                       theme === t.id
                         ? "border-primary bg-primary/5 shadow-sm"
-                        : "border-transparent bg-[var(--color-light)] hover:bg-gray-100 hover:border-[var(--color-beige)]"
+                        : "border-transparent bg-[var(--color-light)] hover:bg-[var(--color-light)] hover:border-[var(--color-beige)]"
                     }`}
                   >
                     <div className="flex -space-x-2 mb-3 overflow-hidden p-1">

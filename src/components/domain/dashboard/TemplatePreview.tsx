@@ -56,7 +56,7 @@ export function TemplatePreview({
 }: TemplatePreviewProps) {
   if (!layout || layout.length === 0) {
     return (
-      <div className={cn("w-full h-16 bg-gray-100 rounded flex items-center justify-center", className)}>
+      <div className={cn("w-full h-16 bg-[var(--color-light)] rounded flex items-center justify-center", className)}>
         <span className="text-xs text-[var(--color-muted-foreground)]">Sin widgets</span>
       </div>
     );
@@ -107,7 +107,7 @@ export function TemplatePreview({
       }}
     >
       {widgetPositions.map(({ widget, top, left }) => {
-        const color = WIDGET_COLORS[widget.type] || "bg-gray-300";
+        const color = WIDGET_COLORS[widget.type] || "bg-[var(--color-muted)]";
         const label = WIDGET_LABELS[widget.type] || "?";
         
         return (

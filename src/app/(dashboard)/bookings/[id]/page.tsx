@@ -206,7 +206,7 @@ export default function BookingDetailsPage() {
             <h1 className="text-3xl font-bold text-primary">
               {booking.group_name}
             </h1>
-            <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 flex items-center">
+            <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-500/10 text-green-400 flex items-center">
               <CheckCircle size={14} className="mr-1" /> Confirmada
             </span>
           </div>
@@ -281,7 +281,7 @@ export default function BookingDetailsPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         {player.paid ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-500/10 text-green-400">
                             Pagado
                           </span>
                         ) : (
@@ -305,7 +305,7 @@ export default function BookingDetailsPage() {
                               </button>
                               <button
                                 onClick={() => handleCopyLink(player.id)}
-                                className="p-1.5 text-[var(--color-muted-foreground)] hover:bg-gray-100 rounded transition-colors"
+                                className="p-1.5 text-[var(--color-muted-foreground)] hover:bg-[var(--color-light)] rounded transition-colors"
                                 title="Copiar enlace"
                               >
                                 <Copy size={16} />
