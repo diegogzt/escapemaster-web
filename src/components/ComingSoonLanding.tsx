@@ -14,7 +14,15 @@ import {
   ChevronRight,
   CheckCircle2,
   ArrowRight,
-  Smartphone
+  Smartphone,
+  Zap,
+  Star,
+  MessageSquare,
+  Shield,
+  Clock,
+  Layout,
+  Trophy,
+  Rocket
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -23,6 +31,9 @@ const ComingSoonLanding = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
   const featuresRef = useRef<HTMLDivElement>(null);
+  const templatesRef = useRef<HTMLDivElement>(null);
+  const pricingRef = useRef<HTMLDivElement>(null);
+  const testimonialsRef = useRef<HTMLDivElement>(null);
   const customizationRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
   const waitlistRef = useRef<HTMLDivElement>(null);
@@ -31,10 +42,16 @@ const ComingSoonLanding = () => {
 
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useGSAP(() => {
-    // Hero Animations - Text Reveal
-    const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+    // Header Animation
+    gsap.fromTo(".header-nav",
+      { y: -100, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1, ease: "power4.out", delay: 0.5 }
+    );
+
+    const tl = gsap.timeline();
     
     tl.fromTo(".hero-badge", 
       { y: 20, opacity: 0 },
@@ -127,7 +144,7 @@ const ComingSoonLanding = () => {
     }
 
     // Scroll Animations for Sections
-    const sections = [featuresRef, customizationRef, mobileRef, waitlistRef];
+    const sections = [featuresRef, templatesRef, customizationRef, mobileRef, testimonialsRef, pricingRef, waitlistRef];
     sections.forEach((section) => {
       if (section.current) {
         // Heading reveal animation
@@ -183,6 +200,66 @@ const ComingSoonLanding = () => {
 
   return (
     <div ref={containerRef} className="theme-tropical bg-background text-foreground selection:bg-secondary/30">
+      {/* Header */}
+      <header className="header-nav fixed top-0 left-0 w-full z-50 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between bg-white/70 backdrop-blur-xl border border-foreground/5 rounded-full px-6 py-3 shadow-sm">
+          <div className="flex items-center gap-8">
+            <Link href="/" className="text-xl font-bold tracking-tighter text-foreground">
+              ESCAPEMASTER
+            </Link>
+            
+            <nav className="hidden md:flex items-center gap-6">
+              <button onClick={() => featuresRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Producto</button>
+              <button onClick={() => templatesRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Plantillas</button>
+              <button onClick={() => pricingRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Precios</button>
+              <Link href="/blog" className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Blog</Link>
+            </nav>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="hidden md:block text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-4 py-2">
+              Iniciar sesión
+            </Link>
+            <button 
+              onClick={() => waitlistRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="px-6 py-2.5 bg-primary text-white text-sm font-bold rounded-full hover:bg-primary/90 transition-all shadow-sm"
+            >
+              Empezar gratis
+            </button>
+            <button 
+              className="md:hidden"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              <div className="w-6 h-0.5 bg-foreground mb-1"></div>
+              <div className="w-6 h-0.5 bg-foreground mb-1"></div>
+              <div className="w-6 h-0.5 bg-foreground"></div>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-xl flex flex-col p-8">
+          <div className="flex justify-between items-center mb-12">
+            <div className="text-xl font-bold tracking-tighter text-foreground">ESCAPEMASTER</div>
+            <button onClick={() => setIsMenuOpen(false)} className="p-2 text-foreground/40 hover:text-foreground">
+              ✕
+            </button>
+          </div>
+          <nav className="flex flex-col gap-8 text-2xl font-bold">
+            <button onClick={() => { featuresRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Producto</button>
+            <button onClick={() => { templatesRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Plantillas</button>
+            <button onClick={() => { pricingRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Precios</button>
+            <Link href="/blog" className="py-4 border-b border-foreground/5">Blog</Link>
+          </nav>
+          <div className="mt-auto pt-8 flex flex-col gap-4">
+             <Link href="/login" className="w-full py-4 text-center font-bold text-foreground/60">Iniciar sesión</Link>
+             <button onClick={() => { waitlistRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="w-full py-4 bg-primary text-white font-bold rounded-2xl">Empezar gratis</button>
+          </div>
+        </div>
+      )}
+
       {/* Background Elements - Tropical Theme */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="parallax-bg absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px]" />
@@ -200,41 +277,44 @@ const ComingSoonLanding = () => {
         </div>
 
         <div className="z-10 text-center max-w-4xl">
-          <div className="hero-badge inline-block px-4 py-1.5 mb-8 rounded-full border border-secondary/30 bg-secondary/10 text-secondary text-sm font-medium tracking-wider uppercase">
+          <div className="hero-badge inline-block px-4 py-1.5 mb-8 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase">
             Próximamente 2026
           </div>
           
-          <h1 className="hero-title text-4xl md:text-7xl font-bold tracking-tighter mb-8 bg-clip-text text-transparent bg-linear-to-b from-foreground to-primary">
-            ESCAPEMASTER
+          <h1 className="hero-title text-5xl md:text-8xl font-bold tracking-tighter mb-8 leading-[1.1]">
+            Donde las <span className="text-primary italic font-serif">experiencias</span> <br /> 
+            se hacen realidad.
           </h1>
           
-          <p className="hero-description text-xl md:text-2xl text-foreground/60 font-light leading-relaxed mb-12 max-w-2xl mx-auto">
-            La plataforma integral que redefine la gestión de salas de escape. 
-            Potencia tu negocio con tecnología de vanguardia y un toque exótico.
+          <p className="hero-description text-xl md:text-2xl text-foreground/50 font-light leading-relaxed mb-12 max-w-2xl mx-auto">
+            La plataforma definitiva para gestionar, escalar y automatizar tu negocio de salas de escape. 
+            Menos gestión, más aventura.
           </p>
 
-          <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-6">
-            <button 
-              ref={magneticBtnRef}
-              onClick={() => waitlistRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="group relative px-8 py-4 bg-primary text-white font-bold rounded-full overflow-hidden transition-all shadow-[0_0_20px_rgba(31,99,87,0.3)]"
-            >
-              <span className="btn-content relative z-10 flex items-center gap-2">
-                Únete a la lista de espera
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </span>
-              <div className="absolute inset-0 bg-linear-to-r from-secondary to-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-            </button>
-            
-            <button 
-              onClick={() => featuresRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-secondary hover:text-light font-medium flex items-center gap-2 transition-colors"
-            >
-              Explorar funciones
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          <div className="hero-cta">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto p-2 rounded-2xl sm:rounded-full bg-white border border-foreground/5 shadow-xl hover:shadow-2xl transition-all">
+              <input 
+                type="email" 
+                placeholder="tu@negocio.com"
+                className="w-full sm:flex-1 px-6 py-3 bg-transparent focus:outline-none text-foreground"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <button 
+                type="submit"
+                className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold rounded-xl sm:rounded-full hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+              >
+                Probar gratis
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
+            <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs font-medium text-foreground/40">
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-secondary" /> Sin tarjeta</span>
+              <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-secondary" /> Instalación en 2 min</span>
+            </div>
           </div>
         </div>
+
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
           <div className="w-6 h-10 border-2 border-foreground rounded-full flex justify-center p-1">
@@ -330,6 +410,48 @@ const ComingSoonLanding = () => {
                 <div className={`absolute bottom-0 left-0 w-full h-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${feature.borderClass}`} />
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Templates Section - Slite inspired */}
+      <section ref={templatesRef} className="relative py-32 px-6 z-10 bg-foreground/[0.02]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+            <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">Vuela con <span className="text-primary italic font-serif">plantillas</span>.</h2>
+            <p className="text-xl text-foreground/50 font-light leading-relaxed">
+              No empieces de cero. Hemos diseñado plantillas listas para usar basadas en las mejores prácticas de las salas de escape más exitosas del mundo.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[
+              { title: "Terror Inmersivo", icon: "👻", category: "Escenario", color: "bg-red-50 text-red-600" },
+              { title: "Aventura Familiar", icon: "🗺️", category: "Escenario", color: "bg-blue-50 text-blue-600" },
+              { title: "Misterio Clásico", icon: "🕵️‍♂️", category: "Escenario", color: "bg-amber-50 text-amber-600" },
+              { title: "Ciencia Ficción", icon: "🚀", category: "Escenario", color: "bg-purple-50 text-purple-600" },
+              { title: "Onboarding Staff", icon: "🤝", category: "Interno", color: "bg-emerald-50 text-emerald-600" },
+              { title: "Checklist de Sala", icon: "✔️", category: "Operaciones", color: "bg-slate-50 text-slate-600" },
+              { title: "Guion de Game Master", icon: "🎭", category: "Teatro", color: "bg-indigo-50 text-indigo-600" },
+              { title: "Post-Juego Review", icon: "⭐", category: "Marketing", color: "bg-orange-50 text-orange-600" },
+            ].map((tpl, i) => (
+              <div key={i} className="animate-on-scroll group p-8 rounded-3xl bg-white border border-foreground/5 hover:border-primary/20 transition-all hover:shadow-xl cursor-pointer">
+                <div className={`w-12 h-12 rounded-2xl ${tpl.color} flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform`}>
+                  {tpl.icon}
+                </div>
+                <div className="text-xs font-bold uppercase tracking-widest text-foreground/30 mb-2">{tpl.category}</div>
+                <h4 className="text-xl font-bold text-foreground mb-4">{tpl.title}</h4>
+                <div className="flex items-center text-primary text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  Usar plantilla <ArrowRight size={14} className="ml-2" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 text-center animate-on-scroll">
+            <button className="px-8 py-3 rounded-full border border-foreground/10 hover:border-primary/50 text-foreground font-medium transition-all">
+              Explorar todas las plantillas
+            </button>
           </div>
         </div>
       </section>
@@ -445,6 +567,152 @@ const ComingSoonLanding = () => {
                   <p className="text-lg font-bold text-foreground">Google Play</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials section */}
+      <section ref={testimonialsRef} className="relative py-32 px-6 z-10 bg-primary/5">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+            <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">Lo que dicen los <span className="text-primary italic font-serif">equipos</span>.</h2>
+            <p className="text-xl text-foreground/50 font-light">
+              Cientos de salas de escape están esperando el lanzamiento para cambiar su forma de trabajar.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                text: "Finalmente una herramienta pensada por y para Game Masters. La automatización de correos nos va a salvar horas cada semana.",
+                author: "Carlos R.",
+                role: "Dueño de 'El Enigma'",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Carlos"
+              },
+              {
+                text: "El diseño es impecable. Se nota que han cuidado la experiencia del usuario final tanto como la del administrador.",
+                author: "Lucía M.",
+                role: "Directora de Operaciones",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lucia"
+              },
+              {
+                text: "Gestionar 5 sedes ahora es posible desde una sola pantalla. El panel de métricas es simplemente revolucionario.",
+                author: "Marc S.",
+                role: "Fundador de EscapeWorld",
+                avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marc"
+              }
+            ].map((t, i) => (
+              <div key={i} className="animate-on-scroll p-10 rounded-[2.5rem] bg-white border border-foreground/5 shadow-sm hover:shadow-xl transition-all">
+                <div className="flex gap-1 text-secondary mb-6">
+                  {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
+                </div>
+                <p className="text-lg text-foreground/70 italic mb-8 leading-relaxed">"{t.text}"</p>
+                <div className="flex items-center gap-4">
+                  <img src={t.avatar} alt={t.author} className="w-12 h-12 rounded-full border border-foreground/10 bg-primary/5" />
+                  <div>
+                    <div className="font-bold text-foreground">{t.author}</div>
+                    <div className="text-xs text-foreground/40 uppercase tracking-widest">{t.role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section ref={pricingRef} className="relative py-32 px-6 z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
+            <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">Precios <span className="text-primary italic font-serif">honestos</span>.</h2>
+            <p className="text-xl text-foreground/50 font-light">
+              Sin comisiones ocultas por reserva. Elige el plan que mejor se adapte a tu escala.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Free Plan */}
+            <div className="animate-on-scroll relative p-12 rounded-[3.5rem] bg-white border border-foreground/5 shadow-sm hover:shadow-2xl transition-all group overflow-hidden">
+               <div className="absolute top-0 right-0 p-8">
+                 <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
+                   <Clock size={24} />
+                 </div>
+               </div>
+               
+               <div className="mb-12">
+                 <h3 className="text-2xl font-bold text-foreground mb-4 italic font-serif">Gratis</h3>
+                 <div className="flex items-baseline gap-1">
+                   <span className="text-6xl font-bold tracking-tighter">0€</span>
+                   <span className="text-foreground/40 font-medium">/para siempre</span>
+                 </div>
+                 <p className="mt-6 text-foreground/50 text-lg font-light leading-relaxed">
+                   Ideal para salas que están empezando o para probar la plataforma sin compromiso.
+                 </p>
+               </div>
+
+               <div className="space-y-4 mb-12">
+                 {[
+                   "Hasta 50 reservas/mes",
+                   "1 Sede",
+                   "Calendario básico",
+                   "Emails transaccionales",
+                   "Soporte por email"
+                 ].map((feat, i) => (
+                   <div key={i} className="flex items-center gap-3">
+                     <CheckCircle2 className="text-primary" size={20} />
+                     <span className="text-foreground/70">{feat}</span>
+                   </div>
+                 ))}
+               </div>
+
+               <button className="w-full py-5 rounded-full border-2 border-foreground/5 text-foreground font-bold hover:bg-foreground hover:text-white transition-all text-lg">
+                 Empezar ahora
+               </button>
+            </div>
+
+            {/* Pro Plan */}
+            <div className="animate-on-scroll relative p-12 rounded-[3.5rem] bg-background border-2 border-primary shadow-2xl transition-all group overflow-hidden">
+               <div className="absolute top-0 right-0 p-8">
+                 <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary animate-pulse">
+                   <Zap size={24} fill="currentColor" />
+                 </div>
+               </div>
+
+               <div className="absolute top-0 left-0 p-8">
+                 <span className="px-4 py-1 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-widest">Recomendado</span>
+               </div>
+               
+               <div className="mb-12 pt-8">
+                 <h3 className="text-2xl font-bold text-foreground mb-4 italic font-serif">Pro</h3>
+                 <div className="flex items-baseline gap-1">
+                   <span className="text-6xl font-bold tracking-tighter">49€</span>
+                   <span className="text-foreground/40 font-medium">/mensual</span>
+                 </div>
+                 <p className="mt-6 text-foreground/50 text-lg font-light leading-relaxed">
+                   Diseñado para salas consolidadas que necesitan funciones avanzadas y escalabilidad.
+                 </p>
+               </div>
+
+               <div className="space-y-4 mb-12">
+                 {[
+                   "Reservas ilimitadas",
+                   "Sedes ilimitadas (+10€/sede extra)",
+                   "Analíticas avanzadas",
+                   "Automatizaciones custom",
+                   "App Móvil incluida",
+                   "Soporte prioritario 24/7"
+                 ].map((feat, i) => (
+                   <div key={i} className="flex items-center gap-3">
+                     <CheckCircle2 className="text-primary" size={20} />
+                     <span className="text-foreground/70 font-medium">{feat}</span>
+                   </div>
+                 ))}
+               </div>
+
+               <button className="w-full py-5 rounded-full bg-primary text-white font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/20 text-lg">
+                 Probar 14 días gratis
+               </button>
             </div>
           </div>
         </div>
