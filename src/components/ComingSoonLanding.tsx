@@ -22,10 +22,46 @@ import {
   Clock,
   Layout,
   Trophy,
-  Rocket
+  Rocket,
+  GripHorizontal,
+  Settings2,
+  Brush
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const THEMES = {
+  tropical: {
+    name: "Tropical",
+    primary: "#1F6357",
+    secondary: "#4DB8A8",
+    background: "#E8F5F3"
+  },
+  ocean: {
+    name: "Ocean",
+    primary: "#006D77",
+    secondary: "#83C5BE",
+    background: "#EDF6F9"
+  },
+  sunset: {
+    name: "Sunset",
+    primary: "#FF6B9D",
+    secondary: "#FFA07A",
+    background: "#FFF4E6"
+  },
+  nature: {
+    name: "Nature",
+    primary: "#2D6A4F",
+    secondary: "#52B788",
+    background: "#D8F3DC"
+  },
+  mint: {
+    name: "Mint Fresh",
+    primary: "#1F756E",
+    secondary: "#5DDCC3",
+    background: "#E8F9F5"
+  }
+};
 
 const ComingSoonLanding = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,6 +79,21 @@ const ComingSoonLanding = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>("tropical");
+
+  const [widgets, setWidgets] = useState([
+    { id: "calendar", title: "Calendario", type: "preview", width: "col-span-1 md:col-span-2", Icon: Calendar, color: "bg-primary/10 text-primary", content: "Disponibilidad en tiempo real" },
+    { id: "stats", title: "Métricas", type: "chart", width: "col-span-1", Icon: BarChart3, color: "bg-secondary/10 text-secondary", content: "mensual" },
+    { id: "users", title: "Equipo", type: "list", width: "col-span-1", Icon: Users, color: "bg-accent/10 text-accent", content: "Gestión de personal" }
+  ]);
+
+  React.useEffect(() => {
+    const theme = THEMES[activeTheme];
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', theme.primary);
+    root.style.setProperty('--color-secondary', theme.secondary);
+    root.style.setProperty('--color-background', theme.background);
+  }, [activeTheme]);
 
   useGSAP(() => {
     // Header Animation
@@ -210,7 +261,7 @@ const ComingSoonLanding = () => {
             
             <nav className="hidden md:flex items-center gap-6">
               <button onClick={() => featuresRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Producto</button>
-              <button onClick={() => templatesRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Plantillas</button>
+              <button onClick={() => templatesRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Personalizar</button>
               <button onClick={() => pricingRef.current?.scrollIntoView({ behavior: 'smooth' })} className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Precios</button>
               <Link href="/blog" className="text-sm font-medium text-foreground/60 hover:text-primary transition-colors">Blog</Link>
             </nav>
@@ -249,7 +300,7 @@ const ComingSoonLanding = () => {
           </div>
           <nav className="flex flex-col gap-8 text-2xl font-bold">
             <button onClick={() => { featuresRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Producto</button>
-            <button onClick={() => { templatesRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Plantillas</button>
+            <button onClick={() => { templatesRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Personalizar</button>
             <button onClick={() => { pricingRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Precios</button>
             <Link href="/blog" className="py-4 border-b border-foreground/5">Blog</Link>
           </nav>
@@ -262,6 +313,7 @@ const ComingSoonLanding = () => {
 
       {/* Background Elements - Tropical Theme */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute inset-0 grid-pattern overflow-hidden" />
         <div className="parallax-bg absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/5 rounded-full blur-[120px]" />
         <div className="parallax-bg absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/5 rounded-full blur-[120px]" />
         <div className="parallax-bg absolute top-[20%] right-[15%] w-[20%] h-[20%] bg-primary/5 blur-[80px] rounded-full" />
@@ -414,91 +466,123 @@ const ComingSoonLanding = () => {
         </div>
       </section>
 
-      {/* Templates Section - Slite inspired */}
-      <section ref={templatesRef} className="relative py-32 px-6 z-10 bg-foreground/[0.02]">
+      {/* Customization & Widgets Section */}
+      <section ref={templatesRef} className="relative py-32 px-6 z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
-            <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">Vuela con <span className="text-primary italic font-serif">plantillas</span>.</h2>
+            <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">Tu gestor, <span className="text-primary italic font-serif">tu estilo</span>.</h2>
             <p className="text-xl text-foreground/50 font-light leading-relaxed">
-              No empieces de cero. Hemos diseñado plantillas listas para usar basadas en las mejores prácticas de las salas de escape más exitosas del mundo.
+              No te limites a lo que te damos. Cambia el color, arrastra las herramientas y construye el panel de control perfecto para tu negocio.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { title: "Terror Inmersivo", icon: "👻", category: "Escenario", color: "bg-red-50 text-red-600" },
-              { title: "Aventura Familiar", icon: "🗺️", category: "Escenario", color: "bg-blue-50 text-blue-600" },
-              { title: "Misterio Clásico", icon: "🕵️‍♂️", category: "Escenario", color: "bg-amber-50 text-amber-600" },
-              { title: "Ciencia Ficción", icon: "🚀", category: "Escenario", color: "bg-purple-50 text-purple-600" },
-              { title: "Onboarding Staff", icon: "🤝", category: "Interno", color: "bg-emerald-50 text-emerald-600" },
-              { title: "Checklist de Sala", icon: "✔️", category: "Operaciones", color: "bg-slate-50 text-slate-600" },
-              { title: "Guion de Game Master", icon: "🎭", category: "Teatro", color: "bg-indigo-50 text-indigo-600" },
-              { title: "Post-Juego Review", icon: "⭐", category: "Marketing", color: "bg-orange-50 text-orange-600" },
-            ].map((tpl, i) => (
-              <div key={i} className="animate-on-scroll group p-8 rounded-3xl bg-white border border-foreground/5 hover:border-primary/20 transition-all hover:shadow-xl cursor-pointer">
-                <div className={`w-12 h-12 rounded-2xl ${tpl.color} flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform`}>
-                  {tpl.icon}
-                </div>
-                <div className="text-xs font-bold uppercase tracking-widest text-foreground/30 mb-2">{tpl.category}</div>
-                <h4 className="text-xl font-bold text-foreground mb-4">{tpl.title}</h4>
-                <div className="flex items-center text-primary text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity">
-                  Usar plantilla <ArrowRight size={14} className="ml-2" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-16 text-center animate-on-scroll">
-            <button className="px-8 py-3 rounded-full border border-foreground/10 hover:border-primary/50 text-foreground font-medium transition-all">
-              Explorar todas las plantillas
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Customization Showcase */}
-      <section ref={customizationRef} className="relative py-32 px-6 z-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="animate-on-scroll">
-            <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight text-foreground">Tu marca, <br />tus reglas</h2>
-            <p className="text-foreground/60 text-xl mb-12 leading-relaxed font-light">
-              No somos solo un software, somos tu socio tecnológico. Personaliza cada aspecto de la experiencia del cliente, desde el widget de reserva hasta los correos de confirmación.
-            </p>
-            <ul className="space-y-6">
-              {[
-                "Editor visual intuitivo", 
-                "Temas personalizados", 
-                "Dominio propio", 
-                "Integración con redes sociales"
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-4 text-lg text-foreground/80">
-                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                    <CheckCircle2 className="text-primary" size={16} />
-                  </div>
-                  {item}
-                </li>
+          {/* Theme Switcher Preview */}
+          <div className="mb-32 animate-on-scroll">
+            <div className="flex flex-wrap justify-center gap-4 mb-12">
+              {(Object.keys(THEMES) as Array<keyof typeof THEMES>).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setActiveTheme(t)}
+                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl border transition-all ${activeTheme === t ? 'border-primary bg-primary/5 shadow-lg' : 'border-foreground/5 bg-white hover:border-primary/20'}`}
+                >
+                  <div className="w-4 h-4 rounded-full" style={{ backgroundColor: THEMES[t].primary }} />
+                  <span className={`text-sm font-bold ${activeTheme === t ? 'text-primary' : 'text-foreground/40'}`}>
+                    {THEMES[t].name}
+                  </span>
+                </button>
               ))}
-            </ul>
-          </div>
-          <div className="animate-on-scroll relative aspect-square rounded-[3rem] overflow-hidden border border-foreground/5 bg-white flex items-center justify-center group shadow-xl">
-            <div className="absolute inset-0 bg-linear-to-br from-primary/5 to-transparent opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-            <Palette size={120} className="text-primary/10 group-hover:scale-110 transition-transform duration-700" />
-            <div className="relative z-10 p-8 w-full">
-              <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-foreground/5 shadow-2xl transform group-hover:-translate-y-2 transition-transform duration-500">
-                <div className="flex gap-2 mb-6">
-                  <div className="w-3 h-3 rounded-full bg-primary/50" />
-                  <div className="w-3 h-3 rounded-full bg-accent/50" />
-                  <div className="w-3 h-3 rounded-full bg-secondary/50" />
-                </div>
-                <div className="space-y-4">
-                  <div className="h-4 w-3/4 bg-primary/20 rounded-full" />
-                  <div className="h-4 w-1/2 bg-primary/10 rounded-full" />
-                  <div className="h-40 w-full bg-primary/5 rounded-2xl border border-foreground/5 mt-6 flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-primary/20 animate-pulse" />
-                  </div>
-                </div>
-              </div>
             </div>
+
+            <div className="relative p-2 rounded-[3rem] bg-white border border-foreground/5 shadow-2xl overflow-hidden group">
+               <div className="absolute inset-0 grid-pattern opacity-10" />
+               <div className="relative z-10 p-8 md:p-12">
+                  <div className="flex items-center justify-between mb-12">
+                    <div className="flex gap-2">
+                      <div className="w-3 h-3 rounded-full bg-primary/20" />
+                      <div className="w-3 h-3 rounded-full bg-primary/10" />
+                    </div>
+                    <div className="px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-bold uppercase tracking-widest text-primary">
+                      Vista previa del Dashboard
+                    </div>
+                  </div>
+
+                  <div 
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
+                      const toIndex = widgets.length - 1; // Simplified drop logic
+                      const newWidgets = [...widgets];
+                      const [moved] = newWidgets.splice(fromIndex, 1);
+                      newWidgets.splice(toIndex, 0, moved);
+                      setWidgets(newWidgets);
+                    }}
+                  >
+                    {widgets.map((w, i) => (
+                      <div 
+                        key={w.id} 
+                        draggable
+                        onDragStart={(e) => e.dataTransfer.setData("text/plain", i.toString())}
+                        className={`group/widget relative p-8 rounded-3xl bg-white border border-foreground/5 shadow-sm hover:shadow-xl transition-all cursor-move ${w.width}`}
+                      >
+                        <div className="flex items-center justify-between mb-6">
+                          <div className={`p-3 rounded-2xl ${w.color}`}>
+                            <w.Icon size={20} />
+                          </div>
+                          <GripHorizontal className="text-foreground/10 group-hover/widget:text-foreground/30 transition-colors" size={20} />
+                        </div>
+                        <h4 className="text-lg font-bold text-foreground mb-2">{w.title}</h4>
+                        <p className="text-sm text-foreground/40 font-light mb-6">
+                          {w.id === 'stats' && w.content === 'mensual' ? 'Ingresos totales: 12.400€' : w.id === 'stats' ? 'Ingresos hoy: 450€' : w.content}
+                        </p>
+                        
+                        <div className="flex items-center justify-between pt-4 border-t border-foreground/[0.03]">
+                          <button 
+                            onClick={() => {
+                              const newWidgets = [...widgets];
+                              newWidgets[i].content = newWidgets[i].id === 'stats' ? (newWidgets[i].content === 'mensual' ? 'diario' : 'mensual') : newWidgets[i].content;
+                              setWidgets(newWidgets);
+                            }}
+                            className="text-[10px] font-bold uppercase tracking-tighter text-primary flex items-center gap-1 hover:gap-2 transition-all"
+                          >
+                            Configurar <Settings2 size={10} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+               </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
+             <div className="animate-on-scroll col-span-1">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6">
+                  <Brush size={24} />
+                </div>
+                <h3 className="text-3xl font-bold mb-4">Paletas de UI-Kit</h3>
+                <p className="text-foreground/50 font-light leading-relaxed">
+                  Utilizamos el sistema de diseño de nuestro UI-Kit oficial para garantizar que cada tema sea accesible y profesional.
+                </p>
+             </div>
+             <div className="animate-on-scroll col-span-1">
+                <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-6">
+                  <Layout size={24} />
+                </div>
+                <h3 className="text-3xl font-bold mb-4">Widgets Modulares</h3>
+                <p className="text-foreground/50 font-light leading-relaxed">
+                  Organiza tu espacio de trabajo como quieras. Prioriza el calendario, las finanzas o el rendimiento de tus Game Masters.
+                </p>
+             </div>
+             <div className="animate-on-scroll col-span-1">
+                <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
+                  <Rocket size={24} />
+                </div>
+                <h3 className="text-3xl font-bold mb-4">Marca Blanca</h3>
+                <p className="text-foreground/50 font-light leading-relaxed">
+                  Tu logo, tus fuentes, tu dominio. EscapeMaster desaparece para que tu marca sea la protagonista.
+                </p>
+             </div>
           </div>
         </div>
       </section>

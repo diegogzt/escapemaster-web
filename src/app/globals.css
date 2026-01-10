@@ -43,6 +43,14 @@
   --color-ring: #2c5f2d;
 }
 
+.grid-pattern {
+  background-image: 
+    linear-gradient(to right, var(--color-foreground) 0.05rem, transparent 0.05rem),
+    linear-gradient(to bottom, var(--color-foreground) 0.05rem, transparent 0.05rem);
+  background-size: 4rem 4rem;
+  opacity: 0.03;
+}
+
 .theme-twilight {
   --color-primary: #4338ca;
   --color-secondary: #6b7280;

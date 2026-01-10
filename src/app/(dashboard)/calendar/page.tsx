@@ -66,7 +66,8 @@ export default function CalendarPage() {
         
         // Create room color mapping
         const colorMap: Record<string, string> = {};
-        (roomsData || []).forEach((room: any, index: number) => {
+        const rooms = roomsData?.rooms || roomsData || [];
+        (rooms).forEach((room: any, index: number) => {
           colorMap[room.id] = ROOM_COLORS[index % ROOM_COLORS.length];
           colorMap[room.name] = ROOM_COLORS[index % ROOM_COLORS.length];
         });
