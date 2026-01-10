@@ -45,10 +45,10 @@
 
 .grid-pattern {
   background-image: 
-    linear-gradient(to right, var(--color-foreground) 0.05rem, transparent 0.05rem),
-    linear-gradient(to bottom, var(--color-foreground) 0.05rem, transparent 0.05rem);
+    linear-gradient(to right, var(--color-foreground) 0.1rem, transparent 0.1rem),
+    linear-gradient(to bottom, var(--color-foreground) 0.1rem, transparent 0.1rem);
   background-size: 4rem 4rem;
-  opacity: 0.03;
+  opacity: 0.12;
 }
 
 .theme-twilight {

@@ -54,15 +54,18 @@ export default function BookingsPage() {
     async function fetchData() {
       try {
         setLoading(true);
-        const [bookingsData, roomsData] = await Promise.all([
+        const [bookingsResponse, roomsData] = await Promise.all([
           bookingsApi.list(),
           roomsApi.list(),
         ]);
         
+        const bookingsList = bookingsResponse?.bookings || bookingsResponse || [];
+        const roomsList = roomsData?.rooms || roomsData || [];
+        
         // Transform bookings data to match expected format
         // API returns: id, start_time, end_time, num_people, booking_status, payment_status, 
         //              total_price, remaining_balance, guest, room_name, assigned_users
-        const transformedBookings = (bookingsData || []).map((b: any) => {
+        const transformedBookings = (bookingsList).map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
           return {
             id: b.id,
@@ -79,7 +82,7 @@ export default function BookingsPage() {
         });
         
         setBookings(transformedBookings);
-        setAllRooms((roomsData || []).map((r: any) => r.name));
+        setAllRooms((roomsList).map((r: any) => r.name));
         setError(null);
       } catch (err) {
         console.error("Error fetching data:", err);

@@ -55,12 +55,34 @@ export default function CalendarPage() {
   const [roomColorMap, setRoomColorMap] = useState<Record<string, string>>({});
 
   // Fetch sessions from API
+  // Fetch sessions from API
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
-        const [bookingsData, roomsData] = await Promise.all([
-          bookingsApi.list(),
+
+        // Calculate date range based on view
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        
+        // Default to fetching the whole month + padding defined by view
+        // For month view: 1st of month to last day of month
+        // We add some buffer (prev month last week, next month first week) for smooth transitions if needed
+        // But strict month filter is usually enough if navigation re-triggers
+        
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+
+        // API expects ISO strings or YYYY-MM-DD
+        const dateFrom = firstDay.toISOString().split("T")[0];
+        const dateTo = lastDay.toISOString().split("T")[0];
+
+        const [bookingsResponse, roomsData] = await Promise.all([
+          bookingsApi.list({ 
+            date_from: dateFrom, 
+            date_to: dateTo,
+            page_size: 1000 // Ensure we get all bookings for the month
+          }),
           roomsApi.list(),
         ]);
         
@@ -74,8 +96,10 @@ export default function CalendarPage() {
         setRoomColorMap(colorMap);
         
         // Transform bookings to sessions
-        // API returns: id, start_time, end_time, num_people, booking_status, room_name, guest
-        const transformedSessions: Session[] = (bookingsData || []).map((b: any) => {
+        // Handle object vs array response
+        const bookingsList = bookingsResponse?.bookings || bookingsResponse || [];
+        
+        const transformedSessions: Session[] = bookingsList.map((b: any) => {
           const roomName = b.room_name || "Sin sala";
           const status = (b.booking_status === "cancelled" ? "cancelled" : 
                          b.booking_status === "confirmed" ? "confirmed" : "pending") as "confirmed" | "pending" | "cancelled";
@@ -106,7 +130,7 @@ export default function CalendarPage() {
       }
     }
     fetchData();
-  }, []);
+  }, [currentDate, view]); // Re-fetch when date or view changes
 
   useEffect(() => {
     const handleResize = () => {

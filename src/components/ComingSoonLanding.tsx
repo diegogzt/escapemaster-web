@@ -25,7 +25,11 @@ import {
   Rocket,
   GripHorizontal,
   Settings2,
-  Brush
+  Brush,
+  Maximize2,
+  Minimize2,
+  Plus,
+  History
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -35,31 +39,36 @@ const THEMES = {
     name: "Tropical",
     primary: "#1F6357",
     secondary: "#4DB8A8",
-    background: "#E8F5F3"
+    background: "#E8F5F3",
+    foreground: "#1F6357"
   },
   ocean: {
     name: "Ocean",
     primary: "#006D77",
     secondary: "#83C5BE",
-    background: "#EDF6F9"
+    background: "#EDF6F9",
+    foreground: "#006D77"
   },
   sunset: {
     name: "Sunset",
     primary: "#FF6B9D",
     secondary: "#FFA07A",
-    background: "#FFF4E6"
+    background: "#FFF4E6",
+    foreground: "#8E2B4B"
   },
   nature: {
     name: "Nature",
     primary: "#2D6A4F",
     secondary: "#52B788",
-    background: "#D8F3DC"
+    background: "#D8F3DC",
+    foreground: "#1B4332"
   },
   mint: {
     name: "Mint Fresh",
     primary: "#1F756E",
     secondary: "#5DDCC3",
-    background: "#E8F9F5"
+    background: "#E8F9F5",
+    foreground: "#1F756E"
   }
 };
 
@@ -82,9 +91,10 @@ const ComingSoonLanding = () => {
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>("tropical");
 
   const [widgets, setWidgets] = useState([
-    { id: "calendar", title: "Calendario", type: "preview", width: "col-span-1 md:col-span-2", Icon: Calendar, color: "bg-primary/10 text-primary", content: "Disponibilidad en tiempo real" },
-    { id: "stats", title: "Métricas", type: "chart", width: "col-span-1", Icon: BarChart3, color: "bg-secondary/10 text-secondary", content: "mensual" },
-    { id: "users", title: "Equipo", type: "list", width: "col-span-1", Icon: Users, color: "bg-accent/10 text-accent", content: "Gestión de personal" }
+    { id: "calendar", title: "Calendario", type: "preview", width: "md:col-span-2", height: "h-auto", Icon: Calendar, color: "bg-primary/10 text-primary", content: "Disponibilidad en tiempo real" },
+    { id: "stats", title: "Métricas", type: "chart", width: "md:col-span-1", height: "h-auto", Icon: BarChart3, color: "bg-secondary/10 text-secondary", content: "mensual" },
+    { id: "users", title: "Equipo", type: "list", width: "md:col-span-1", height: "h-auto", Icon: Users, color: "bg-accent/10 text-accent", content: "Gestión de personal" },
+    { id: "activity", title: "Actividad", type: "list", width: "md:col-span-1", height: "h-auto", Icon: History, color: "bg-primary/10 text-primary", content: "Últimas 5 reservas" }
   ]);
 
   React.useEffect(() => {
@@ -93,6 +103,7 @@ const ComingSoonLanding = () => {
     root.style.setProperty('--color-primary', theme.primary);
     root.style.setProperty('--color-secondary', theme.secondary);
     root.style.setProperty('--color-background', theme.background);
+    root.style.setProperty('--color-foreground', theme.foreground);
   }, [activeTheme]);
 
   useGSAP(() => {
@@ -250,7 +261,7 @@ const ComingSoonLanding = () => {
   };
 
   return (
-    <div ref={containerRef} className="theme-tropical bg-background text-foreground selection:bg-secondary/30">
+    <div ref={containerRef} className="bg-background text-foreground selection:bg-secondary/30 transition-colors duration-500">
       {/* Header */}
       <header className="header-nav fixed top-0 left-0 w-full z-50 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between bg-white/70 backdrop-blur-xl border border-foreground/5 rounded-full px-6 py-3 shadow-sm">
@@ -493,16 +504,16 @@ const ComingSoonLanding = () => {
               ))}
             </div>
 
-            <div className="relative p-2 rounded-[3rem] bg-white border border-foreground/5 shadow-2xl overflow-hidden group">
-               <div className="absolute inset-0 grid-pattern opacity-10" />
+            <div className="relative p-2 rounded-[3rem] bg-background border border-foreground/10 shadow-2xl overflow-hidden group">
+               <div className="absolute inset-0 grid-pattern opacity-20" />
                <div className="relative z-10 p-8 md:p-12">
                   <div className="flex items-center justify-between mb-12">
                     <div className="flex gap-2">
-                      <div className="w-3 h-3 rounded-full bg-primary/20" />
-                      <div className="w-3 h-3 rounded-full bg-primary/10" />
+                      <div className="w-3 h-3 rounded-full bg-primary" />
+                      <div className="w-3 h-3 rounded-full bg-secondary" />
                     </div>
-                    <div className="px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-[10px] font-bold uppercase tracking-widest text-primary">
-                      Vista previa del Dashboard
+                    <div className="px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-bold uppercase tracking-widest text-primary">
+                      Panel Personalizado
                     </div>
                   </div>
 
@@ -511,7 +522,7 @@ const ComingSoonLanding = () => {
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => {
                       const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
-                      const toIndex = widgets.length - 1; // Simplified drop logic
+                      const toIndex = widgets.length - 1; 
                       const newWidgets = [...widgets];
                       const [moved] = newWidgets.splice(fromIndex, 1);
                       newWidgets.splice(toIndex, 0, moved);
@@ -523,16 +534,45 @@ const ComingSoonLanding = () => {
                         key={w.id} 
                         draggable
                         onDragStart={(e) => e.dataTransfer.setData("text/plain", i.toString())}
-                        className={`group/widget relative p-8 rounded-3xl bg-white border border-foreground/5 shadow-sm hover:shadow-xl transition-all cursor-move ${w.width}`}
+                        className={`group/widget relative p-8 rounded-3xl bg-white/40 backdrop-blur-md border border-foreground/5 shadow-sm hover:shadow-xl transition-all cursor-move ${w.width} ${w.height} flex flex-col`}
                       >
                         <div className="flex items-center justify-between mb-6">
                           <div className={`p-3 rounded-2xl ${w.color}`}>
                             <w.Icon size={20} />
                           </div>
-                          <GripHorizontal className="text-foreground/10 group-hover/widget:text-foreground/30 transition-colors" size={20} />
+                          <div className="flex items-center gap-2">
+                             <button 
+                               onClick={() => {
+                                 const newWidgets = [...widgets];
+                                 const currentWidth = newWidgets[i].width;
+                                 if (currentWidth === 'md:col-span-1') newWidgets[i].width = 'md:col-span-2';
+                                 else if (currentWidth === 'md:col-span-2') newWidgets[i].width = 'md:col-span-3';
+                                 else newWidgets[i].width = 'md:col-span-1';
+                                 setWidgets(newWidgets);
+                               }}
+                               className="p-1.5 rounded-lg bg-foreground/5 text-foreground/30 hover:text-primary transition-colors flex items-center gap-1"
+                               title="Cambiar ancho"
+                             >
+                               <Maximize2 size={14} />
+                               <span className="text-[8px] font-bold">W</span>
+                             </button>
+                             <button 
+                               onClick={() => {
+                                 const newWidgets = [...widgets];
+                                 newWidgets[i].height = newWidgets[i].height === 'h-auto' ? 'min-h-[400px]' : 'h-auto';
+                                 setWidgets(newWidgets);
+                               }}
+                               className="p-1.5 rounded-lg bg-foreground/5 text-foreground/30 hover:text-primary transition-colors flex items-center gap-1"
+                               title="Cambiar alto"
+                             >
+                               <Plus size={14} />
+                               <span className="text-[8px] font-bold">H</span>
+                             </button>
+                             <GripHorizontal className="text-foreground/10 group-hover/widget:text-foreground/30 transition-colors" size={20} />
+                          </div>
                         </div>
                         <h4 className="text-lg font-bold text-foreground mb-2">{w.title}</h4>
-                        <p className="text-sm text-foreground/40 font-light mb-6">
+                        <p className="text-sm text-foreground/40 font-light mb-6 flex-1">
                           {w.id === 'stats' && w.content === 'mensual' ? 'Ingresos totales: 12.400€' : w.id === 'stats' ? 'Ingresos hoy: 450€' : w.content}
                         </p>
                         
@@ -540,7 +580,11 @@ const ComingSoonLanding = () => {
                           <button 
                             onClick={() => {
                               const newWidgets = [...widgets];
-                              newWidgets[i].content = newWidgets[i].id === 'stats' ? (newWidgets[i].content === 'mensual' ? 'diario' : 'mensual') : newWidgets[i].content;
+                              if (w.id === 'stats') {
+                                newWidgets[i].content = newWidgets[i].content === 'mensual' ? 'diario' : 'mensual';
+                              } else {
+                                newWidgets[i].content = "Personalizado";
+                              }
                               setWidgets(newWidgets);
                             }}
                             className="text-[10px] font-bold uppercase tracking-tighter text-primary flex items-center gap-1 hover:gap-2 transition-all"
