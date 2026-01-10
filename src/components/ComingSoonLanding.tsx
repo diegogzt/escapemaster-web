@@ -32,6 +32,7 @@ import {
   Sun,
   Moon
 } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -115,7 +116,7 @@ const ComingSoonLanding = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>("tropical");
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, setIsDarkMode } = useTheme();
 
   const [widgets, setWidgets] = useState<any[]>([
     { id: "calendar", title: "Calendario", type: "preview", width: 420, height: 350, Icon: Calendar, color: "bg-primary/10 text-primary", content: "Disponibilidad en tiempo real" },
@@ -126,38 +127,6 @@ const ComingSoonLanding = () => {
 
   const [resizingWidget, setResizingWidget] = useState<string | null>(null);
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, w: 0, h: 0 });
-
-  React.useEffect(() => {
-    // Check system preference
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setIsDarkMode(prefersDark);
-
-    // Listen for changes
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
-
-  React.useEffect(() => {
-    // 1. Global Dark Mode Sync
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    document.documentElement.style.colorScheme = isDarkMode ? 'dark' : 'light';
-    
-    // 2. Base Landing Theme (Always Tropical for the page background)
-    const baseTheme = THEMES.tropical;
-    const bg = isDarkMode ? baseTheme.darkBackground : baseTheme.background;
-    const fg = isDarkMode ? baseTheme.darkForeground : baseTheme.foreground;
-
-    // We apply variables to body to override ThemeProvider
-    document.body.style.setProperty('--color-primary', baseTheme.primary);
-    document.body.style.setProperty('--color-secondary', baseTheme.secondary);
-    document.body.style.setProperty('--color-background', bg);
-    document.body.style.setProperty('--color-foreground', fg);
-    
-    document.body.style.backgroundColor = bg;
-    document.body.style.color = fg;
-  }, [isDarkMode]);
 
   useGSAP(() => {
     // Header Animation
@@ -990,9 +959,10 @@ const ComingSoonLanding = () => {
                <div className="mb-12 pt-8">
                  <h3 className="text-2xl font-bold text-foreground mb-4 italic font-serif">Pro</h3>
                  <div className="flex items-baseline gap-1">
-                   <span className="text-6xl font-bold tracking-tighter">49€</span>
+                   <span className="text-6xl font-bold tracking-tighter">24,79€</span>
                    <span className="text-foreground/40 font-medium">/mensual</span>
                  </div>
+                 <p className="mt-2 text-xs text-foreground/40 italic">(Sin IVA incluido - 30,00€ total)</p>
                  <p className="mt-6 text-foreground/50 text-lg font-light leading-relaxed">
                    Diseñado para salas consolidadas que necesitan funciones avanzadas y escalabilidad.
                  </p>
