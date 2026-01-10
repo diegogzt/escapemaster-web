@@ -11,7 +11,6 @@ import {
   Users,
   Search,
   Filter,
-  MoreVertical,
   Eye,
   CheckCircle,
   XCircle,
@@ -19,7 +18,8 @@ import {
   Plus,
   LayoutGrid,
   List,
-  Loader2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 // Types for API response
@@ -36,11 +36,24 @@ interface Booking {
   game_master: string;
 }
 
+interface Room {
+  id: string;
+  name: string;
+}
+
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [allRooms, setAllRooms] = useState<string[]>([]);
+  const [allRooms, setAllRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Pagination State
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [total, setTotal] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  // Filters State
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [roomFilter, setRoomFilter] = useState("all");
@@ -49,50 +62,103 @@ export default function BookingsPage() {
   const [customEndDate, setCustomEndDate] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "table">("table");
 
-  // Fetch bookings and rooms from API
+  // Debounce search term
   useEffect(() => {
-    async function fetchData() {
+    const timer = setTimeout(() => {
+      setPage(1); // Reset to page 1 on search change
+      fetchData(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+    fetchData(1);
+  }, [statusFilter, roomFilter, dateFilterType, customStartDate, customEndDate, pageSize]);
+
+  // Fetch only when page changes (and not triggered by filters above)
+  useEffect(() => {
+    fetchData(page);
+  }, [page]);
+
+  // Initial Rooms Fetch
+  useEffect(() => {
+    async function fetchRooms() {
       try {
-        setLoading(true);
-        const [bookingsResponse, roomsData] = await Promise.all([
-          bookingsApi.list(),
-          roomsApi.list(),
-        ]);
-        
-        const bookingsList = bookingsResponse?.bookings || bookingsResponse || [];
+        const roomsData = await roomsApi.list();
         const roomsList = roomsData?.rooms || roomsData || [];
-        
-        // Transform bookings data to match expected format
-        // API returns: id, start_time, end_time, num_people, booking_status, payment_status, 
-        //              total_price, remaining_balance, guest, room_name, assigned_users
-        const transformedBookings = (bookingsList).map((b: any) => {
-          const startTime = b.start_time ? new Date(b.start_time) : null;
-          return {
-            id: b.id,
-            room_name: b.room_name || "Sin sala",
-            group_name: b.guest?.full_name || "Sin grupo",
-            date: startTime ? startTime.toISOString().split("T")[0] : "",
-            time: startTime ? startTime.toTimeString().substring(0, 5) : "",
-            players_count: b.num_people || 0,
-            status: b.booking_status || "pending",
-            total_price: Number(b.total_price) || 0,
-            paid_amount: Number(b.total_price) - Number(b.remaining_balance) || 0,
-            game_master: b.assigned_users?.[0]?.full_name || "Sin asignar",
-          };
-        });
-        
-        setBookings(transformedBookings);
-        setAllRooms((roomsList).map((r: any) => r.name));
-        setError(null);
+        setAllRooms(roomsList.map((r: any) => ({ id: r.id, name: r.name })));
       } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Error al cargar las reservas");
-      } finally {
-        setLoading(false);
+        console.error("Error fetching rooms:", err);
       }
     }
-    fetchData();
+    fetchRooms();
   }, []);
+
+  async function fetchData(currentPage: number) {
+    try {
+      setLoading(true);
+      
+      const params: any = {
+        page: currentPage,
+        page_size: pageSize,
+      };
+
+      if (searchTerm) params.search = searchTerm;
+      if (statusFilter !== "all") params.status = statusFilter;
+      if (roomFilter !== "all") params.room_id = roomFilter;
+
+      // Date Filters
+      if (dateFilterType === "today") {
+        const today = new Date();
+        params.date_from = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        params.date_to = params.date_from;
+      } else if (dateFilterType === "tomorrow") {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        params.date_from = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+        params.date_to = params.date_from;
+      } else if (dateFilterType === "custom" && customStartDate) {
+        params.date_from = customStartDate;
+        if (customEndDate) params.date_to = customEndDate;
+      }
+
+      const response = await bookingsApi.list(params);
+      
+      const bookingsList = response?.bookings || response || [];
+      const totalCount = response?.total || bookingsList.length;
+      const pages = response?.total_pages || Math.ceil(totalCount / pageSize);
+
+      setTotal(totalCount);
+      setTotalPages(pages);
+
+      // Transform bookings data
+      const transformedBookings = bookingsList.map((b: any) => {
+        const startTime = b.start_time ? new Date(b.start_time) : null;
+        return {
+          id: b.id,
+          room_name: b.room_name || (b.room ? b.room.name : "Sin sala"),
+          group_name: b.guest?.full_name || "Sin grupo",
+          date: startTime ? startTime.toISOString().split("T")[0] : "",
+          time: startTime ? startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "",
+          players_count: b.num_people || 0,
+          status: b.booking_status || "pending",
+          total_price: Number(b.total_price) || 0,
+          paid_amount: Number(b.total_price) - Number(b.remaining_balance) || 0,
+          game_master: b.assigned_users?.[0]?.full_name || "Sin asignar",
+        };
+      });
+      
+      setBookings(transformedBookings);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Error al cargar las reservas");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -102,18 +168,10 @@ export default function BookingsPage() {
         setViewMode("grid");
       }
     };
-
-    // Set initial value
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // Extract unique rooms from API
-  const uniqueRooms = allRooms.length > 0 ? allRooms : Array.from(
-    new Set(bookings.map((b) => b.room_name))
-  );
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -140,57 +198,6 @@ export default function BookingsPage() {
     }
   };
 
-  const filteredBookings = bookings.filter((booking) => {
-    // Search Term
-    const matchesSearch =
-      booking.group_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.room_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      booking.game_master.toLowerCase().includes(searchTerm.toLowerCase());
-
-    // Status Filter
-    const matchesStatus =
-      statusFilter === "all" || booking.status === statusFilter;
-
-    // Room Filter
-    const matchesRoom =
-      roomFilter === "all" || booking.room_name === roomFilter;
-
-    // Date Filter
-    let matchesDate = true;
-    
-    // Create Date objects but compare YYYY-MM-DD strings to avoid timezone issues with midnight
-    const bookingDateObj = new Date(booking.date);
-    const bookingDateStr = booking.date; // already YYYY-MM-DD from transform
-    
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-    
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
-    if (dateFilterType === "today") {
-      matchesDate = bookingDateStr === todayStr;
-    } else if (dateFilterType === "tomorrow") {
-      matchesDate = bookingDateStr === tomorrowStr;
-    } else if (dateFilterType === "custom") {
-      if (customStartDate && customEndDate) {
-        const start = new Date(customStartDate);
-        const end = new Date(customEndDate);
-        start.setHours(0, 0, 0, 0);
-        end.setHours(23, 59, 59, 999);
-        matchesDate = bookingDateObj >= start && bookingDateObj <= end;
-      } else if (customStartDate) {
-        const start = new Date(customStartDate);
-        start.setHours(0, 0, 0, 0);
-        matchesDate = bookingDateObj >= start;
-      }
-    }
-
-    return matchesSearch && matchesStatus && matchesRoom && matchesDate;
-  });
-
-  // Loading Skeleton Component
   const BookingSkeleton = () => (
     <Card className="p-4 border-beige/50 animate-pulse">
       <div className="flex justify-between items-start mb-3">
@@ -223,9 +230,6 @@ export default function BookingsPage() {
     </tr>
   );
 
-
-
-  // Error state
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -295,7 +299,7 @@ export default function BookingsPage() {
               />
               <input
                 type="text"
-                placeholder="Buscar por grupo, sala o GM..."
+                placeholder="Buscar por grupo o email..."
                 className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -321,9 +325,9 @@ export default function BookingsPage() {
               onChange={(e) => setRoomFilter(e.target.value)}
             >
               <option value="all">Todas las salas</option>
-              {uniqueRooms.map((room) => (
-                <option key={room} value={room}>
-                  {room}
+              {allRooms.map((room) => (
+                <option key={room.id} value={room.id}>
+                  {room.name}
                 </option>
               ))}
             </select>
@@ -404,12 +408,12 @@ export default function BookingsPage() {
 
       {/* Content */}
       {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {loading ? (
             Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />)
-          ) : filteredBookings.length > 0 ? (
-            filteredBookings.map((booking) => (
-              <Card key={booking.id} className="p-4 border-beige/50">
+          ) : bookings.length > 0 ? (
+            bookings.map((booking) => (
+              <Card key={booking.id} className="p-4 border-beige/50 hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-start mb-3">
                   <div>
                     <div className="flex items-center font-bold text-dark mb-1">
@@ -425,10 +429,10 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="mb-3">
-                  <h3 className="font-bold text-lg text-dark">
+                  <h3 className="font-bold text-lg text-dark truncate" title={booking.room_name}>
                     {booking.room_name}
                   </h3>
-                  <div className="text-sm text-gray-600 mt-1">
+                  <div className="text-sm text-gray-600 mt-1 truncate">
                     {booking.group_name}
                   </div>
                 </div>
@@ -456,7 +460,7 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-beige">
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-gray-500 truncate max-w-[50%]">
                     GM: {booking.game_master}
                   </div>
                   <Link href={`/bookings/${booking.id}`}>
@@ -476,7 +480,7 @@ export default function BookingsPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm border border-beige overflow-hidden mb-8">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-light/50 border-b border-beige">
@@ -494,8 +498,8 @@ export default function BookingsPage() {
             <tbody className="divide-y divide-beige">
               {loading ? (
                 Array(5).fill(0).map((_, i) => <TableSkeleton key={i} />)
-              ) : filteredBookings.length > 0 ? (
-                filteredBookings.map((booking) => (
+              ) : bookings.length > 0 ? (
+                bookings.map((booking) => (
                   <tr
                     key={booking.id}
                     className="hover:bg-light/30 transition-colors"
@@ -573,6 +577,61 @@ export default function BookingsPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination Controls */}
+      {!loading && bookings.length > 0 && (
+        <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg shadow-sm">
+          <div className="flex flex-1 justify-between sm:hidden">
+            <Button
+              variant="outline"
+              disabled={page === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              Anterior
+            </Button>
+            <Button
+              variant="outline"
+              disabled={page >= totalPages}
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Siguiente
+            </Button>
+          </div>
+          <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700">
+                Mostrando <span className="font-medium">{(page - 1) * pageSize + 1}</span> a{" "}
+                <span className="font-medium">{Math.min(page * pageSize, total)}</span> de{" "}
+                <span className="font-medium">{total}</span> resultados
+              </p>
+            </div>
+            <div>
+              <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+                <button
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="sr-only">Anterior</span>
+                  <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                </button>
+                {/* Page Indicator */}
+                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0">
+                  Página {page} de {totalPages}
+                </span>
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page >= totalPages}
+                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="sr-only">Siguiente</span>
+                  <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </nav>
+            </div>
+          </div>
         </div>
       )}
     </div>

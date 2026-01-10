@@ -156,13 +156,8 @@ export const bookings = {
   list: async (params?: any) => {
     try {
       const response = await api.get("/bookings", { params });
-      // API returns { bookings: [...], total, page, ... } - extract bookings array
-      // If we need the full envelope, we should return response.data 
-      // But preserving compat with existing callers who expect array
-      
-      // However, if the caller needs pagination metadata, this current implementation hides it.
-      // For now, let's keep the array return but fix the error swallow.
-      return response.data?.bookings || response.data || [];
+      // Return full response to allow access to pagination metadata (total, page, total_pages)
+      return response.data;
     } catch (error) {
       console.error("Error fetching bookings:", error);
       throw error; // Don't swallow errors!

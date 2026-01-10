@@ -40,6 +40,7 @@ const THEMES = {
     name: "Tropical",
     primary: "#1F6357",
     secondary: "#4DB8A8",
+    accent: "#F4E9CD",
     background: "#F0F9F8",
     foreground: "#0D3D34",
     darkBackground: "#051A17",
@@ -49,6 +50,7 @@ const THEMES = {
     name: "Ocean",
     primary: "#006D77",
     secondary: "#83C5BE",
+    accent: "#E5F3FF",
     background: "#F0F8F9",
     foreground: "#003D42",
     darkBackground: "#001517",
@@ -58,6 +60,7 @@ const THEMES = {
     name: "Sunset",
     primary: "#FF6B9D",
     secondary: "#FFA07A",
+    accent: "#FFF1E6",
     background: "#FFF8F0",
     foreground: "#4A1A0B",
     darkBackground: "#1A0A05",
@@ -67,6 +70,7 @@ const THEMES = {
     name: "Nature",
     primary: "#2D6A4F",
     secondary: "#52B788",
+    accent: "#F0FDF4",
     background: "#F0F9F1",
     foreground: "#112D21",
     darkBackground: "#05140E",
@@ -76,10 +80,21 @@ const THEMES = {
     name: "Mint Fresh",
     primary: "#1F756E",
     secondary: "#5DDCC3",
+    accent: "#C8E86C",
     background: "#F0FAF7",
     foreground: "#0D332F",
     darkBackground: "#031412",
     darkForeground: "#5DDCC3"
+  },
+  vista: {
+    name: "Vista",
+    primary: "#D56A34",
+    secondary: "#3F170E",
+    accent: "#F9F7E9",
+    background: "#FDFCF5",
+    foreground: "#2A0F08",
+    darkBackground: "#2A0F08",
+    darkForeground: "#FDFCF5"
   }
 };
 
@@ -125,24 +140,34 @@ const ComingSoonLanding = () => {
   }, []);
 
   React.useEffect(() => {
-    const theme = THEMES[activeTheme];
+    const theme = THEMES[activeTheme] as any;
     const root = document.documentElement;
     
     const bg = isDarkMode ? theme.darkBackground : theme.background;
     const fg = isDarkMode ? theme.darkForeground : theme.foreground;
     
+    // Set CSS variables with !important priority for Tailwind 4
     root.style.setProperty('--color-primary', theme.primary);
     root.style.setProperty('--color-secondary', theme.secondary);
+    root.style.setProperty('--color-accent', theme.accent || theme.secondary);
     root.style.setProperty('--color-background', bg);
     root.style.setProperty('--color-foreground', fg);
     
+    // Update theme classes on root
+    Object.keys(THEMES).forEach(t => {
+      root.classList.remove(`theme-${t}`);
+    });
+    root.classList.add(`theme-${activeTheme}`);
+    
     if (isDarkMode) {
       root.classList.add('dark');
+      root.style.colorScheme = 'dark';
     } else {
       root.classList.remove('dark');
+      root.style.colorScheme = 'light';
     }
     
-    // Also update body background directly for consistency
+    // Force background and color transitions
     document.body.style.backgroundColor = bg;
   }, [activeTheme, isDarkMode]);
 
@@ -411,12 +436,15 @@ const ComingSoonLanding = () => {
           <div className="absolute bottom-[20%] right-[20%] w-10 h-10 bg-primary/5 rounded-md -rotate-12" />
         </div>
 
-        <div className="z-10 max-w-7xl mx-auto w-full flex flex-col items-center">
-          <div className="hero-badge inline-block px-4 py-1.5 mb-12 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase animate-on-scroll">
-            Próximamente 2026
+        <div className="z-10 max-w-7xl mx-auto w-full">
+          {/* Badge Centered */}
+          <div className="flex justify-center mb-16 animate-on-scroll">
+            <div className="hero-badge inline-block px-4 py-1.5 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase">
+              Próximamente 2026
+            </div>
           </div>
           
-          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center mb-16 px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center mb-20 px-4">
             <div className="text-left animate-on-scroll lg:pr-10">
               <h1 className="hero-title text-5xl md:text-7xl xl:text-8xl font-bold tracking-tighter leading-[0.85] text-foreground">
                 Donde las <br />
@@ -506,7 +534,8 @@ const ComingSoonLanding = () => {
             </div>
           </div>
 
-          <div className="max-w-4xl text-center px-6 animate-on-scroll">
+          {/* Description and CTA Centered Below */}
+          <div className="max-w-4xl mx-auto text-center px-6 animate-on-scroll">
             <p className="hero-description text-xl md:text-2xl text-foreground/50 font-light leading-relaxed mb-12">
               La plataforma definitiva para gestionar, escalar y automatizar tu negocio de salas de escape. 
               Menos gestión, más aventura.
