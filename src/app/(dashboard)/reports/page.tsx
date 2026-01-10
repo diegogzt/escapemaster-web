@@ -405,34 +405,44 @@ export default function ReportsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <tr key={i} className="hover:bg-light/20 transition-colors group">
-                      <td className="px-6 py-4 text-sm text-gray-500 font-mono">#RES-{1000 + i}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <div className="w-8 h-8 rounded-full bg-beige/40 flex items-center justify-center text-primary font-bold text-xs mr-3">
-                            C{i}
+                  {recentBookings.length > 0 ? (
+                    recentBookings.map((booking, i) => (
+                      <tr key={booking.id} className="hover:bg-light/20 transition-colors group">
+                        <td className="px-6 py-4 text-sm text-gray-500 font-mono">#{booking.id.substring(0, 8)}</td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 rounded-full bg-beige/40 flex items-center justify-center text-primary font-bold text-xs mr-3">
+                              {booking.guest?.full_name?.charAt(0) || "C"}
+                            </div>
+                            <span className="text-sm font-bold text-dark">{booking.guest?.full_name || "Cliente"}</span>
                           </div>
-                          <span className="text-sm font-bold text-dark">Cliente {i}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
-                          style={{
-                            backgroundColor: (roomPopularity[i % roomPopularity.length]?.color || "#ccc") + "15",
-                            color: roomPopularity[i % roomPopularity.length]?.color || "#666",
-                          }}
-                        >
-                          {roomPopularity[i % roomPopularity.length]?.name || "Sin sala"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">21 Dic, 2025</td>
-                      <td className="px-6 py-4 text-right">
-                        <span className="text-sm font-bold text-primary">+120,00€</span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span
+                            className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
+                            style={{
+                              backgroundColor: (roomPopularity[i % roomPopularity.length]?.color || "#ccc") + "15",
+                              color: roomPopularity[i % roomPopularity.length]?.color || "#666",
+                            }}
+                          >
+                            {booking.room_name || "Sin sala"}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {booking.start_time ? new Date(booking.start_time).toLocaleDateString() : "-"}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <span className="text-sm font-bold text-primary">+{Number(booking.total_price).toFixed(2)}€</span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                        No hay transacciones recientes
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>

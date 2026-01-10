@@ -65,22 +65,17 @@ export default function CalendarPage() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
         
-        // Default to fetching the whole month + padding defined by view
-        // For month view: 1st of month to last day of month
-        // We add some buffer (prev month last week, next month first week) for smooth transitions if needed
-        // But strict month filter is usually enough if navigation re-triggers
+        // Start of month (local time YYYY-MM-DD)
+        const firstDayStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
         
-        const firstDay = new Date(year, month, 1);
+        // End of month
         const lastDay = new Date(year, month + 1, 0);
-
-        // API expects ISO strings or YYYY-MM-DD
-        const dateFrom = firstDay.toISOString().split("T")[0];
-        const dateTo = lastDay.toISOString().split("T")[0];
+        const lastDayStr = `${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
 
         const [bookingsResponse, roomsData] = await Promise.all([
           bookingsApi.list({ 
-            date_from: dateFrom, 
-            date_to: dateTo,
+            date_from: firstDayStr, 
+            date_to: lastDayStr, 
             page_size: 1000 // Ensure we get all bookings for the month
           }),
           roomsApi.list(),

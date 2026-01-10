@@ -157,45 +157,73 @@ export default function BookingsPage() {
 
     // Date Filter
     let matchesDate = true;
-    const bookingDate = new Date(booking.date);
+    
+    // Create Date objects but compare YYYY-MM-DD strings to avoid timezone issues with midnight
+    const bookingDateObj = new Date(booking.date);
+    const bookingDateStr = booking.date; // already YYYY-MM-DD from transform
+    
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
     if (dateFilterType === "today") {
-      matchesDate = bookingDate.getTime() === today.getTime();
+      matchesDate = bookingDateStr === todayStr;
     } else if (dateFilterType === "tomorrow") {
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      matchesDate = bookingDate.getTime() === tomorrow.getTime();
+      matchesDate = bookingDateStr === tomorrowStr;
     } else if (dateFilterType === "custom") {
       if (customStartDate && customEndDate) {
         const start = new Date(customStartDate);
         const end = new Date(customEndDate);
-        // Reset hours for comparison
         start.setHours(0, 0, 0, 0);
         end.setHours(23, 59, 59, 999);
-        matchesDate = bookingDate >= start && bookingDate <= end;
+        matchesDate = bookingDateObj >= start && bookingDateObj <= end;
       } else if (customStartDate) {
         const start = new Date(customStartDate);
         start.setHours(0, 0, 0, 0);
-        matchesDate = bookingDate >= start;
+        matchesDate = bookingDateObj >= start;
       }
     }
 
     return matchesSearch && matchesStatus && matchesRoom && matchesDate;
   });
 
-  // Loading state
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-600">Cargando reservas...</p>
+  // Loading Skeleton Component
+  const BookingSkeleton = () => (
+    <Card className="p-4 border-beige/50 animate-pulse">
+      <div className="flex justify-between items-start mb-3">
+        <div className="space-y-2">
+          <div className="h-4 w-24 bg-gray-200 rounded"></div>
+          <div className="h-3 w-16 bg-gray-200 rounded"></div>
         </div>
+        <div className="h-5 w-20 bg-gray-200 rounded-full"></div>
       </div>
-    );
-  }
+      <div className="mb-3 space-y-2">
+        <div className="h-6 w-32 bg-gray-200 rounded"></div>
+        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+      </div>
+      <div className="flex justify-between pt-3 border-t border-beige">
+        <div className="h-3 w-20 bg-gray-200 rounded"></div>
+        <div className="h-8 w-24 bg-gray-200 rounded"></div>
+      </div>
+    </Card>
+  );
+
+  const TableSkeleton = () => (
+    <tr className="animate-pulse border-b border-beige">
+      <td className="px-6 py-4"><div className="h-4 w-32 bg-gray-200 rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-24 bg-gray-200 rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-32 bg-gray-200 rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-16 bg-gray-200 rounded"></div></td>
+      <td className="px-6 py-4"><div className="h-5 w-20 bg-gray-200 rounded-full"></div></td>
+      <td className="px-6 py-4"><div className="h-4 w-20 bg-gray-200 rounded"></div></td>
+      <td className="px-6 py-4 text-right"><div className="h-8 w-8 bg-gray-200 rounded ml-auto"></div></td>
+    </tr>
+  );
+
+
 
   // Error state
   if (error) {
@@ -377,7 +405,9 @@ export default function BookingsPage() {
       {/* Content */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredBookings.length > 0 ? (
+          {loading ? (
+            Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />)
+          ) : filteredBookings.length > 0 ? (
             filteredBookings.map((booking) => (
               <Card key={booking.id} className="p-4 border-beige/50">
                 <div className="flex justify-between items-start mb-3">
@@ -462,7 +492,9 @@ export default function BookingsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-beige">
-              {filteredBookings.length > 0 ? (
+              {loading ? (
+                Array(5).fill(0).map((_, i) => <TableSkeleton key={i} />)
+              ) : filteredBookings.length > 0 ? (
                 filteredBookings.map((booking) => (
                   <tr
                     key={booking.id}

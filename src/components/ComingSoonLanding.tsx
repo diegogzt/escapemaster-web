@@ -27,9 +27,10 @@ import {
   Settings2,
   Brush,
   Maximize2,
-  Minimize2,
   Plus,
-  History
+  History,
+  Sun,
+  Moon
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -39,36 +40,46 @@ const THEMES = {
     name: "Tropical",
     primary: "#1F6357",
     secondary: "#4DB8A8",
-    background: "#E8F5F3",
-    foreground: "#1F6357"
+    background: "#F0F9F8",
+    foreground: "#0D3D34",
+    darkBackground: "#051A17",
+    darkForeground: "#4DB8A8"
   },
   ocean: {
     name: "Ocean",
     primary: "#006D77",
     secondary: "#83C5BE",
-    background: "#EDF6F9",
-    foreground: "#006D77"
+    background: "#F0F8F9",
+    foreground: "#003D42",
+    darkBackground: "#001517",
+    darkForeground: "#83C5BE"
   },
   sunset: {
     name: "Sunset",
     primary: "#FF6B9D",
     secondary: "#FFA07A",
-    background: "#FFF4E6",
-    foreground: "#8E2B4B"
+    background: "#FFF8F0",
+    foreground: "#4A1A0B",
+    darkBackground: "#1A0A05",
+    darkForeground: "#FFA07A"
   },
   nature: {
     name: "Nature",
     primary: "#2D6A4F",
     secondary: "#52B788",
-    background: "#D8F3DC",
-    foreground: "#1B4332"
+    background: "#F0F9F1",
+    foreground: "#112D21",
+    darkBackground: "#05140E",
+    darkForeground: "#52B788"
   },
   mint: {
     name: "Mint Fresh",
     primary: "#1F756E",
     secondary: "#5DDCC3",
-    background: "#E8F9F5",
-    foreground: "#1F756E"
+    background: "#F0FAF7",
+    foreground: "#0D332F",
+    darkBackground: "#031412",
+    darkForeground: "#5DDCC3"
   }
 };
 
@@ -89,22 +100,45 @@ const ComingSoonLanding = () => {
   const [submitted, setSubmitted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeTheme, setActiveTheme] = useState<keyof typeof THEMES>("tropical");
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const [widgets, setWidgets] = useState([
-    { id: "calendar", title: "Calendario", type: "preview", width: "md:col-span-2", height: "h-auto", Icon: Calendar, color: "bg-primary/10 text-primary", content: "Disponibilidad en tiempo real" },
-    { id: "stats", title: "Métricas", type: "chart", width: "md:col-span-1", height: "h-auto", Icon: BarChart3, color: "bg-secondary/10 text-secondary", content: "mensual" },
-    { id: "users", title: "Equipo", type: "list", width: "md:col-span-1", height: "h-auto", Icon: Users, color: "bg-accent/10 text-accent", content: "Gestión de personal" },
-    { id: "activity", title: "Actividad", type: "list", width: "md:col-span-1", height: "h-auto", Icon: History, color: "bg-primary/10 text-primary", content: "Últimas 5 reservas" }
+  const [widgets, setWidgets] = useState<any[]>([
+    { id: "calendar", title: "Calendario", type: "preview", width: 420, height: 350, Icon: Calendar, color: "bg-primary/10 text-primary", content: "Disponibilidad en tiempo real" },
+    { id: "stats", title: "Métricas", type: "chart", width: 320, height: 300, Icon: BarChart3, color: "bg-secondary/10 text-secondary", content: "mensual" },
+    { id: "users", title: "Equipo", type: "list", width: 320, height: 280, Icon: Users, color: "bg-accent/10 text-accent", content: "Gestión de personal" },
+    { id: "activity", title: "Actividad", type: "list", width: 320, height: 220, Icon: History, color: "bg-primary/10 text-primary", content: "Últimas 5 reservas" }
   ]);
+
+  const [resizingWidget, setResizingWidget] = useState<string | null>(null);
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, w: 0, h: 0 });
+
+  React.useEffect(() => {
+    // Check system preference
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDarkMode(prefersDark);
+
+    // Listen for changes
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handler = (e: MediaQueryListEvent) => setIsDarkMode(e.matches);
+    mediaQuery.addEventListener("change", handler);
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, []);
 
   React.useEffect(() => {
     const theme = THEMES[activeTheme];
     const root = document.documentElement;
+    
+    const bg = isDarkMode ? theme.darkBackground : theme.background;
+    const fg = isDarkMode ? theme.darkForeground : theme.foreground;
+    
     root.style.setProperty('--color-primary', theme.primary);
     root.style.setProperty('--color-secondary', theme.secondary);
-    root.style.setProperty('--color-background', theme.background);
-    root.style.setProperty('--color-foreground', theme.foreground);
-  }, [activeTheme]);
+    root.style.setProperty('--color-background', bg);
+    root.style.setProperty('--color-foreground', fg);
+    
+    // Also update body background directly for consistency
+    document.body.style.backgroundColor = bg;
+  }, [activeTheme, isDarkMode]);
 
   useGSAP(() => {
     // Header Animation
@@ -168,6 +202,31 @@ const ComingSoonLanding = () => {
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+
+    // Resize Handler
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (resizingWidget) {
+        setWidgets(prev => prev.map(w => {
+          if (w.id === resizingWidget) {
+            const dx = e.clientX - resizeStart.x;
+            const dy = e.clientY - resizeStart.y;
+            return {
+              ...w,
+              width: Math.max(250, resizeStart.w + dx),
+              height: Math.max(150, resizeStart.h + dy)
+            };
+          }
+          return w;
+        }));
+      }
+    };
+
+    const handleGlobalMouseUp = () => {
+      setResizingWidget(null);
+    };
+
+    window.addEventListener("mousemove", handleGlobalMouseMove);
+    window.addEventListener("mouseup", handleGlobalMouseUp);
 
     // Magnetic Button Effect
     const magneticBtn = magneticBtnRef.current;
@@ -279,6 +338,13 @@ const ComingSoonLanding = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2.5 rounded-full border border-foreground/5 bg-white/50 hover:bg-white transition-colors"
+              aria-label="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4 text-orange-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
+            </button>
             <Link href="/login" className="hidden md:block text-sm font-medium text-foreground/60 hover:text-foreground transition-colors px-4 py-2">
               Iniciar sesión
             </Link>
@@ -331,7 +397,7 @@ const ComingSoonLanding = () => {
       </div>
 
       {/* Hero Section */}
-      <section ref={heroRef} className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
+      <section ref={heroRef} className="relative min-h-[90vh] flex flex-col justify-start px-6 pt-40 overflow-hidden">
         <div ref={floatingRef} className="absolute inset-0 pointer-events-none">
           <div className="absolute top-[20%] left-[15%] w-12 h-12 border border-secondary/10 rounded-lg rotate-12" />
           <div className="absolute top-[60%] left-[10%] w-8 h-8 bg-primary/5 rounded-full blur-sm" />
@@ -339,44 +405,128 @@ const ComingSoonLanding = () => {
           <div className="absolute bottom-[20%] right-[20%] w-10 h-10 bg-primary/5 rounded-md -rotate-12" />
         </div>
 
-        <div className="z-10 text-center max-w-4xl">
-          <div className="hero-badge inline-block px-4 py-1.5 mb-8 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase">
-            Próximamente 2026
-          </div>
-          
-          <h1 className="hero-title text-5xl md:text-8xl font-bold tracking-tighter mb-8 leading-[1.1]">
-            Donde las <span className="text-primary italic font-serif">experiencias</span> <br /> 
-            se hacen realidad.
-          </h1>
-          
-          <p className="hero-description text-xl md:text-2xl text-foreground/50 font-light leading-relaxed mb-12 max-w-2xl mx-auto">
-            La plataforma definitiva para gestionar, escalar y automatizar tu negocio de salas de escape. 
-            Menos gestión, más aventura.
-          </p>
+        <div className="z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="text-left animate-on-scroll">
+            <div className="hero-badge inline-block px-4 py-1.5 mb-8 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase">
+              Próximamente 2026
+            </div>
+            
+            <h1 className="hero-title text-6xl md:text-8xl xl:text-9xl font-bold tracking-tighter mb-8 leading-[0.9]">
+              Donde las <br />
+              <span className="text-primary italic font-serif">experiencias</span> <br /> 
+              se hacen realidad.
+            </h1>
+            
+            <p className="hero-description text-xl md:text-2xl text-foreground/50 font-light leading-relaxed mb-12 max-w-xl">
+              La plataforma definitiva para gestionar, escalar y automatizar tu negocio de salas de escape. 
+              Menos gestión, más aventura.
+            </p>
 
-          <div className="hero-cta">
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center justify-center gap-3 max-w-xl mx-auto p-2 rounded-2xl sm:rounded-full bg-white border border-foreground/5 shadow-xl hover:shadow-2xl transition-all">
-              <input 
-                type="email" 
-                placeholder="tu@negocio.com"
-                className="w-full sm:flex-1 px-6 py-3 bg-transparent focus:outline-none text-foreground"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <button 
-                type="submit"
-                className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold rounded-xl sm:rounded-full hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
-              >
-                Probar gratis
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </form>
-            <div className="mt-6 flex flex-wrap justify-center gap-4 text-xs font-medium text-foreground/40">
-              <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-secondary" /> Sin tarjeta</span>
-              <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3 text-secondary" /> Instalación en 2 min</span>
+            <div className="hero-cta">
+              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-3 p-2 rounded-2xl sm:rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-xl hover:shadow-2xl transition-all">
+                <input 
+                  type="email" 
+                  placeholder="tu@negocio.com"
+                  className="w-full sm:flex-1 px-6 py-3 bg-transparent focus:outline-none text-foreground placeholder:text-foreground/30"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button 
+                  type="submit"
+                  className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold rounded-xl sm:rounded-full hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+                >
+                  Probar gratis
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+              <div className="mt-6 flex flex-wrap gap-4 text-xs font-medium text-foreground/40">
+                <span className="flex items-center gap-1 text-primary"><CheckCircle2 className="w-3 h-3" /> Sin tarjeta</span>
+                <span className="flex items-center gap-1 text-primary"><CheckCircle2 className="w-3 h-3" /> Instalación en 2 min</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:block relative h-[650px] animate-on-scroll">
+            <div className="absolute inset-0 bg-foreground/5 rounded-[4rem] border border-foreground/10 backdrop-blur-3xl overflow-hidden p-8 shadow-2xl">
+              <div className="flex items-center justify-between mb-10">
+                <div className="flex gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-400/30" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400/30" />
+                  <div className="w-3 h-3 rounded-full bg-green-400/30" />
+                </div>
+                <div className="px-4 py-1.5 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold tracking-widest uppercase text-foreground/40">
+                  Dashboard Demo v2.0
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="col-span-2 bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5">
+                  <div className="flex justify-between items-center mb-6">
+                    <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <div className="h-3 w-32 bg-foreground/5 rounded-full" />
+                  </div>
+                  <div className="space-y-4">
+                    <div className="h-6 w-full bg-foreground/5 rounded-xl" />
+                    <div className="h-6 w-3/4 bg-foreground/5 rounded-xl" />
+                  </div>
+                </div>
+                
+                <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5 aspect-square flex flex-col">
+                  <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-6">
+                    <BarChart3 className="w-5 h-5" />
+                  </div>
+                  <div className="mt-auto h-28 w-full bg-linear-to-t from-secondary/5 to-transparent rounded-2xl flex items-end px-3 pb-3 gap-1.5">
+                    <div className="h-1/2 flex-1 bg-secondary/20 rounded-t-lg" />
+                    <div className="h-3/4 flex-1 bg-secondary/30 rounded-t-lg" />
+                    <div className="h-1/3 flex-1 bg-secondary/20 rounded-t-lg" />
+                    <div className="h-full flex-1 bg-secondary/40 rounded-t-lg" />
+                  </div>
+                </div>
+
+                <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5 aspect-square">
+                  <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                      <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                      <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                      <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Floating badges */}
+            <div className="absolute -top-10 -right-10 px-8 py-6 bg-background rounded-3xl shadow-2xl border border-foreground/10 animate-pulse">
+              <div className="text-[10px] font-bold text-foreground/30 mb-2 uppercase tracking-widest">INGRESOS HOY</div>
+              <div className="text-3xl font-bold text-primary">$1,240.00</div>
+            </div>
+
+            <div className="absolute -bottom-10 -left-10 px-8 py-6 bg-background rounded-3xl shadow-2xl border border-foreground/10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-green-500 overflow-hidden border-4 border-white shadow-sm flex items-center justify-center text-white font-bold text-sm uppercase">
+                  JK
+                </div>
+                <div>
+                  <div className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">NUEVA RESERVA</div>
+                  <div className="text-sm font-bold text-foreground">Laboratorio Zombie</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+
 
 
         <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-30">
@@ -494,7 +644,7 @@ const ComingSoonLanding = () => {
                 <button
                   key={t}
                   onClick={() => setActiveTheme(t)}
-                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl border transition-all ${activeTheme === t ? 'border-primary bg-primary/5 shadow-lg' : 'border-foreground/5 bg-white hover:border-primary/20'}`}
+                  className={`flex items-center gap-3 px-6 py-3 rounded-2xl border transition-all ${activeTheme === t ? 'border-primary bg-primary/5 shadow-lg' : 'border-foreground/5 bg-background/50 hover:border-primary/20'}`}
                 >
                   <div className="w-4 h-4 rounded-full" style={{ backgroundColor: THEMES[t].primary }} />
                   <span className={`text-sm font-bold ${activeTheme === t ? 'text-primary' : 'text-foreground/40'}`}>
@@ -518,7 +668,7 @@ const ComingSoonLanding = () => {
                   </div>
 
                   <div 
-                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                    className="flex flex-wrap gap-6 min-h-[500px]"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => {
                       const fromIndex = parseInt(e.dataTransfer.getData("text/plain"));
@@ -532,47 +682,22 @@ const ComingSoonLanding = () => {
                     {widgets.map((w, i) => (
                       <div 
                         key={w.id} 
+                        id={`widget-${w.id}`}
+                        style={{ width: w.width, height: w.height }}
                         draggable
                         onDragStart={(e) => e.dataTransfer.setData("text/plain", i.toString())}
-                        className={`group/widget relative p-8 rounded-3xl bg-white/40 backdrop-blur-md border border-foreground/5 shadow-sm hover:shadow-xl transition-all cursor-move ${w.width} ${w.height} flex flex-col`}
+                        className={`group/widget relative p-8 rounded-[2.5rem] bg-background/60 backdrop-blur-xl border border-foreground/10 shadow-xl hover:shadow-2xl transition-all cursor-move flex flex-col overflow-hidden`}
                       >
                         <div className="flex items-center justify-between mb-6">
-                          <div className={`p-3 rounded-2xl ${w.color}`}>
-                            <w.Icon size={20} />
+                          <div className={`p-4 rounded-2xl ${w.color}`}>
+                            <w.Icon size={24} />
                           </div>
                           <div className="flex items-center gap-2">
-                             <button 
-                               onClick={() => {
-                                 const newWidgets = [...widgets];
-                                 const currentWidth = newWidgets[i].width;
-                                 if (currentWidth === 'md:col-span-1') newWidgets[i].width = 'md:col-span-2';
-                                 else if (currentWidth === 'md:col-span-2') newWidgets[i].width = 'md:col-span-3';
-                                 else newWidgets[i].width = 'md:col-span-1';
-                                 setWidgets(newWidgets);
-                               }}
-                               className="p-1.5 rounded-lg bg-foreground/5 text-foreground/30 hover:text-primary transition-colors flex items-center gap-1"
-                               title="Cambiar ancho"
-                             >
-                               <Maximize2 size={14} />
-                               <span className="text-[8px] font-bold">W</span>
-                             </button>
-                             <button 
-                               onClick={() => {
-                                 const newWidgets = [...widgets];
-                                 newWidgets[i].height = newWidgets[i].height === 'h-auto' ? 'min-h-[400px]' : 'h-auto';
-                                 setWidgets(newWidgets);
-                               }}
-                               className="p-1.5 rounded-lg bg-foreground/5 text-foreground/30 hover:text-primary transition-colors flex items-center gap-1"
-                               title="Cambiar alto"
-                             >
-                               <Plus size={14} />
-                               <span className="text-[8px] font-bold">H</span>
-                             </button>
                              <GripHorizontal className="text-foreground/10 group-hover/widget:text-foreground/30 transition-colors" size={20} />
                           </div>
                         </div>
-                        <h4 className="text-lg font-bold text-foreground mb-2">{w.title}</h4>
-                        <p className="text-sm text-foreground/40 font-light mb-6 flex-1">
+                        <h4 className="text-xl font-bold text-foreground mb-2">{w.title}</h4>
+                        <p className="text-md text-foreground/50 font-light mb-auto">
                           {w.id === 'stats' && w.content === 'mensual' ? 'Ingresos totales: 12.400€' : w.id === 'stats' ? 'Ingresos hoy: 450€' : w.content}
                         </p>
                         
@@ -592,12 +717,26 @@ const ComingSoonLanding = () => {
                             Configurar <Settings2 size={10} />
                           </button>
                         </div>
+
+                        {/* Resize Handle */}
+                        <div 
+                          className="absolute bottom-0 right-0 w-10 h-10 cursor-nwse-resize flex items-end justify-end p-2 opacity-0 group-hover/widget:opacity-100 transition-opacity z-20"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setResizingWidget(w.id);
+                            setResizeStart({ x: e.clientX, y: e.clientY, w: w.width, h: w.height });
+                          }}
+                        >
+                          <div className="w-4 h-4 rounded-tl-full border-b-2 border-r-2 border-primary/40 mr-1 mb-1" />
+                        </div>
                       </div>
                     ))}
                   </div>
                </div>
             </div>
           </div>
+
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 items-center">
              <div className="animate-on-scroll col-span-1">
@@ -731,7 +870,7 @@ const ComingSoonLanding = () => {
                 avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marc"
               }
             ].map((t, i) => (
-              <div key={i} className="animate-on-scroll p-10 rounded-[2.5rem] bg-white border border-foreground/5 shadow-sm hover:shadow-xl transition-all">
+              <div key={i} className="animate-on-scroll p-10 rounded-[2.5rem] bg-background border border-foreground/10 shadow-sm hover:shadow-xl transition-all">
                 <div className="flex gap-1 text-secondary mb-6">
                   {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
                 </div>
@@ -750,7 +889,7 @@ const ComingSoonLanding = () => {
       </section>
 
       {/* Pricing Section */}
-      <section ref={pricingRef} className="relative py-32 px-6 z-10">
+      <section ref={pricingRef} id="pricing" className="relative py-32 px-6 z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-20 animate-on-scroll">
             <h2 className="text-4xl md:text-7xl font-bold mb-8 tracking-tight">Precios <span className="text-primary italic font-serif">honestos</span>.</h2>
@@ -761,9 +900,9 @@ const ComingSoonLanding = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
             {/* Free Plan */}
-            <div className="animate-on-scroll relative p-12 rounded-[3.5rem] bg-white border border-foreground/5 shadow-sm hover:shadow-2xl transition-all group overflow-hidden">
+            <div className="animate-on-scroll relative p-12 rounded-[3.5rem] bg-background border border-foreground/10 shadow-sm hover:shadow-2xl transition-all group overflow-hidden">
                <div className="absolute top-0 right-0 p-8">
-                 <div className="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
+                 <div className="w-12 h-12 rounded-2xl bg-foreground/5 flex items-center justify-center text-foreground/30 group-hover:scale-110 transition-transform">
                    <Clock size={24} />
                  </div>
                </div>
@@ -794,13 +933,14 @@ const ComingSoonLanding = () => {
                  ))}
                </div>
 
-               <button className="w-full py-5 rounded-full border-2 border-foreground/5 text-foreground font-bold hover:bg-foreground hover:text-white transition-all text-lg">
+               <button className="w-full py-5 rounded-full border-2 border-foreground/10 text-foreground font-bold hover:bg-foreground hover:text-background transition-all text-lg">
                  Empezar ahora
                </button>
             </div>
 
             {/* Pro Plan */}
             <div className="animate-on-scroll relative p-12 rounded-[3.5rem] bg-background border-2 border-primary shadow-2xl transition-all group overflow-hidden">
+
                <div className="absolute top-0 right-0 p-8">
                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary animate-pulse">
                    <Zap size={24} fill="currentColor" />
