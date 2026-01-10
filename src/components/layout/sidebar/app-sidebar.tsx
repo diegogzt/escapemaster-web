@@ -19,11 +19,22 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { auth } from "@/services/api";
 
 export function AppSidebar() {
   const { user, updateUser, isAuthenticated } = useAuth();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [memberships, setMemberships] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const { auth } = require("@/services/api");
+      auth.getMemberships()
+        .then((data: any) => setMemberships(data))
+        .catch(console.error);
+    }
+  }, [isAuthenticated]);
 
   // Helper to check permissions
   const hasPermission = (permission: string) => {
@@ -93,6 +104,41 @@ export function AppSidebar() {
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </button>
       </div>
+
+      {/* Organization Switcher */}
+      {!isCollapsed && isAuthenticated && (
+        <div className="px-4 py-3 border-b border-[var(--color-beige)]">
+          <label className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2 block px-2">
+            Organización
+          </label>
+          <div className="relative group">
+            <select
+              className="w-full bg-[var(--color-light)]/30 border border-beige/50 rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/20 appearance-none cursor-pointer hover:bg-[var(--color-light)]/50 transition-colors"
+              value={user?.organization_id || ""}
+              onChange={async (e) => {
+                const orgId = e.target.value;
+                if (orgId && orgId !== user?.organization_id) {
+                  try {
+                    await auth.switchOrganization(orgId);
+                    window.location.reload(); // Refresh to apply new context/permissions
+                  } catch (err) {
+                    alert("Error al cambiar de organización");
+                  }
+                }
+              }}
+            >
+              {memberships.map((m: any) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground group-hover:text-primary transition-colors">
+              <ChevronLeft size={12} className="-rotate-90" />
+            </div>
+          </div>
+        </div>
+      )}
 
       <nav className="flex-1 px-2 space-y-2 py-4 overflow-y-auto">
         <NavItem

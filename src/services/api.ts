@@ -94,6 +94,22 @@ export const auth = {
     const response = await api.post("/auth/verify-email-code", { email, code });
     return response.data;
   },
+  onboard: async (data: { email: string; invitation_code: string; password: string }) => {
+    const response = await api.post("/auth/onboard", data);
+    return response.data;
+  },
+  joinOrganization: async (invitationCode: string) => {
+    const response = await api.post("/auth/join-organization", { invitation_code: invitationCode });
+    return response.data;
+  },
+  getMemberships: async () => {
+    const response = await api.get("/auth/memberships");
+    return response.data;
+  },
+  switchOrganization: async (organizationId: string) => {
+    const response = await api.post("/auth/switch-organization", { organization_id: organizationId });
+    return response.data;
+  },
 };
 
 export const orgs = {

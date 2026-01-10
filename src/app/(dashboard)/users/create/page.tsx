@@ -59,7 +59,6 @@ export default function CreateUserPage() {
     const userData = {
       email: formData.get("email"),
       full_name: formData.get("full_name"),
-      password: formData.get("password"),
       role_id: formData.get("role_id") || null,
       is_active: formData.get("is_active") === "true",
       target_hours: parseFloat(formData.get("target_hours") as string) || 0,
@@ -105,7 +104,7 @@ export default function CreateUserPage() {
             Crear Nuevo Usuario
           </h1>
           <p className="text-[var(--color-foreground)]/60 text-lg">
-            Configura el acceso y permisos para un nuevo miembro de tu equipo.
+            Invita a un nuevo miembro a tu equipo mediante su correo electrónico.
           </p>
         </div>
         <Button
@@ -152,15 +151,6 @@ export default function CreateUserPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <Input
-                    name="password"
-                    label="Contraseña Temporal"
-                    type="password"
-                    placeholder="••••••••"
-                    required
-                    icon={<Lock size={18} />}
-                    className="bg-[var(--color-background)] py-3"
-                  />
                   <div className="space-y-3">
                     <label className="block text-sm font-bold text-[var(--color-foreground)]">
                       Estado de la Cuenta

@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/layout/sidebar/app-sidebar";
 import { MobileNav } from "@/components/layout/header/mobile-nav";
 import { BottomNav } from "@/components/layout/bottom-nav";
+import { ViewRenderer } from "@/components/layout/ViewRenderer";
 
 export default function DashboardLayout({
   children,
@@ -12,7 +13,9 @@ export default function DashboardLayout({
       <AppSidebar />
       <div className="flex-1 flex flex-col pb-16 md:pb-0">
         <MobileNav />
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+          <ViewRenderer>{children}</ViewRenderer>
+        </main>
         <BottomNav />
       </div>
     </div>

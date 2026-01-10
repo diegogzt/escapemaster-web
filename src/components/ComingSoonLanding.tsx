@@ -404,10 +404,14 @@ const ComingSoonLanding = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center mb-20 px-4">
             <div className="text-left animate-on-scroll lg:pr-10">
               <h1 className="hero-title text-5xl md:text-7xl xl:text-8xl font-bold tracking-tighter leading-[0.85] text-foreground">
-                Donde las <br />
-                <span className="text-primary italic font-serif">experiencias</span> <br /> 
-                se hacen realidad.
+                Gestión de <br />
+                <span className="text-primary italic font-serif">Escape Rooms</span> <br /> 
+                sin límites.
               </h1>
+              <p className="hero-description text-lg md:text-xl text-foreground/60 mt-10 max-w-lg font-light">
+                El ecosistema definitivo para automatizar reservas, gestionar equipos y 
+                escalar tu negocio de ocio con una interfaz que te encantará usar.
+              </p>
             </div>
 
             <div className="hidden lg:block relative h-[500px] animate-on-scroll">
@@ -879,7 +883,7 @@ const ComingSoonLanding = () => {
                 <div className="flex gap-1 text-secondary mb-6">
                   {[...Array(5)].map((_, i) => <Star key={i} size={16} fill="currentColor" />)}
                 </div>
-                <p className="text-lg text-foreground/70 italic mb-8 leading-relaxed">"{t.text}"</p>
+                <p className="text-lg text-foreground/70 italic mb-8 leading-relaxed">&quot;{t.text}&quot;</p>
                 <div className="flex items-center gap-4">
                   <img src={t.avatar} alt={t.author} className="w-12 h-12 rounded-full border border-foreground/10 bg-primary/5" />
                   <div>
@@ -1047,6 +1051,31 @@ const ComingSoonLanding = () => {
           </div>
         </div>
       </footer>
+
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "EscapeMaster",
+            "operatingSystem": "Web, iOS, Android",
+            "applicationCategory": "BusinessApplication",
+            "offers": {
+              "@type": "Offer",
+              "price": "24.79",
+              "priceCurrency": "EUR"
+            },
+            "description": "El software de gestión más avanzado para salas de escape room. Reservas, gestión de equipos y analíticas.",
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "4.9",
+              "ratingCount": "120"
+            }
+          })
+        }}
+      />
     </div>
   );
 };
