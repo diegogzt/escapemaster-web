@@ -68,10 +68,10 @@ function ResetPasswordForm() {
             />
           </svg>
         </div>
-        <h3 className="text-xl font-bold text-dark mb-2">
+        <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-2">
           ¡Contraseña Actualizada!
         </h3>
-        <p className="text-dark opacity-75 mb-4">
+        <p className="text-[var(--color-foreground)] opacity-75 mb-4">
           Tu contraseña ha sido cambiada exitosamente. Redirigiendo al login...
         </p>
         <Link href="/login">
@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle level="h2">Restablecer Contraseña</CardTitle>
-          <p className="text-dark opacity-75">Ingresa tu nueva contraseña</p>
+          <p className="text-[var(--color-foreground)] opacity-75">Ingresa tu nueva contraseña</p>
         </CardHeader>
         <Suspense fallback={<div className="p-6 text-center">Cargando...</div>}>
           <ResetPasswordForm />

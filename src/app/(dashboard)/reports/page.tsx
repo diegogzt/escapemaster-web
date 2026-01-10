@@ -244,7 +244,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-600">Cargando reportes...</p>
+          <p className="text-[var(--color-muted-foreground)]">Cargando reportes...</p>
         </div>
       </div>
     );
@@ -258,7 +258,7 @@ export default function ReportsPage() {
           <h1 className="text-4xl font-bold text-primary tracking-tight">
             Panel de Control Financiero
           </h1>
-          <p className="text-dark/60 mt-1 text-lg">
+          <p className="text-[var(--color-foreground)]/60 mt-1 text-lg">
             Análisis detallado del rendimiento y métricas operativas.
           </p>
         </div>
@@ -266,7 +266,7 @@ export default function ReportsPage() {
           <div className="bg-[var(--color-light)]/50 border border-beige rounded-xl flex items-center px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
             <Calendar size={18} className="text-primary mr-2" />
             <select
-              className="bg-transparent border-none text-sm font-semibold focus:outline-none text-dark w-full lg:min-w-[160px]"
+              className="bg-transparent border-none text-sm font-semibold focus:outline-none text-[var(--color-foreground)] w-full lg:min-w-[160px]"
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
             >
@@ -306,8 +306,8 @@ export default function ReportsPage() {
                 </div>
                 {/* Growth indicator would require period comparison in API */}
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Ingresos Totales</p>
-              <h3 className="text-3xl font-bold text-dark">{stats.totalRevenue.toLocaleString()}€</h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Ingresos Totales</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{stats.totalRevenue.toLocaleString()}€</h3>
             </Card>
 
             <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
@@ -316,8 +316,8 @@ export default function ReportsPage() {
                   <Wallet size={24} />
                 </div>
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Beneficio Neto</p>
-              <h3 className="text-3xl font-bold text-dark">{stats.profit.toLocaleString()}€</h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Beneficio Neto</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{stats.profit.toLocaleString()}€</h3>
             </Card>
 
             <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
@@ -326,8 +326,8 @@ export default function ReportsPage() {
                   <CreditCard size={24} />
                 </div>
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Gastos (Est.)</p>
-              <h3 className="text-3xl font-bold text-dark">{(stats.totalRevenue - stats.profit).toLocaleString()}€</h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Gastos (Est.)</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{(stats.totalRevenue - stats.profit).toLocaleString()}€</h3>
             </Card>
 
             <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
@@ -336,8 +336,8 @@ export default function ReportsPage() {
                   <AlertCircle size={24} />
                 </div>
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Cancelaciones</p>
-              <h3 className="text-3xl font-bold text-dark">{stats.totalBookings > 0 ? ((stats.totalBookings / (stats.totalBookings || 1)) * 0).toFixed(1) : 0}%</h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Cancelaciones</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{stats.totalBookings > 0 ? ((stats.totalBookings / (stats.totalBookings || 1)) * 0).toFixed(1) : 0}%</h3>
               {/* Note: Cancellation rate requires cancelled bookings count which isn't in stats yet, defaulting to 0 for now or need to calculate */}
             </Card>
           </div>
@@ -346,14 +346,14 @@ export default function ReportsPage() {
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h3 className="text-xl font-bold text-dark">Balance Financiero Semanal</h3>
-                <p className="text-sm text-gray-500">Comparativa de ingresos vs gastos operativos</p>
+                <h3 className="text-xl font-bold text-[var(--color-foreground)]">Balance Financiero Semanal</h3>
+                <p className="text-sm text-[var(--color-muted-foreground)]">Comparativa de ingresos vs gastos operativos</p>
               </div>
               <div className="flex gap-2">
-                <div className="flex items-center text-xs font-medium text-gray-500 mr-4">
+                <div className="flex items-center text-xs font-medium text-[var(--color-muted-foreground)] mr-4">
                   <span className="w-3 h-3 bg-primary rounded-full mr-1.5"></span> Ingresos
                 </div>
-                <div className="flex items-center text-xs font-medium text-gray-500">
+                <div className="flex items-center text-xs font-medium text-[var(--color-muted-foreground)]">
                   <span className="w-3 h-3 bg-error rounded-full mr-1.5"></span> Gastos
                 </div>
               </div>
@@ -388,7 +388,7 @@ export default function ReportsPage() {
           {/* Recent Activity Table */}
           <Card className="border-none shadow-sm bg-[var(--color-background)] overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-dark">Últimas Transacciones</h3>
+              <h3 className="text-xl font-bold text-[var(--color-foreground)]">Últimas Transacciones</h3>
               <Button variant="ghost" size="sm" className="text-primary font-bold">
                 Ver historial completo
               </Button>
@@ -396,7 +396,7 @@ export default function ReportsPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-[var(--color-light)]/30 text-gray-500 text-xs uppercase tracking-wider">
+                  <tr className="bg-[var(--color-light)]/30 text-[var(--color-muted-foreground)] text-xs uppercase tracking-wider">
                     <th className="px-6 py-4 font-bold">Referencia</th>
                     <th className="px-6 py-4 font-bold">Cliente</th>
                     <th className="px-6 py-4 font-bold">Sala / Servicio</th>
@@ -408,13 +408,13 @@ export default function ReportsPage() {
                   {recentBookings.length > 0 ? (
                     recentBookings.map((booking, i) => (
                       <tr key={booking.id} className="hover:bg-[var(--color-light)]/20 transition-colors group">
-                        <td className="px-6 py-4 text-sm text-gray-500 font-mono">#{booking.id.substring(0, 8)}</td>
+                        <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)] font-mono">#{booking.id.substring(0, 8)}</td>
                         <td className="px-6 py-4">
                           <div className="flex items-center">
                             <div className="w-8 h-8 rounded-full bg-beige/40 flex items-center justify-center text-primary font-bold text-xs mr-3">
                               {booking.guest?.full_name?.charAt(0) || "C"}
                             </div>
-                            <span className="text-sm font-bold text-dark">{booking.guest?.full_name || "Cliente"}</span>
+                            <span className="text-sm font-bold text-[var(--color-foreground)]">{booking.guest?.full_name || "Cliente"}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
@@ -428,7 +428,7 @@ export default function ReportsPage() {
                             {booking.room_name || "Sin sala"}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
+                        <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
                           {booking.start_time ? new Date(booking.start_time).toLocaleDateString() : "-"}
                         </td>
                         <td className="px-6 py-4 text-right">
@@ -438,7 +438,7 @@ export default function ReportsPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-gray-500">
+                      <td colSpan={5} className="px-6 py-8 text-center text-[var(--color-muted-foreground)]">
                         No hay transacciones recientes
                       </td>
                     </tr>
@@ -453,7 +453,7 @@ export default function ReportsPage() {
         <div className="col-span-12 lg:col-span-4 space-y-8">
           {/* Room Popularity */}
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
-            <h3 className="text-xl font-bold text-dark mb-6">Popularidad de Salas</h3>
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6">Popularidad de Salas</h3>
             <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -477,9 +477,9 @@ export default function ReportsPage() {
                 <div key={i} className="flex justify-between items-center">
                   <div className="flex items-center">
                     <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: room.color }}></div>
-                    <span className="text-sm font-medium text-dark">{room.name}</span>
+                    <span className="text-sm font-medium text-[var(--color-foreground)]">{room.name}</span>
                   </div>
-                  <span className="text-sm font-bold text-dark">{room.value}%</span>
+                  <span className="text-sm font-bold text-[var(--color-foreground)]">{room.value}%</span>
                 </div>
               ))}
             </div>
@@ -487,7 +487,7 @@ export default function ReportsPage() {
 
           {/* Hourly Occupancy */}
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
-            <h3 className="text-xl font-bold text-dark mb-6">Picos de Ocupación</h3>
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6">Picos de Ocupación</h3>
             <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={hourlyDistribution}>
@@ -512,7 +512,7 @@ export default function ReportsPage() {
               </ResponsiveContainer>
             </div>
             <div className="mt-4 p-4 bg-[var(--color-light)]/30 rounded-xl border border-beige/30">
-              <p className="text-xs text-dark/60 leading-relaxed">
+              <p className="text-xs text-[var(--color-foreground)]/60 leading-relaxed">
                 <span className="font-bold text-primary">Tip:</span> El pico máximo de ocupación se registra a las <span className="font-bold">20:00h</span>. Considera reforzar el personal en este horario.
               </p>
             </div>
@@ -520,7 +520,7 @@ export default function ReportsPage() {
 
           {/* Expenses Breakdown */}
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
-            <h3 className="text-xl font-bold text-dark mb-6">Distribución de Gastos</h3>
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6">Distribución de Gastos</h3>
             <div className="space-y-6">
               {expensesData.map((expense, i) => {
                 const total = expensesData.reduce((acc, curr) => acc + curr.value, 0);
@@ -528,8 +528,8 @@ export default function ReportsPage() {
                 return (
                   <div key={i} className="space-y-2">
                     <div className="flex justify-between text-sm">
-                      <span className="font-medium text-gray-600">{expense.name}</span>
-                      <span className="font-bold text-dark">{expense.value}€</span>
+                      <span className="font-medium text-[var(--color-muted-foreground)]">{expense.name}</span>
+                      <span className="font-bold text-[var(--color-foreground)]">{expense.value}€</span>
                     </div>
                     <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                       <div 

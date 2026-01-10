@@ -29,7 +29,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variantStyles = {
       primary: "bg-primary text-white hover:bg-accent hover:-translate-y-0.5",
       secondary: "bg-secondary text-white hover:bg-dark",
-      accent: "bg-accent text-dark hover:bg-primary hover:text-white",
+      accent: "bg-accent text-[var(--color-foreground)] hover:bg-primary hover:text-white",
       outline:
         "bg-transparent text-primary border-2 border-primary hover:bg-primary hover:text-white",
       ghost:

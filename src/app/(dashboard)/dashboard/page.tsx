@@ -170,7 +170,7 @@ function WidgetItem({
       ref={elementRef}
       style={style}
       className={cn(
-        "relative group h-full w-full transition-all duration-200 bg-[var(--color-background)] rounded-xl shadow-sm border border-gray-100 overflow-hidden",
+        "relative group h-full w-full transition-all duration-200 bg-[var(--color-background)] rounded-xl shadow-sm border border-[var(--color-beige)] overflow-hidden",
         isEditMode && "ring-2 ring-dashed ring-primary/30 cursor-default",
         isDragging && "opacity-30",
         isBlinking && "ring-4 ring-red-500 ring-opacity-100"
@@ -200,13 +200,13 @@ function WidgetItem({
             </div>
           )}
 
-          <div className="absolute top-2 right-2 z-20 flex gap-1 bg-[var(--color-background)] shadow-md rounded-full p-1 border border-gray-200 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute top-2 right-2 z-20 flex gap-1 bg-[var(--color-background)] shadow-md rounded-full p-1 border border-[var(--color-beige)] opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               {...dragHandleProps}
               className="p-1 hover:bg-beige rounded-full cursor-grab active:cursor-grabbing group"
               title="Arrastrar"
             >
-              <GripVertical className="h-4 w-4 text-secondary group-hover:text-dark" />
+              <GripVertical className="h-4 w-4 text-secondary group-hover:text-[var(--color-foreground)]" />
             </button>
             {onConfigure &&
               def.configurableOptions &&
@@ -546,9 +546,9 @@ export default function DashboardPage() {
     <div className="space-y-6 relative min-h-screen pb-20">
       <div className="flex items-center justify-between">
         <nav className="flex items-center text-sm text-secondary">
-          <span className="hover:text-dark cursor-pointer">Inicio</span>
-          <span className="mx-2 text-gray-400">/</span>
-          <span className="text-dark font-medium">Dashboard</span>
+          <span className="hover:text-[var(--color-foreground)] cursor-pointer">Inicio</span>
+          <span className="mx-2 text-[var(--color-muted-foreground)]">/</span>
+          <span className="text-[var(--color-foreground)] font-medium">Dashboard</span>
         </nav>
         <div className="flex gap-2 flex-wrap">
           {isEditMode && (
@@ -577,7 +577,7 @@ export default function DashboardPage() {
                   onClick={() => setShowTemplateSelector(!showTemplateSelector)}
                   variant="outline"
                   size="sm"
-                  className="text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark"
+                  className="text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]"
                   disabled={isLoadingTemplates}
                 >
                   <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
@@ -585,9 +585,9 @@ export default function DashboardPage() {
                   <ChevronDown className="ml-1.5 h-3.5 w-3.5" />
                 </Button>
                 {showTemplateSelector && templates.length > 0 && (
-                  <div className="absolute top-full right-0 mt-2 w-80 bg-[var(--color-background)] rounded-xl shadow-lg border border-gray-200 z-50 overflow-hidden">
-                    <div className="p-3 border-b border-gray-100">
-                      <h4 className="font-semibold text-dark text-sm">
+                  <div className="absolute top-full right-0 mt-2 w-80 bg-[var(--color-background)] rounded-xl shadow-lg border border-[var(--color-beige)] z-50 overflow-hidden">
+                    <div className="p-3 border-b border-[var(--color-beige)]">
+                      <h4 className="font-semibold text-[var(--color-foreground)] text-sm">
                         Seleccionar Plantilla
                       </h4>
                       <p className="text-xs text-secondary mt-1">
@@ -609,7 +609,7 @@ export default function DashboardPage() {
                             />
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between">
-                                <span className="font-medium text-dark truncate">
+                                <span className="font-medium text-[var(--color-foreground)] truncate">
                                   {template.name}
                                 </span>
                                 {template.is_default && (
@@ -623,7 +623,7 @@ export default function DashboardPage() {
                                   {template.description}
                                 </p>
                               )}
-                              <p className="text-xs text-gray-400 mt-1">
+                              <p className="text-xs text-[var(--color-muted-foreground)] mt-1">
                                 {template.layout.length} widgets
                               </p>
                             </div>
@@ -638,7 +638,7 @@ export default function DashboardPage() {
                 onClick={resetLayout}
                 variant="outline"
                 size="sm"
-                className="text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark"
+                className="text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]"
               >
                 <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
                 Ordenar
@@ -647,7 +647,7 @@ export default function DashboardPage() {
                 onClick={() => setShowCollectionsModal(true)}
                 variant="outline"
                 size="sm"
-                className="text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark"
+                className="text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]"
               >
                 <FolderOpen className="mr-1.5 h-3.5 w-3.5" />
                 Colecciones
@@ -667,7 +667,7 @@ export default function DashboardPage() {
             variant="outline"
             size="sm"
             className={cn(
-              "text-dark border-gray-300 bg-[var(--color-background)] hover:bg-beige hover:text-dark",
+              "text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]",
               activeCollectionId && "border-primary/30 text-primary"
             )}
             disabled={isSaving}
@@ -687,8 +687,8 @@ export default function DashboardPage() {
             onClick={toggleEditMode}
             className={
               isEditMode
-                ? "bg-accent text-dark border-accent hover:bg-accent/80"
-                : "hover:bg-beige hover:text-dark"
+                ? "bg-accent text-[var(--color-foreground)] border-accent hover:bg-accent/80"
+                : "hover:bg-beige hover:text-[var(--color-foreground)]"
             }
           >
             {isEditMode ? (
@@ -706,10 +706,10 @@ export default function DashboardPage() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-[var(--color-background)] rounded-xl p-6 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-dark">Añadir Widget</h3>
+              <h3 className="text-xl font-bold text-[var(--color-foreground)]">Añadir Widget</h3>
               <button
                 onClick={() => setShowAddWidget(false)}
-                className="text-gray-500 hover:text-dark"
+                className="text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
                 aria-label="Cerrar modal"
                 title="Cerrar modal"
               >
@@ -734,7 +734,7 @@ export default function DashboardPage() {
                       <span
                         className={cn(
                           "font-bold",
-                          isAdded ? "text-primary" : "text-dark"
+                          isAdded ? "text-primary" : "text-[var(--color-foreground)]"
                         )}
                       >
                         {def.title}

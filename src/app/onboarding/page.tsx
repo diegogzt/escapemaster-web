@@ -144,7 +144,7 @@ export default function OnboardingPage() {
             <h1 className="text-3xl font-bold text-primary mb-4">
               Elige tu estilo
             </h1>
-            <p className="text-dark mb-8">
+            <p className="text-[var(--color-foreground)] mb-8">
               Personaliza la apariencia de tu espacio de trabajo.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -163,7 +163,7 @@ export default function OnboardingPage() {
                       Twilight
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[var(--color-muted-foreground)]">
                     Tonos índigo y oscuros para una experiencia elegante y
                     profesional.
                   </p>
@@ -185,7 +185,7 @@ export default function OnboardingPage() {
                       Tropical
                     </span>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-[var(--color-muted-foreground)]">
                     Colores vibrantes y naturales para un ambiente fresco y
                     dinámico.
                   </p>
@@ -203,7 +203,7 @@ export default function OnboardingPage() {
             <h1 className="text-3xl font-bold text-primary mb-4">
               Tu Organización
             </h1>
-            <p className="text-dark mb-8">
+            <p className="text-[var(--color-foreground)] mb-8">
               Crea un nuevo espacio o únete a uno existente.
             </p>
 
@@ -298,7 +298,7 @@ export default function OnboardingPage() {
             <h1 className="text-3xl font-bold text-primary mb-4">
               Invitar al Equipo
             </h1>
-            <p className="text-dark mb-8">
+            <p className="text-[var(--color-foreground)] mb-8">
               Añade a tus compañeros para que puedan acceder.
             </p>
             <Card className="max-w-md mx-auto text-left">
@@ -331,7 +331,7 @@ export default function OnboardingPage() {
             <h1 className="text-3xl font-bold text-primary mb-4">
               Configuración Inicial
             </h1>
-            <p className="text-dark mb-8">
+            <p className="text-[var(--color-foreground)] mb-8">
               Ajusta los últimos detalles antes de empezar.
             </p>
             <Card className="max-w-2xl mx-auto text-left">
@@ -412,14 +412,14 @@ function StepIndicator({
         className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
           active || completed
             ? "bg-primary text-white shadow-lg scale-110"
-            : "bg-white text-gray-400 border-2 border-gray-200"
+            : "bg-white text-[var(--color-muted-foreground)] border-2 border-[var(--color-beige)]"
         }`}
       >
         {completed ? <Check size={20} /> : icon}
       </div>
       <span
         className={`mt-2 text-sm font-medium ${
-          active ? "text-primary" : "text-gray-500"
+          active ? "text-primary" : "text-[var(--color-muted-foreground)]"
         }`}
       >
         {label}

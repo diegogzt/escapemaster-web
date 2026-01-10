@@ -74,7 +74,7 @@ export function RevenueTableWidget() {
       <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex items-center justify-center min-h-[200px]">
         <div className="text-center">
           <Loader2 className="w-6 h-6 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-500 text-sm">Cargando transacciones...</p>
+          <p className="text-[var(--color-muted-foreground)] text-sm">Cargando transacciones...</p>
         </div>
       </div>
     );
@@ -94,10 +94,10 @@ export function RevenueTableWidget() {
   return (
     <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h3 className="font-semibold text-dark">Registro de Transacciones</h3>
+        <h3 className="font-semibold text-[var(--color-foreground)]">Registro de Transacciones</h3>
         <div className="flex gap-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-muted-foreground)]" />
             <input
               type="text"
               placeholder="Buscar..."
@@ -130,11 +130,11 @@ export function RevenueTableWidget() {
           <tbody className="divide-y divide-beige">
             {filteredData.map((trx) => (
               <tr key={trx.id} className="hover:bg-[var(--color-light)] transition-colors">
-                <td className="p-3 font-mono text-xs text-gray-500">
+                <td className="p-3 font-mono text-xs text-[var(--color-muted-foreground)]">
                   {trx.id}
                 </td>
-                <td className="p-3 text-dark">{trx.date}</td>
-                <td className="p-3 text-dark font-medium">{trx.concept}</td>
+                <td className="p-3 text-[var(--color-foreground)]">{trx.date}</td>
+                <td className="p-3 text-[var(--color-foreground)] font-medium">{trx.concept}</td>
                 <td className="p-3 text-secondary">{trx.method}</td>
                 <td className="p-3">
                   <span
@@ -155,7 +155,7 @@ export function RevenueTableWidget() {
                 </td>
                 <td
                   className={`p-3 text-right font-bold ${
-                    trx.amount < 0 ? "text-red-600" : "text-dark"
+                    trx.amount < 0 ? "text-red-600" : "text-[var(--color-foreground)]"
                   }`}
                 >
                   {trx.amount > 0 ? "+" : ""}

@@ -27,14 +27,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     <div className={cn("mb-6", wrapperClassName)}>
       {label && (
         <label
-          className={cn("block mb-2 font-semibold text-dark ", labelClassName)}
+          className={cn("block mb-2 font-semibold text-[var(--color-foreground)] ", labelClassName)}
         >
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)] pointer-events-none">
             {icon}
           </div>
         )}
@@ -51,7 +51,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         />
       </div>
       {error && <span className="text-red-600 text-sm mt-1">{error}</span>}
-      {helpText && <span className="text-dark text-sm mt-1">{helpText}</span>}
+      {helpText && <span className="text-[var(--color-foreground)] text-sm mt-1">{helpText}</span>}
     </div>
   )
 );

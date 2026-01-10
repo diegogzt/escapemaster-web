@@ -57,7 +57,7 @@ export function TemplatePreview({
   if (!layout || layout.length === 0) {
     return (
       <div className={cn("w-full h-16 bg-gray-100 rounded flex items-center justify-center", className)}>
-        <span className="text-xs text-gray-400">Sin widgets</span>
+        <span className="text-xs text-[var(--color-muted-foreground)]">Sin widgets</span>
       </div>
     );
   }
@@ -114,7 +114,7 @@ export function TemplatePreview({
           <div
             key={widget.id}
             className={cn(
-              "absolute rounded-sm flex items-center justify-center text-[6px] font-bold text-gray-600 border border-white/50",
+              "absolute rounded-sm flex items-center justify-center text-[6px] font-bold text-[var(--color-muted-foreground)] border border-white/50",
               color
             )}
             style={{

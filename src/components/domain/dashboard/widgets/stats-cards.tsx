@@ -102,15 +102,15 @@ export function StatsCards({
           className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm hover:shadow-md transition-shadow h-full flex flex-col justify-between min-h-0"
         >
           <div className="flex items-center justify-between space-y-0 pb-2">
-            <h3 className="tracking-tight text-xs font-medium text-gray-500 truncate">
+            <h3 className="tracking-tight text-xs font-medium text-[var(--color-muted-foreground)] truncate">
               {stat.title}
             </h3>
             <stat.icon className={`h-4 w-4 ${stat.color} flex-shrink-0`} />
           </div>
           <div className="min-h-0">
-            <div className="text-xl font-bold text-gray-900">{stat.value}</div>
+            <div className="text-xl font-bold text-[var(--color-foreground)]">{stat.value}</div>
             {showTrends && (
-              <p className="text-xs text-gray-500 mt-1 truncate">
+              <p className="text-xs text-[var(--color-muted-foreground)] mt-1 truncate">
                 {stat.change}
               </p>
             )}

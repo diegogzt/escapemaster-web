@@ -154,7 +154,7 @@ export function CalendarWidget({
 
           return (
             <div key={index} className="flex flex-col items-center gap-2">
-              <span className="text-xs text-gray-500 font-medium uppercase">
+              <span className="text-xs text-[var(--color-muted-foreground)] font-medium uppercase">
                 {days[d.getDay()]}
               </span>
               <span
@@ -162,7 +162,7 @@ export function CalendarWidget({
                   "text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full transition-colors",
                   isToday
                     ? "bg-primary text-white"
-                    : "text-gray-700 hover:bg-primary/10 hover:text-primary"
+                    : "text-[var(--color-foreground)] hover:bg-primary/10 hover:text-primary"
                 )}
               >
                 {d.getDate()}
@@ -198,7 +198,7 @@ export function CalendarWidget({
     return (
       <div className="grid grid-cols-7 gap-1 text-center text-sm">
         {days.map((d) => (
-          <div key={d} className="font-semibold text-gray-500 py-1">
+          <div key={d} className="font-semibold text-[var(--color-muted-foreground)] py-1">
             {d}
           </div>
         ))}
@@ -222,13 +222,13 @@ export function CalendarWidget({
               <span
                 className={cn(
                   "w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium group-hover:text-primary",
-                  isToday ? "bg-primary text-white group-hover:text-white" : "text-gray-700"
+                  isToday ? "bg-primary text-white group-hover:text-white" : "text-[var(--color-foreground)]"
                 )}
               >
                 {d}
               </span>
               {sessions.total > 0 && (
-                <span className="text-[10px] font-bold text-gray-400">
+                <span className="text-[10px] font-bold text-[var(--color-muted-foreground)]">
                   {sessions.total} ses.
                 </span>
               )}
@@ -252,7 +252,7 @@ export function CalendarWidget({
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-dark text-sm">Calendario</h3>
+          <h3 className="font-semibold text-[var(--color-foreground)] text-sm">Calendario</h3>
         </div>
         <div className="flex gap-1 bg-[var(--color-light)] rounded-lg p-1">
           <button
@@ -260,8 +260,8 @@ export function CalendarWidget({
             className={cn(
               "px-2 py-1 text-xs rounded-md transition-colors",
               view === "month"
-                ? "bg-[var(--color-background)] shadow-sm text-dark font-medium"
-                : "text-gray-500 hover:text-dark"
+                ? "bg-[var(--color-background)] shadow-sm text-[var(--color-foreground)] font-medium"
+                : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
             )}
           >
             Mes
@@ -271,8 +271,8 @@ export function CalendarWidget({
             className={cn(
               "px-2 py-1 text-xs rounded-md transition-colors",
               view === "week"
-                ? "bg-[var(--color-background)] shadow-sm text-dark font-medium"
-                : "text-gray-500 hover:text-dark"
+                ? "bg-[var(--color-background)] shadow-sm text-[var(--color-foreground)] font-medium"
+                : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
             )}
           >
             Semana
@@ -291,12 +291,12 @@ export function CalendarWidget({
             }
             setDate(newDate);
           }}
-          className="p-1 hover:bg-beige hover:text-dark rounded-full transition-colors group"
+          className="p-1 hover:bg-beige hover:text-[var(--color-foreground)] rounded-full transition-colors group"
           aria-label="Anterior"
         >
-          <ChevronLeft className="h-4 w-4 text-secondary group-hover:text-dark" />
+          <ChevronLeft className="h-4 w-4 text-secondary group-hover:text-[var(--color-foreground)]" />
         </button>
-        <span className="font-medium text-dark capitalize text-sm">
+        <span className="font-medium text-[var(--color-foreground)] capitalize text-sm">
           {monthNames[date.getMonth()]} {date.getFullYear()}
         </span>
         <button
@@ -309,10 +309,10 @@ export function CalendarWidget({
             }
             setDate(newDate);
           }}
-          className="p-1 hover:bg-beige hover:text-dark rounded-full transition-colors group"
+          className="p-1 hover:bg-beige hover:text-[var(--color-foreground)] rounded-full transition-colors group"
           aria-label="Siguiente"
         >
-          <ChevronRight className="h-4 w-4 text-secondary group-hover:text-dark" />
+          <ChevronRight className="h-4 w-4 text-secondary group-hover:text-[var(--color-foreground)]" />
         </button>
       </div>
 

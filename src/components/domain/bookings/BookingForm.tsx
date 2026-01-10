@@ -317,7 +317,7 @@ export default function BookingForm({
       </div>
 
       <div>
-        <label className="block mb-2 font-semibold text-dark">
+        <label className="block mb-2 font-semibold text-[var(--color-foreground)]">
           Comentarios
         </label>
         <textarea
@@ -328,7 +328,7 @@ export default function BookingForm({
       </div>
 
       <div>
-        <label className="block mb-2 font-semibold text-dark">
+        <label className="block mb-2 font-semibold text-[var(--color-foreground)]">
           Comentarios internos
         </label>
         <textarea
@@ -423,7 +423,7 @@ export default function BookingForm({
       {/* Tabla de Pagos Mock */}
       <div className="border border-[var(--color-beige)] rounded-lg overflow-hidden">
         <table className="w-full text-sm text-left">
-          <thead className="bg-[var(--color-light)] text-dark font-semibold">
+          <thead className="bg-[var(--color-light)] text-[var(--color-foreground)] font-semibold">
             <tr>
               <th className="p-3">ID</th>
               <th className="p-3">Origen pago</th>
@@ -552,7 +552,7 @@ export default function BookingForm({
     <div className="space-y-6">
       <div className="bg-[var(--color-light)] p-4 rounded-lg border border-[var(--color-beige)]">
         <p className="text-sm text-secondary mb-2">Creado por usuario</p>
-        <div className="font-medium text-dark">system</div>
+        <div className="font-medium text-[var(--color-foreground)]">system</div>
       </div>
       <div className="space-y-2">
         <div className="text-sm text-secondary">
@@ -569,12 +569,12 @@ export default function BookingForm({
         <div>
           <button
             onClick={() => router.back()}
-            className="flex items-center text-secondary hover:text-dark mb-2"
+            className="flex items-center text-secondary hover:text-[var(--color-foreground)] mb-2"
           >
             <ArrowLeft size={20} className="mr-2" />
             Volver
           </button>
-          <h1 className="text-2xl font-bold text-dark">
+          <h1 className="text-2xl font-bold text-[var(--color-foreground)]">
             {isEdit
               ? `Reserva ${initialData?.id?.slice(0, 8) || ""}`
               : "Nueva Reserva"}
@@ -590,7 +590,7 @@ export default function BookingForm({
           <button className="p-2 bg-dark text-white rounded hover:bg-dark/90">
             <Camera size={20} />
           </button>
-          <button className="p-2 bg-accent text-dark rounded hover:bg-accent/90">
+          <button className="p-2 bg-accent text-[var(--color-foreground)] rounded hover:bg-accent/90">
             <PenTool size={20} />
           </button>
         </div>
@@ -692,23 +692,23 @@ export default function BookingForm({
 
               <div className="pt-4 border-t border-[var(--color-beige)] space-y-3">
                 <div className="flex justify-between items-center bg-[var(--color-light)] p-2 rounded">
-                  <span className="text-sm font-medium text-dark">
+                  <span className="text-sm font-medium text-[var(--color-foreground)]">
                     Importe pagado
                   </span>
-                  <span className="font-bold text-dark">{totalPaid} €</span>
+                  <span className="font-bold text-[var(--color-foreground)]">{totalPaid} €</span>
                 </div>
                 <div className="flex justify-between items-center bg-[var(--color-light)] p-2 rounded">
-                  <span className="text-sm font-medium text-dark">
+                  <span className="text-sm font-medium text-[var(--color-foreground)]">
                     Importe pendiente
                   </span>
-                  <span className="font-bold text-dark">
+                  <span className="font-bold text-[var(--color-foreground)]">
                     {remainingBalance} €
                   </span>
                 </div>
               </div>
 
               <div className="pt-4">
-                <label className="block mb-2 font-semibold text-dark text-sm">
+                <label className="block mb-2 font-semibold text-[var(--color-foreground)] text-sm">
                   Descuento/Incremento de precio
                 </label>
                 <div className="flex gap-2">
@@ -729,7 +729,7 @@ export default function BookingForm({
                 </div>
               </div>
 
-              <div className="flex justify-between items-center bg-beige p-3 rounded font-bold text-lg text-dark">
+              <div className="flex justify-between items-center bg-beige p-3 rounded font-bold text-lg text-[var(--color-foreground)]">
                 <span>Importe total</span>
                 <span>{totalPrice} €</span>
               </div>

@@ -62,7 +62,7 @@ export default function ProfilePage() {
     <div className="w-full pb-20">
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-primary mb-2">Mi Cuenta</h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-[var(--color-muted-foreground)]">
           Gestiona tu perfil personal y preferencias de apariencia.
         </p>
       </div>
@@ -72,14 +72,14 @@ export default function ProfilePage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <UserIcon className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800">
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">
               Perfil de Usuario
             </h2>
           </div>
           <Card className="w-full max-w-none">
             <CardHeader>
               <CardTitle>Información Personal</CardTitle>
-              <p className="text-gray-500">
+              <p className="text-[var(--color-muted-foreground)]">
                 Actualiza tus datos de acceso y perfil.
               </p>
             </CardHeader>
@@ -132,12 +132,12 @@ export default function ProfilePage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Layout className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800">Apariencia</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Apariencia</h2>
           </div>
           <Card className="w-full max-w-none">
             <CardHeader>
               <CardTitle>Tema de la Interfaz</CardTitle>
-              <p className="text-gray-500">
+              <p className="text-[var(--color-muted-foreground)]">
                 Selecciona un esquema de colores para personalizar tu panel.
               </p>
             </CardHeader>
@@ -150,7 +150,7 @@ export default function ProfilePage() {
                     className={`relative flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${
                       theme === t.id
                         ? "border-primary bg-primary/5 shadow-sm"
-                        : "border-transparent bg-[var(--color-light)] hover:bg-gray-100 hover:border-gray-200"
+                        : "border-transparent bg-[var(--color-light)] hover:bg-gray-100 hover:border-[var(--color-beige)]"
                     }`}
                   >
                     <div className="flex -space-x-2 mb-3 overflow-hidden p-1">
@@ -164,7 +164,7 @@ export default function ProfilePage() {
                     </div>
                     <span
                       className={`font-medium text-sm ${
-                        theme === t.id ? "text-primary" : "text-gray-700"
+                        theme === t.id ? "text-primary" : "text-[var(--color-foreground)]"
                       }`}
                     >
                       {t.name}

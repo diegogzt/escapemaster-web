@@ -69,7 +69,7 @@ export default function EditUserPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500">Cargando información del usuario...</p>
+        <p className="text-[var(--color-muted-foreground)]">Cargando información del usuario...</p>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function EditUserPage() {
           Volver a usuarios
         </Link>
         <h1 className="text-3xl font-bold text-primary">Editar Usuario</h1>
-        <p className="text-dark opacity-75">
+        <p className="text-[var(--color-foreground)] opacity-75">
           Modifica los datos y permisos de{" "}
           {userData.full_name || userData.email}
         </p>
@@ -134,12 +134,12 @@ export default function EditUserPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-[var(--color-foreground)]">
                   Rol del Sistema
                 </label>
                 <div className="relative">
                   <Shield
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]"
                     size={18}
                   />
                   <select
@@ -159,12 +159,12 @@ export default function EditUserPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-[var(--color-foreground)]">
                   Estado de la Cuenta
                 </label>
                 <div className="relative">
                   <CheckCircle
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]"
                     size={18}
                   />
                   <select
@@ -181,7 +181,7 @@ export default function EditUserPage() {
             </div>
 
             <div className="pt-6 border-t border-beige">
-              <h3 className="text-lg font-bold text-dark mb-4 flex items-center">
+              <h3 className="text-lg font-bold text-[var(--color-foreground)] mb-4 flex items-center">
                 <Lock size={20} className="mr-2 text-accent" />
                 Configuración de Horas y Salario
               </h3>

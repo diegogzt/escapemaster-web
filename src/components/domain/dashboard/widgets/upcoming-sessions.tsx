@@ -49,8 +49,8 @@ export function UpcomingSessions({
       case "confirmed": return "bg-primary/10 text-primary";
       case "pending": return "bg-yellow-100 text-yellow-800";
       case "cancelled": return "bg-red-100 text-red-800";
-      case "completed": return "bg-gray-100 text-gray-800";
-      default: return "bg-gray-100 text-gray-600";
+      case "completed": return "bg-gray-100 text-[var(--color-foreground)]";
+      default: return "bg-gray-100 text-[var(--color-muted-foreground)]";
     }
   };
 
@@ -68,11 +68,11 @@ export function UpcomingSessions({
 
   return (
     <div className="bg-[var(--color-background)] rounded-xl border border-[var(--color-beige)] shadow-sm h-full flex flex-col overflow-hidden">
-      <div className="p-4 border-b border-gray-100 flex-shrink-0">
-        <h3 className="text-sm font-semibold text-gray-900">
+      <div className="p-4 border-b border-[var(--color-beige)] flex-shrink-0">
+        <h3 className="text-sm font-semibold text-[var(--color-foreground)]">
           Próximas Sesiones
         </h3>
-        <p className="text-xs text-gray-500">Sesiones programadas</p>
+        <p className="text-xs text-[var(--color-muted-foreground)]">Sesiones programadas</p>
       </div>
       <div className="flex-1 p-4 overflow-auto min-h-0">
         {loading ? (
@@ -88,7 +88,7 @@ export function UpcomingSessions({
               ))}
             </div>
         ) : items.length === 0 ? (
-          <div className="text-center text-gray-500 py-8 text-sm">No hay sesiones próximas.</div>
+          <div className="text-center text-[var(--color-muted-foreground)] py-8 text-sm">No hay sesiones próximas.</div>
         ) : (
         <div className="space-y-4">
           {items.map((session) => (
@@ -101,8 +101,8 @@ export function UpcomingSessions({
                   <Clock size={16} />
                 </div>
                 <div className="min-w-0">
-                  <h4 className="font-medium text-gray-900 text-sm truncate">{session.room_name}</h4>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1 text-xs text-gray-500">
+                  <h4 className="font-medium text-[var(--color-foreground)] text-sm truncate">{session.room_name}</h4>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 mt-1 text-xs text-[var(--color-muted-foreground)]">
                     <span className="flex items-center gap-1 truncate">
                       <User size={12} className="flex-shrink-0" />
                       {session.customer_name}
@@ -124,8 +124,8 @@ export function UpcomingSessions({
         </div>
         )}
       </div>
-      <div className="p-4 border-t border-gray-100 flex-shrink-0">
-        <button className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-gray-300 rounded-lg hover:bg-[var(--color-light)]">
+      <div className="p-4 border-t border-[var(--color-beige)] flex-shrink-0">
+        <button className="w-full py-2 text-xs font-medium text-primary hover:text-primary/80 transition-colors border border-dashed border-[var(--color-beige)] rounded-lg hover:bg-[var(--color-light)]">
           Ver calendario completo
         </button>
       </div>

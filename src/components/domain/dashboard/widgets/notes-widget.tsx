@@ -26,7 +26,7 @@ export function NotesWidget() {
     <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col">
       <div className="flex items-center gap-2 mb-4">
         <StickyNote className="h-5 w-5 text-primary" />
-        <h3 className="font-semibold text-dark">Notas Rápidas</h3>
+        <h3 className="font-semibold text-[var(--color-foreground)]">Notas Rápidas</h3>
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-2 mb-4 max-h-[200px]">
@@ -35,17 +35,17 @@ export function NotesWidget() {
             key={i}
             className="flex items-start justify-between group bg-[var(--color-light)] p-2 rounded-lg text-sm"
           >
-            <span className="text-dark">{note}</span>
+            <span className="text-[var(--color-foreground)]">{note}</span>
             <button
               onClick={() => removeNote(i)}
-              className="text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="text-[var(--color-muted-foreground)] hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <X className="h-3 w-3" />
             </button>
           </div>
         ))}
         {notes.length === 0 && (
-          <p className="text-gray-400 text-sm text-center py-4">No hay notas</p>
+          <p className="text-[var(--color-muted-foreground)] text-sm text-center py-4">No hay notas</p>
         )}
       </div>
 

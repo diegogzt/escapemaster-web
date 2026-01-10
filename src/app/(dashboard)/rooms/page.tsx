@@ -45,7 +45,7 @@ export default function RoomsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">Salas</h1>
-          <p className="text-dark opacity-75">
+          <p className="text-[var(--color-foreground)] opacity-75">
             {roomsList.length} {roomsList.length === 1 ? "sala" : "salas"}
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function RoomsPage() {
               className={`p-2 rounded-md transition-colors ${
                 viewMode === "grid"
                   ? "bg-primary/10 text-primary"
-                  : "text-gray-400 hover:text-gray-600"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
               }`}
               title="Vista de cuadrícula"
             >
@@ -67,7 +67,7 @@ export default function RoomsPage() {
               className={`p-2 rounded-md transition-colors ${
                 viewMode === "table"
                   ? "bg-primary/10 text-primary"
-                  : "text-gray-400 hover:text-gray-600"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
               }`}
               title="Vista de lista"
             >
@@ -85,15 +85,15 @@ export default function RoomsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[400px]">
-          <p className="text-gray-500">Cargando salas...</p>
+          <p className="text-[var(--color-muted-foreground)]">Cargando salas...</p>
         </div>
       ) : roomsList.length === 0 ? (
         <Card className="text-center py-12">
-          <Layers className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-xl font-bold text-dark mb-2">
+          <Layers className="mx-auto text-[var(--color-muted-foreground)] mb-4" size={48} />
+          <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-2">
             No hay salas todavía
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[var(--color-muted-foreground)] mb-6">
             Crea tu primera sala para empezar a recibir reservas
           </p>
           <Link href="/rooms/create">
@@ -168,32 +168,32 @@ export default function RoomsPage() {
               {/* Main Content */}
               <div className="mb-4">
                 <div className="flex items-start justify-between">
-                  <h3 className="font-bold text-lg text-dark">{room.name}</h3>
+                  <h3 className="font-bold text-lg text-[var(--color-foreground)]">{room.name}</h3>
                   <span
                     className={`px-2 py-1 text-xs rounded ${
                       room.is_active
                         ? "bg-green-100 text-green-700"
-                        : "bg-gray-100 text-gray-700"
+                        : "bg-gray-100 text-[var(--color-foreground)]"
                     }`}
                   >
                     {room.is_active ? "Activa" : "Inactiva"}
                   </span>
                 </div>
-                <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                <p className="text-sm text-[var(--color-muted-foreground)] mt-2 line-clamp-2">
                   {room.description}
                 </p>
               </div>
 
               <div className="space-y-2 text-sm">
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-[var(--color-muted-foreground)]">
                   <Users size={16} className="mr-2" />
                   {room.capacity_min}-{room.capacity_max} jugadores
                 </div>
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-[var(--color-muted-foreground)]">
                   <Clock size={16} className="mr-2" />
                   {room.duration_minutes} minutos
                 </div>
-                <div className="flex items-center text-gray-600">
+                <div className="flex items-center text-[var(--color-muted-foreground)]">
                   <DollarSign size={16} className="mr-2" />
                   {room.price_per_person}€ por persona
                 </div>
@@ -201,7 +201,7 @@ export default function RoomsPage() {
 
               <div className="mt-4 pt-4 border-t border-beige">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">Dificultad</span>
+                  <span className="text-xs text-[var(--color-muted-foreground)]">Dificultad</span>
                   <div className="flex space-x-1">
                     {[1, 2, 3, 4, 5].map((level) => (
                       <div
@@ -229,12 +229,12 @@ export default function RoomsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[var(--color-light)]/50 border-b border-beige">
-                <th className="px-6 py-4 font-bold text-dark">Nombre</th>
-                <th className="px-6 py-4 font-bold text-dark">Jugadores</th>
-                <th className="px-6 py-4 font-bold text-dark">Duración</th>
-                <th className="px-6 py-4 font-bold text-dark">Precio</th>
-                <th className="px-6 py-4 font-bold text-dark">Estado</th>
-                <th className="px-6 py-4 font-bold text-dark text-right">
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Nombre</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Jugadores</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Duración</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Precio</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Estado</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)] text-right">
                   Acciones
                 </th>
               </tr>
@@ -255,26 +255,26 @@ export default function RoomsPage() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <div className="w-full h-full flex items-center justify-center text-[var(--color-muted-foreground)]">
                             <Layers size={20} />
                           </div>
                         )}
                       </div>
                       <div>
-                        <div className="font-medium text-dark">{room.name}</div>
-                        <div className="text-xs text-gray-500">
+                        <div className="font-medium text-[var(--color-foreground)]">{room.name}</div>
+                        <div className="text-xs text-[var(--color-muted-foreground)]">
                           {room.theme}
                         </div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-[var(--color-muted-foreground)]">
                     {room.capacity_min}-{room.capacity_max}
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-[var(--color-muted-foreground)]">
                     {room.duration_minutes} min
                   </td>
-                  <td className="px-6 py-4 text-gray-600">
+                  <td className="px-6 py-4 text-[var(--color-muted-foreground)]">
                     {room.price_per_person}€ / pers
                   </td>
                   <td className="px-6 py-4">
@@ -282,7 +282,7 @@ export default function RoomsPage() {
                       className={`px-2 py-1 text-xs rounded ${
                         room.is_active
                           ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-700"
+                          : "bg-gray-100 text-[var(--color-foreground)]"
                       }`}
                     >
                       {room.is_active ? "Activa" : "Inactiva"}
@@ -292,14 +292,14 @@ export default function RoomsPage() {
                     <div className="flex items-center justify-end gap-2">
                       <Link href={`/rooms/${room.id}`}>
                         <button
-                          className="p-2 text-gray-400 hover:text-primary transition-colors"
+                          className="p-2 text-[var(--color-muted-foreground)] hover:text-primary transition-colors"
                           title="Editar"
                         >
                           <Edit size={18} />
                         </button>
                       </Link>
                       <button
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        className="p-2 text-[var(--color-muted-foreground)] hover:text-red-500 transition-colors"
                         title="Eliminar"
                       >
                         <Trash2 size={18} />

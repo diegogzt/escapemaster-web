@@ -76,11 +76,11 @@ export function RevenueBarChartWidget({
     };
 
     if (loading) {
-        return <div className="h-full w-full flex items-center justify-center text-gray-400">Cargando datos...</div>;
+        return <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)]">Cargando datos...</div>;
     }
     
     if (data.length === 0) {
-        return <div className="h-full w-full flex items-center justify-center text-gray-400">No hay datos de ingresos disponibles.</div>;
+        return <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)]">No hay datos de ingresos disponibles.</div>;
     }
 
     if (chartType === "line") {
@@ -201,7 +201,7 @@ export function RevenueBarChartWidget({
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-dark text-sm">
+          <h3 className="font-semibold text-[var(--color-foreground)] text-sm">
             Ingresos vs Gastos
           </h3>
         </div>

@@ -150,13 +150,13 @@ export function SaveCollectionModal({
               <FolderPlus className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-dark">Mis Colecciones</h3>
+              <h3 className="text-lg font-bold text-[var(--color-foreground)]">Mis Colecciones</h3>
               <p className="text-sm text-secondary">Guarda y carga layouts personalizados</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-secondary hover:text-dark p-1 rounded-lg hover:bg-beige"
+            className="text-secondary hover:text-[var(--color-foreground)] p-1 rounded-lg hover:bg-beige"
             aria-label="Cerrar modal"
           >
             <X className="h-5 w-5" />
@@ -181,7 +181,7 @@ export function SaveCollectionModal({
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-dark">{collection.name}</span>
+                      <span className="font-medium text-[var(--color-foreground)]">{collection.name}</span>
                       {collection.is_active && (
                         <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">
                           Activa
@@ -191,7 +191,7 @@ export function SaveCollectionModal({
                     {collection.description && (
                       <p className="text-xs text-secondary mt-1">{collection.description}</p>
                     )}
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-[var(--color-muted-foreground)] mt-1">
                       {collection.layout.length} widgets
                     </p>
                   </div>
@@ -232,7 +232,7 @@ export function SaveCollectionModal({
         </div>
 
         {showNewForm ? (
-          <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+          <div className="mt-4 pt-4 border-t border-[var(--color-beige)] space-y-3">
             <input
               type="text"
               placeholder="Nombre de la colección"
@@ -269,7 +269,7 @@ export function SaveCollectionModal({
             </div>
           </div>
         ) : (
-          <div className="mt-4 pt-4 border-t border-gray-100">
+          <div className="mt-4 pt-4 border-t border-[var(--color-beige)]">
             <Button
               variant="outline"
               className="w-full"

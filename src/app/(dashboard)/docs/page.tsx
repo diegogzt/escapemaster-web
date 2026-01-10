@@ -6,7 +6,7 @@ export default function DocsPage() {
     <div className="w-full">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-primary">Documentación</h1>
-        <p className="text-dark opacity-75">
+        <p className="text-[var(--color-foreground)] opacity-75">
           Guías y referencias para usar EscapeMaster.
         </p>
       </div>
@@ -16,7 +16,7 @@ export default function DocsPage() {
           <CardHeader>
             <CardTitle>Guía de Inicio</CardTitle>
           </CardHeader>
-          <p className="text-gray-600 mb-4">
+          <p className="text-[var(--color-muted-foreground)] mb-4">
             Aprende los conceptos básicos para configurar tu organización y
             empezar a recibir reservas.
           </p>
@@ -29,7 +29,7 @@ export default function DocsPage() {
           <CardHeader>
             <CardTitle>Gestión de Salas</CardTitle>
           </CardHeader>
-          <p className="text-gray-600 mb-4">
+          <p className="text-[var(--color-muted-foreground)] mb-4">
             Cómo crear salas, configurar horarios y gestionar la disponibilidad.
           </p>
           <a href="#" className="text-primary font-semibold hover:underline">
@@ -41,7 +41,7 @@ export default function DocsPage() {
           <CardHeader>
             <CardTitle>API Reference</CardTitle>
           </CardHeader>
-          <p className="text-gray-600 mb-4">
+          <p className="text-[var(--color-muted-foreground)] mb-4">
             Documentación técnica completa de la API para integraciones
             personalizadas.
           </p>
@@ -58,7 +58,7 @@ export default function DocsPage() {
           <CardHeader>
             <CardTitle>Soporte</CardTitle>
           </CardHeader>
-          <p className="text-gray-600 mb-4">
+          <p className="text-[var(--color-muted-foreground)] mb-4">
             ¿Necesitas ayuda? Contacta con nuestro equipo de soporte técnico.
           </p>
           <a href="#" className="text-primary font-semibold hover:underline">

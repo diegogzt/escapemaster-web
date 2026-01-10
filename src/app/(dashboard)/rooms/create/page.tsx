@@ -52,8 +52,8 @@ export default function CreateRoomPage() {
     <main className="w-full p-6">
       <header className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Nueva Sala</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-[var(--color-foreground)]">Nueva Sala</h1>
+          <p className="text-[var(--color-muted-foreground)] mt-2">
             Configura los detalles de la nueva sala de escape.
           </p>
         </div>
@@ -69,11 +69,11 @@ export default function CreateRoomPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-8 bg-[var(--color-background)] p-8 rounded-xl shadow-sm border border-gray-200"
+        className="space-y-8 bg-[var(--color-background)] p-8 rounded-xl shadow-sm border border-[var(--color-beige)]"
       >
         {/* Información General */}
         <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <legend className="text-xl font-semibold text-gray-800 mb-4 col-span-full border-b pb-2 w-full">
+          <legend className="text-xl font-semibold text-[var(--color-foreground)] mb-4 col-span-full border-b pb-2 w-full">
             Información General
           </legend>
 
@@ -96,7 +96,7 @@ export default function CreateRoomPage() {
               className="w-full"
             />
             <div className="space-y-1">
-              <label htmlFor="color" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="color" className="block text-sm font-medium text-[var(--color-foreground)]">
                 Color de Sala
               </label>
               <div className="flex gap-2">
@@ -105,14 +105,14 @@ export default function CreateRoomPage() {
                   id="color"
                   name="color"
                   defaultValue="#3B82F6"
-                  className="h-10 w-12 p-1 rounded border border-gray-300 cursor-pointer"
+                  className="h-10 w-12 p-1 rounded border border-[var(--color-beige)] cursor-pointer"
                 />
                 <input 
                   type="text"
                   name="color_text" 
                   placeholder="#3B82F6"
                   defaultValue="#3B82F6"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary sm:text-sm"
+                  className="flex-1 px-3 py-2 border border-[var(--color-beige)] rounded-md focus:ring-primary focus:border-primary sm:text-sm"
                   onChange={(e) => {
                     const val = e.target.value;
                     const colorInput = document.getElementById('color') as HTMLInputElement;
@@ -128,7 +128,7 @@ export default function CreateRoomPage() {
           <div className="col-span-full">
             <label
               htmlFor="description"
-              className="block mb-2 font-semibold text-dark"
+              className="block mb-2 font-semibold text-[var(--color-foreground)]"
             >
               Descripción
             </label>
@@ -136,7 +136,7 @@ export default function CreateRoomPage() {
               id="description"
               name="description"
               rows={4}
-              className="w-full px-3 py-2 border-2 border-beige rounded-lg text-base focus:border-primary focus:ring-0 outline-none transition-colors resize-y bg-[var(--color-background)] text-dark"
+              className="w-full px-3 py-2 border-2 border-beige rounded-lg text-base focus:border-primary focus:ring-0 outline-none transition-colors resize-y bg-[var(--color-background)] text-[var(--color-foreground)]"
               placeholder="Describe la historia y el ambiente de la sala..."
               required
             />
@@ -145,7 +145,7 @@ export default function CreateRoomPage() {
 
         {/* Detalles Técnicos */}
         <fieldset className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <legend className="text-xl font-semibold text-gray-800 mb-4 col-span-full border-b pb-2 w-full">
+          <legend className="text-xl font-semibold text-[var(--color-foreground)] mb-4 col-span-full border-b pb-2 w-full">
             Detalles Técnicos
           </legend>
 
@@ -176,7 +176,7 @@ export default function CreateRoomPage() {
 
         {/* Precios y Duración */}
         <fieldset className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <legend className="text-xl font-semibold text-gray-800 mb-4 col-span-full border-b pb-2 w-full">
+          <legend className="text-xl font-semibold text-[var(--color-foreground)] mb-4 col-span-full border-b pb-2 w-full">
             Configuración de Sesión
           </legend>
 
@@ -207,7 +207,7 @@ export default function CreateRoomPage() {
           </div>
         )}
 
-        <div className="flex justify-end pt-6 border-t border-gray-100">
+        <div className="flex justify-end pt-6 border-t border-[var(--color-beige)]">
           <Button
             type="submit"
             loading={loading}

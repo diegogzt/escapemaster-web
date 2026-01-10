@@ -112,7 +112,7 @@ export default function RoomConfigPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <p className="text-gray-500">Cargando configuración de la sala...</p>
+        <p className="text-[var(--color-muted-foreground)]">Cargando configuración de la sala...</p>
       </div>
     );
   }
@@ -140,7 +140,7 @@ export default function RoomConfigPage() {
             Volver a salas
           </Link>
           <h1 className="text-3xl font-bold text-primary">Configurar Sala</h1>
-          <p className="text-dark opacity-75">
+          <p className="text-[var(--color-foreground)] opacity-75">
             Ajusta los detalles de {roomData.name}
           </p>
         </div>
@@ -165,7 +165,7 @@ export default function RoomConfigPage() {
                   required
                 />
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-[var(--color-foreground)]">
                     Descripción
                   </label>
                   <textarea
@@ -183,7 +183,7 @@ export default function RoomConfigPage() {
                     placeholder="Ej: Terror, Aventura"
                   />
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-[var(--color-foreground)]">
                       Color de Sala
                     </label>
                     <div className="flex gap-2">
@@ -210,7 +210,7 @@ export default function RoomConfigPage() {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-[var(--color-foreground)]">
                       Dificultad (1-5)
                     </label>
                     <select
@@ -240,7 +240,7 @@ export default function RoomConfigPage() {
                 <CardTitle>Campos Personalizados</CardTitle>
               </CardHeader>
               <div className="p-6">
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-[var(--color-muted-foreground)] mb-4">
                   Define qué información adicional quieres solicitar a los
                   clientes al hacer la reserva.
                 </p>
@@ -251,20 +251,20 @@ export default function RoomConfigPage() {
                       key={field.id}
                       className="flex items-center justify-between bg-[var(--color-light)]/30 p-3 rounded-lg border border-beige"
                     >
-                      <span className="font-medium text-dark">
+                      <span className="font-medium text-[var(--color-foreground)]">
                         {field.label}
                       </span>
                       <button
                         type="button"
                         onClick={() => handleRemoveCustomField(field.id)}
-                        className="text-gray-400 hover:text-red-500 transition-colors"
+                        className="text-[var(--color-muted-foreground)] hover:text-red-500 transition-colors"
                       >
                         <X size={18} />
                       </button>
                     </div>
                   ))}
                   {customFields.length === 0 && (
-                    <p className="text-sm text-gray-400 italic text-center py-2">
+                    <p className="text-sm text-[var(--color-muted-foreground)] italic text-center py-2">
                       No hay campos personalizados
                     </p>
                   )}
@@ -334,7 +334,7 @@ export default function RoomConfigPage() {
                   icon={<DollarSign size={18} />}
                 />
                 <div className="space-y-2 pt-2">
-                  <label className="block text-sm font-medium text-gray-700">
+                  <label className="block text-sm font-medium text-[var(--color-foreground)]">
                     Estado
                   </label>
                   <select

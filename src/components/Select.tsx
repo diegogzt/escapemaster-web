@@ -16,7 +16,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, options, children, className, ...props }, ref) => (
     <div className="mb-6">
       {label && (
-        <label className="block mb-2 font-semibold text-dark ">{label}</label>
+        <label className="block mb-2 font-semibold text-[var(--color-foreground)] ">{label}</label>
       )}
       <select
         ref={ref}

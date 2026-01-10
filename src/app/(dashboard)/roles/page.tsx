@@ -49,7 +49,7 @@ export default function RolesPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
         <div>
           <h1 className="text-4xl font-bold text-primary mb-2">Roles y Permisos</h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-[var(--color-muted-foreground)]">
             Gestiona los niveles de acceso y responsabilidades de tu equipo.
           </p>
         </div>
@@ -62,13 +62,13 @@ export default function RolesPage() {
       </div>
 
       <Card className="w-full max-w-none overflow-hidden">
-        <div className="p-6 border-b border-gray-100 bg-[var(--color-light)]/50">
+        <div className="p-6 border-b border-[var(--color-beige)] bg-[var(--color-light)]/50">
           <div className="relative max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]" size={20} />
             <input
               type="text"
               placeholder="Buscar roles..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-[var(--color-beige)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -78,7 +78,7 @@ export default function RolesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-[var(--color-light)] text-gray-600 text-sm uppercase tracking-wider">
+              <tr className="bg-[var(--color-light)] text-[var(--color-muted-foreground)] text-sm uppercase tracking-wider">
                 <th className="px-6 py-4 font-semibold">Rol</th>
                 <th className="px-6 py-4 font-semibold">Descripción</th>
                 <th className="px-6 py-4 font-semibold text-center">Permisos</th>
@@ -105,10 +105,10 @@ export default function RolesPage() {
                         <div className="p-2 bg-primary/10 rounded-lg text-primary">
                           <Shield size={18} />
                         </div>
-                        <span className="font-medium text-gray-900">{role.name}</span>
+                        <span className="font-medium text-[var(--color-foreground)]">{role.name}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-gray-600 max-w-xs truncate">
+                    <td className="px-6 py-4 text-[var(--color-muted-foreground)] max-w-xs truncate">
                       {role.description || "Sin descripción"}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -122,7 +122,7 @@ export default function RolesPage() {
                           Personalizado
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-[var(--color-foreground)]">
                           Sistema
                         </span>
                       )}
@@ -130,12 +130,12 @@ export default function RolesPage() {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link href={`/roles/${role.id}`}>
-                          <button className="p-2 text-gray-400 hover:text-primary transition-colors" title="Editar">
+                          <button className="p-2 text-[var(--color-muted-foreground)] hover:text-primary transition-colors" title="Editar">
                             <Edit2 size={18} />
                           </button>
                         </Link>
                         {role.is_custom && (
-                          <button className="p-2 text-gray-400 hover:text-red-500 transition-colors" title="Eliminar">
+                          <button className="p-2 text-[var(--color-muted-foreground)] hover:text-red-500 transition-colors" title="Eliminar">
                             <Trash2 size={18} />
                           </button>
                         )}
@@ -145,7 +145,7 @@ export default function RolesPage() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={5} className="px-6 py-12 text-center text-[var(--color-muted-foreground)]">
                     <div className="flex flex-col items-center gap-2">
                       <Shield size={48} className="text-gray-200" />
                       <p>No se encontraron roles</p>

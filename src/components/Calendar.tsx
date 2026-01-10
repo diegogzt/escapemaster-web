@@ -125,21 +125,21 @@ const Calendar = ({
       header: "text-primary",
       selected: "bg-primary text-white",
       today: "border-2 border-primary",
-      hover: "hover:bg-[var(--color-light)] hover:text-dark",
+      hover: "hover:bg-[var(--color-light)] hover:text-[var(--color-foreground)]",
       nav: "text-primary hover:bg-[var(--color-light)]",
     },
     secondary: {
       header: "text-secondary",
-      selected: "bg-secondary text-dark",
+      selected: "bg-secondary text-[var(--color-foreground)]",
       today: "border-2 border-secondary",
-      hover: "hover:bg-[var(--color-light)] hover:text-dark",
+      hover: "hover:bg-[var(--color-light)] hover:text-[var(--color-foreground)]",
       nav: "text-secondary hover:bg-[var(--color-light)]",
     },
     accent: {
       header: "text-accent",
       selected: "bg-accent text-white",
       today: "border-2 border-accent",
-      hover: "hover:bg-[var(--color-light)] hover:text-dark",
+      hover: "hover:bg-[var(--color-light)] hover:text-[var(--color-foreground)]",
       nav: "text-accent hover:bg-[var(--color-light)]",
     },
   };
@@ -231,7 +231,7 @@ const Calendar = ({
         {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((day) => (
           <div
             key={day}
-            className={cn("text-center font-bold text-dark", config.weekday)}
+            className={cn("text-center font-bold text-[var(--color-foreground)]", config.weekday)}
           >
             {day}
           </div>

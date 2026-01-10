@@ -196,7 +196,7 @@ export default function BookingsPage() {
           </span>
         );
       default:
-        return <span className="text-gray-500">{status}</span>;
+        return <span className="text-[var(--color-muted-foreground)]">{status}</span>;
     }
   };
 
@@ -251,7 +251,7 @@ export default function BookingsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">Reservas</h1>
-          <p className="text-dark opacity-75">
+          <p className="text-[var(--color-foreground)] opacity-75">
             Gestiona las sesiones y reservas
           </p>
         </div>
@@ -262,7 +262,7 @@ export default function BookingsPage() {
               className={`p-2 rounded-md transition-colors ${
                 viewMode === "grid"
                   ? "bg-primary/10 text-primary"
-                  : "text-gray-400 hover:text-gray-600"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
               }`}
               title="Vista de cuadrícula"
             >
@@ -273,7 +273,7 @@ export default function BookingsPage() {
               className={`p-2 rounded-md transition-colors ${
                 viewMode === "table"
                   ? "bg-primary/10 text-primary"
-                  : "text-gray-400 hover:text-gray-600"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
               }`}
               title="Vista de lista"
             >
@@ -296,7 +296,7 @@ export default function BookingsPage() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1 relative">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]"
                 size={18}
               />
               <input
@@ -336,10 +336,10 @@ export default function BookingsPage() {
           </div>
 
           {/* Bottom Row: Date Filters */}
-          <div className="flex flex-col md:flex-row gap-4 items-center bg-[var(--color-light)] p-3 rounded-lg border border-gray-100">
+          <div className="flex flex-col md:flex-row gap-4 items-center bg-[var(--color-light)] p-3 rounded-lg border border-[var(--color-beige)]">
             <div className="flex items-center gap-2">
-              <Filter size={16} className="text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">
+              <Filter size={16} className="text-[var(--color-muted-foreground)]" />
+              <span className="text-sm font-medium text-[var(--color-foreground)]">
                 Filtrar por fecha:
               </span>
             </div>
@@ -350,7 +350,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "all"
                     ? "bg-primary text-white"
-                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
+                    : "bg-[var(--color-background)] border border-[var(--color-beige)] text-[var(--color-foreground)] hover:bg-[var(--color-light)]"
                 }`}
               >
                 Todas
@@ -360,7 +360,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "today"
                     ? "bg-primary text-white"
-                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
+                    : "bg-[var(--color-background)] border border-[var(--color-beige)] text-[var(--color-foreground)] hover:bg-[var(--color-light)]"
                 }`}
               >
                 Hoy
@@ -370,7 +370,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "tomorrow"
                     ? "bg-primary text-white"
-                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
+                    : "bg-[var(--color-background)] border border-[var(--color-beige)] text-[var(--color-foreground)] hover:bg-[var(--color-light)]"
                 }`}
               >
                 Mañana
@@ -380,7 +380,7 @@ export default function BookingsPage() {
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
                   dateFilterType === "custom"
                     ? "bg-primary text-white"
-                    : "bg-[var(--color-background)] border border-gray-200 text-gray-700 hover:bg-[var(--color-light)]"
+                    : "bg-[var(--color-background)] border border-[var(--color-beige)] text-[var(--color-foreground)] hover:bg-[var(--color-light)]"
                 }`}
               >
                 Rango Personalizado
@@ -391,14 +391,14 @@ export default function BookingsPage() {
               <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-4 duration-200">
                 <input
                   type="date"
-                  className="px-3 py-1.5 border border-gray-200 rounded-md text-sm"
+                  className="px-3 py-1.5 border border-[var(--color-beige)] rounded-md text-sm"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
                 />
-                <span className="text-gray-400">-</span>
+                <span className="text-[var(--color-muted-foreground)]">-</span>
                 <input
                   type="date"
-                  className="px-3 py-1.5 border border-gray-200 rounded-md text-sm"
+                  className="px-3 py-1.5 border border-[var(--color-beige)] rounded-md text-sm"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
                 />
@@ -422,11 +422,11 @@ export default function BookingsPage() {
               >
                 <div className="flex justify-between items-start mb-3">
                   <div>
-                    <div className="flex items-center font-bold text-dark mb-1">
+                    <div className="flex items-center font-bold text-[var(--color-foreground)] mb-1">
                       <Calendar size={14} className="mr-1 text-primary" />
                       {new Date(booking.date).toLocaleDateString()}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
+                    <div className="flex items-center text-sm text-[var(--color-muted-foreground)]">
                       <Clock size={14} className="mr-1" />
                       {booking.time}
                     </div>
@@ -435,15 +435,15 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="mb-3">
-                  <h3 className="font-bold text-lg text-dark truncate" title={booking.room_name}>
+                  <h3 className="font-bold text-lg text-[var(--color-foreground)] truncate" title={booking.room_name}>
                     {booking.room_name}
                   </h3>
-                  <div className="text-sm text-gray-600 mt-1 truncate">
+                  <div className="text-sm text-[var(--color-muted-foreground)] mt-1 truncate">
                     {booking.group_name}
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-sm text-gray-600 mb-3 bg-[var(--color-light)]/30 p-2 rounded">
+                <div className="flex items-center justify-between text-sm text-[var(--color-muted-foreground)] mb-3 bg-[var(--color-light)]/30 p-2 rounded">
                   <div className="flex items-center">
                     <Users size={14} className="mr-1" />
                     {booking.players_count} pax
@@ -458,7 +458,7 @@ export default function BookingsPage() {
                     >
                       {booking.paid_amount}€
                     </span>
-                    <span className="text-gray-400">
+                    <span className="text-[var(--color-muted-foreground)]">
                       {" "}
                       / {booking.total_price}€
                     </span>
@@ -466,7 +466,7 @@ export default function BookingsPage() {
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-beige">
-                  <div className="text-xs text-gray-500 truncate max-w-[50%]">
+                  <div className="text-xs text-[var(--color-muted-foreground)] truncate max-w-[50%]">
                     GM: {booking.game_master}
                   </div>
                   <Link href={`/bookings/${booking.id}`}>
@@ -479,7 +479,7 @@ export default function BookingsPage() {
             ))
           ) : (
             <div className="col-span-full text-center py-12 bg-[var(--color-background)] rounded-xl border border-beige">
-              <p className="text-gray-500">
+              <p className="text-[var(--color-muted-foreground)]">
                 No se encontraron reservas con los filtros seleccionados.
               </p>
             </div>
@@ -490,13 +490,13 @@ export default function BookingsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[var(--color-light)]/50 border-b border-beige">
-                <th className="px-6 py-4 font-bold text-dark">Fecha y Hora</th>
-                <th className="px-6 py-4 font-bold text-dark">Sala</th>
-                <th className="px-6 py-4 font-bold text-dark">Grupo</th>
-                <th className="px-6 py-4 font-bold text-dark">Jugadores</th>
-                <th className="px-6 py-4 font-bold text-dark">Estado</th>
-                <th className="px-6 py-4 font-bold text-dark">Pago</th>
-                <th className="px-6 py-4 font-bold text-dark text-right">
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Fecha y Hora</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Sala</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Grupo</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Jugadores</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Estado</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Pago</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)] text-right">
                   Acciones
                 </th>
               </tr>
@@ -512,17 +512,17 @@ export default function BookingsPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <div className="flex items-center font-medium text-dark">
+                        <div className="flex items-center font-medium text-[var(--color-foreground)]">
                           <Calendar size={14} className="mr-1 text-primary" />
                           {new Date(booking.date).toLocaleDateString()}
                         </div>
-                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                        <div className="flex items-center text-sm text-[var(--color-muted-foreground)] mt-1">
                           <Clock size={14} className="mr-1" />
                           {booking.time}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 font-medium text-dark">
+                    <td className="px-6 py-4 font-medium text-[var(--color-foreground)]">
                       <div className="flex items-center">
                         <span 
                           className="w-3 h-3 rounded-full mr-2" 
@@ -532,16 +532,16 @@ export default function BookingsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-medium text-dark">
+                      <div className="font-medium text-[var(--color-foreground)]">
                         {booking.group_name}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-[var(--color-muted-foreground)]">
                         GM: {booking.game_master}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center text-gray-700">
-                        <Users size={16} className="mr-2 text-gray-400" />
+                      <div className="flex items-center text-[var(--color-foreground)]">
+                        <Users size={16} className="mr-2 text-[var(--color-muted-foreground)]" />
                         {booking.players_count}
                       </div>
                     </td>
@@ -559,7 +559,7 @@ export default function BookingsPage() {
                         >
                           {booking.paid_amount}€
                         </span>
-                        <span className="text-gray-400">
+                        <span className="text-[var(--color-muted-foreground)]">
                           {" "}
                           / {booking.total_price}€
                         </span>
@@ -568,7 +568,7 @@ export default function BookingsPage() {
                     <td className="px-6 py-4 text-right">
                       <Link href={`/bookings/${booking.id}`}>
                         <button
-                          className="p-2 text-gray-400 hover:text-primary transition-colors"
+                          className="p-2 text-[var(--color-muted-foreground)] hover:text-primary transition-colors"
                           title="Ver detalles"
                         >
                           <Eye size={18} />
@@ -581,7 +581,7 @@ export default function BookingsPage() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-6 py-8 text-center text-gray-500"
+                    className="px-6 py-8 text-center text-[var(--color-muted-foreground)]"
                   >
                     No se encontraron reservas con los filtros seleccionados.
                   </td>
@@ -594,7 +594,7 @@ export default function BookingsPage() {
 
       {/* Pagination Controls */}
       {!loading && bookings.length > 0 && (
-        <div className="flex items-center justify-between border-t border-gray-200 bg-[var(--color-background)] px-4 py-3 sm:px-6 rounded-lg shadow-sm">
+        <div className="flex items-center justify-between border-t border-[var(--color-beige)] bg-[var(--color-background)] px-4 py-3 sm:px-6 rounded-lg shadow-sm">
           <div className="flex flex-1 justify-between sm:hidden">
             <Button
               variant="outline"
@@ -613,7 +613,7 @@ export default function BookingsPage() {
           </div>
           <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-[var(--color-foreground)]">
                 Mostrando <span className="font-medium">{(page - 1) * pageSize + 1}</span> a{" "}
                 <span className="font-medium">{Math.min(page * pageSize, total)}</span> de{" "}
                 <span className="font-medium">{total}</span> resultados
@@ -624,19 +624,19 @@ export default function BookingsPage() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center rounded-l-md px-2 py-2 text-[var(--color-muted-foreground)] ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Anterior</span>
                   <ChevronLeft className="h-5 w-5" aria-hidden="true" />
                 </button>
                 {/* Page Indicator */}
-                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0">
+                <span className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[var(--color-foreground)] ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0">
                   Página {page} de {totalPages}
                 </span>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative inline-flex items-center rounded-r-md px-2 py-2 text-[var(--color-muted-foreground)] ring-1 ring-inset ring-gray-300 hover:bg-[var(--color-light)] focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <span className="sr-only">Siguiente</span>
                   <ChevronRight className="h-5 w-5" aria-hidden="true" />

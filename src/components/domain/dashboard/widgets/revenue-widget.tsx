@@ -10,7 +10,7 @@ export function RevenueWidget() {
           <div className="p-2 bg-primary/10 rounded-lg">
             <DollarSign className="h-5 w-5 text-primary" />
           </div>
-          <h3 className="font-semibold text-dark">Ingresos</h3>
+          <h3 className="font-semibold text-[var(--color-foreground)]">Ingresos</h3>
         </div>
         <span className="text-xs font-medium px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
           <TrendingUp size={12} />
@@ -19,14 +19,14 @@ export function RevenueWidget() {
       </div>
 
       <div className="space-y-1">
-        <p className="text-sm text-gray-500">Total este mes</p>
-        <h2 className="text-3xl font-bold text-dark">€8,450.00</h2>
+        <p className="text-sm text-[var(--color-muted-foreground)]">Total este mes</p>
+        <h2 className="text-3xl font-bold text-[var(--color-foreground)]">€8,450.00</h2>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-gray-100">
+      <div className="mt-4 pt-4 border-t border-[var(--color-beige)]">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">Meta mensual</span>
-          <span className="font-medium text-dark">€10,000</span>
+          <span className="text-[var(--color-muted-foreground)]">Meta mensual</span>
+          <span className="font-medium text-[var(--color-foreground)]">€10,000</span>
         </div>
         <div className="mt-2 h-2 w-full bg-gray-100 rounded-full overflow-hidden">
           <div

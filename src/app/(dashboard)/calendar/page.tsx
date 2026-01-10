@@ -268,7 +268,7 @@ export default function CalendarPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-600">Cargando calendario...</p>
+          <p className="text-[var(--color-muted-foreground)]">Cargando calendario...</p>
         </div>
       </div>
     );
@@ -300,7 +300,7 @@ export default function CalendarPage() {
       days.push(
         <div
           key={`empty-${i}`}
-          className="h-32 bg-[var(--color-light)] border border-gray-100"
+          className="h-32 bg-[var(--color-light)] border border-[var(--color-beige)]"
         ></div>
       );
     }
@@ -318,20 +318,20 @@ export default function CalendarPage() {
       days.push(
         <div
           key={day}
-          className={`h-32 border border-gray-100 p-2 overflow-y-auto transition-colors hover:bg-[var(--color-light)] custom-scrollbar ${
+          className={`h-32 border border-[var(--color-beige)] p-2 overflow-y-auto transition-colors hover:bg-[var(--color-light)] custom-scrollbar ${
             isToday ? "bg-blue-50/30" : "bg-[var(--color-background)]"
           }`}
         >
           <div className="flex justify-between items-start mb-1">
             <span
               className={`text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full ${
-                isToday ? "bg-primary text-white" : "text-gray-700"
+                isToday ? "bg-primary text-white" : "text-[var(--color-foreground)]"
               }`}
             >
               {day}
             </span>
             {daySessions.length > 0 && (
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-[var(--color-muted-foreground)]">
                 {daySessions.length} ses.
               </span>
             )}
@@ -358,11 +358,11 @@ export default function CalendarPage() {
     }
 
     return (
-      <div className="grid grid-cols-7 gap-px bg-gray-200 rounded-lg overflow-hidden border border-gray-200">
+      <div className="grid grid-cols-7 gap-px bg-gray-200 rounded-lg overflow-hidden border border-[var(--color-beige)]">
         {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => (
           <div
             key={d}
-            className="bg-[var(--color-light)] p-2 text-center text-sm font-semibold text-gray-500"
+            className="bg-[var(--color-light)] p-2 text-center text-sm font-semibold text-[var(--color-muted-foreground)]"
           >
             {d}
           </div>
@@ -380,10 +380,10 @@ export default function CalendarPage() {
             <div
               key={d.toISOString()}
               className={`p-3 text-center border-r last:border-r-0 ${
-                isSameDay(d, new Date()) ? "text-primary" : "text-gray-700"
+                isSameDay(d, new Date()) ? "text-primary" : "text-[var(--color-foreground)]"
               }`}
             >
-              <div className="text-xs uppercase text-gray-500">
+              <div className="text-xs uppercase text-[var(--color-muted-foreground)]">
                 {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][d.getDay()]}
               </div>
               <div className="text-lg font-bold">{d.getDate()}</div>
@@ -400,7 +400,7 @@ export default function CalendarPage() {
             return (
               <div key={d.toISOString()} className="bg-[var(--color-background)] p-3 min-h-[220px]">
                 {daySessions.length === 0 ? (
-                  <div className="text-sm text-gray-400">Sin sesiones</div>
+                  <div className="text-sm text-[var(--color-muted-foreground)]">Sin sesiones</div>
                 ) : (
                   <div className="space-y-2">
                     {daySessions.map((session) => (
@@ -461,7 +461,7 @@ export default function CalendarPage() {
                   isToday ? "bg-primary/5" : "bg-[var(--color-light)]/30"
                 }`}
               >
-                <div className="font-bold text-dark capitalize">
+                <div className="font-bold text-[var(--color-foreground)] capitalize">
                   {date.toLocaleDateString("es-ES", {
                     weekday: "long",
                     day: "2-digit",
@@ -469,14 +469,14 @@ export default function CalendarPage() {
                     year: "numeric",
                   })}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-[var(--color-muted-foreground)]">
                   {items.length} {items.length === 1 ? "sesión" : "sesiones"}
                 </div>
               </div>
 
               <div className="p-4 space-y-3">
                 {items.length === 0 ? (
-                  <div className="text-sm text-gray-500">Sin sesiones</div>
+                  <div className="text-sm text-[var(--color-muted-foreground)]">Sin sesiones</div>
                 ) : (
                   items.map((session) => (
                     <div
@@ -486,29 +486,29 @@ export default function CalendarPage() {
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <div className="text-lg font-bold text-dark">
+                            <div className="text-lg font-bold text-[var(--color-foreground)]">
                               {formatTime(session.start)}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-[var(--color-muted-foreground)]">
                               {formatTime(session.end)}
                             </div>
                           </div>
-                          <div className="mt-1 font-bold text-dark truncate">
+                          <div className="mt-1 font-bold text-[var(--color-foreground)] truncate">
                             {session.title}
                           </div>
-                          <div className="mt-2 grid grid-cols-1 gap-1 text-sm text-gray-600">
+                          <div className="mt-2 grid grid-cols-1 gap-1 text-sm text-[var(--color-muted-foreground)]">
                             <div className="flex items-center gap-2">
-                              <Users size={14} className="text-gray-400" />
+                              <Users size={14} className="text-[var(--color-muted-foreground)]" />
                               <span className="truncate">
                                 {session.customer}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <MapPin size={14} className="text-gray-400" />
+                              <MapPin size={14} className="text-[var(--color-muted-foreground)]" />
                               <span className="truncate">{session.room}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Clock size={14} className="text-gray-400" />
+                              <Clock size={14} className="text-[var(--color-muted-foreground)]" />
                               <span>
                                 {formatTime(session.start)} -{" "}
                                 {formatTime(session.end)}
@@ -546,7 +546,7 @@ export default function CalendarPage() {
         </div>
         <div className="p-4">
           {daySessions.length === 0 ? (
-            <div className="text-sm text-gray-500">
+            <div className="text-sm text-[var(--color-muted-foreground)]">
               No hay sesiones para este día.
             </div>
           ) : (
@@ -581,7 +581,7 @@ export default function CalendarPage() {
                           <span className="truncate">{session.customer}</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 bg-[var(--color-background)]/50 rounded text-black">
+                      <div className="flex items-center gap-1 text-xs font-medium px-2 py-1 bg-[var(--color-background)]/50 rounded text-[var(--color-foreground)]">
                         <MapPin size={12} />
                         {session.room}
                       </div>
@@ -608,15 +608,15 @@ export default function CalendarPage() {
                   handlePrev();
                 }}
                 aria-label="Semana anterior"
-                className="p-2 rounded-lg border border-beige/60 bg-[var(--color-background)] text-gray-600"
+                className="p-2 rounded-lg border border-beige/60 bg-[var(--color-background)] text-[var(--color-muted-foreground)]"
               >
                 <ChevronLeft size={18} />
               </button>
               <div className="min-w-0">
-                <div className="text-sm text-gray-500 capitalize">
+                <div className="text-sm text-[var(--color-muted-foreground)] capitalize">
                   {formatDate(currentDate)}
                 </div>
-                <div className="font-bold text-dark truncate">
+                <div className="font-bold text-[var(--color-foreground)] truncate">
                   Semana actual: {formatWeekRange(weekStart, weekEnd)}
                 </div>
               </div>
@@ -626,7 +626,7 @@ export default function CalendarPage() {
                   handleNext();
                 }}
                 aria-label="Semana siguiente"
-                className="p-2 rounded-lg border border-beige/60 bg-[var(--color-background)] text-gray-600"
+                className="p-2 rounded-lg border border-beige/60 bg-[var(--color-background)] text-[var(--color-muted-foreground)]"
               >
                 <ChevronRight size={18} />
               </button>
@@ -655,31 +655,31 @@ export default function CalendarPage() {
       {/* Desktop: existing calendar views */}
       <div className="hidden md:flex flex-col space-y-6 flex-1">
         {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-[var(--color-background)] p-4 rounded-xl border border-gray-200 shadow-sm">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm">
           <div className="flex items-center gap-4">
             <div className="flex items-center bg-gray-100 rounded-lg p-1">
               <button
                 onClick={handlePrev}
                 aria-label="Anterior"
-                className="p-2 hover:bg-[var(--color-background)] hover:shadow-sm rounded-md transition-all text-gray-600"
+                className="p-2 hover:bg-[var(--color-background)] hover:shadow-sm rounded-md transition-all text-[var(--color-muted-foreground)]"
               >
                 <ChevronLeft size={20} />
               </button>
               <button
                 onClick={handleToday}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-[var(--color-background)] hover:shadow-sm rounded-md transition-all"
+                className="px-4 py-2 text-sm font-medium text-[var(--color-foreground)] hover:bg-[var(--color-background)] hover:shadow-sm rounded-md transition-all"
               >
                 Hoy
               </button>
               <button
                 onClick={handleNext}
                 aria-label="Siguiente"
-                className="p-2 hover:bg-[var(--color-background)] hover:shadow-sm rounded-md transition-all text-gray-600"
+                className="p-2 hover:bg-[var(--color-background)] hover:shadow-sm rounded-md transition-all text-[var(--color-muted-foreground)]"
               >
                 <ChevronRight size={20} />
               </button>
             </div>
-            <h2 className="text-xl font-bold text-gray-900 capitalize">
+            <h2 className="text-xl font-bold text-[var(--color-foreground)] capitalize">
               {view === "month"
                 ? formatDate(currentDate)
                 : view === "day"
@@ -698,7 +698,7 @@ export default function CalendarPage() {
               className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                 view === "month"
                   ? "bg-[var(--color-background)] shadow-sm text-primary"
-                  : "text-gray-600 hover:text-gray-900"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
               }`}
             >
               Mes
@@ -708,7 +708,7 @@ export default function CalendarPage() {
               className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                 view === "week"
                   ? "bg-[var(--color-background)] shadow-sm text-primary"
-                  : "text-gray-600 hover:text-gray-900"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
               }`}
             >
               Semana
@@ -718,7 +718,7 @@ export default function CalendarPage() {
               className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${
                 view === "day"
                   ? "bg-[var(--color-background)] shadow-sm text-primary"
-                  : "text-gray-600 hover:text-gray-900"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
               }`}
             >
               Día

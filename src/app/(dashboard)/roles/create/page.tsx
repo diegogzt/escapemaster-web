@@ -81,12 +81,12 @@ export default function CreateRolePage() {
   return (
     <div className="w-full pb-20">
       <div className="mb-10">
-        <Link href="/roles" className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors mb-4">
+        <Link href="/roles" className="flex items-center gap-2 text-[var(--color-muted-foreground)] hover:text-primary transition-colors mb-4">
           <ArrowLeft size={20} />
           Volver a Roles
         </Link>
         <h1 className="text-4xl font-bold text-primary mb-2">Nuevo Rol</h1>
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-[var(--color-muted-foreground)]">
           Define un nuevo conjunto de permisos para tu equipo.
         </p>
       </div>
@@ -104,11 +104,11 @@ export default function CreateRolePage() {
                 icon={<Shield size={18} />}
               />
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-[var(--color-foreground)]">
                   Descripción
                 </label>
                 <textarea
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-h-[120px]"
+                  className="w-full px-4 py-2 border border-[var(--color-beige)] rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all min-h-[120px]"
                   placeholder="Describe las responsabilidades de este rol..."
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -116,17 +116,17 @@ export default function CreateRolePage() {
               </div>
             </div>
 
-            <div className="bg-[var(--color-light)] rounded-xl p-6 border border-gray-100">
-              <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <div className="bg-[var(--color-light)] rounded-xl p-6 border border-[var(--color-beige)]">
+              <h3 className="font-semibold text-[var(--color-foreground)] mb-4 flex items-center gap-2">
                 <CheckSquare size={20} className="text-primary" />
                 Resumen de Selección
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Permisos seleccionados:</span>
+                  <span className="text-[var(--color-muted-foreground)]">Permisos seleccionados:</span>
                   <span className="font-bold text-primary">{selectedPermissions.length}</span>
                 </div>
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-[var(--color-beige)]">
                   <Button 
                     type="submit" 
                     className="w-full flex items-center justify-center gap-2"
@@ -143,13 +143,13 @@ export default function CreateRolePage() {
 
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold text-gray-800">Asignar Permisos</h2>
+            <h2 className="text-2xl font-bold text-[var(--color-foreground)]">Asignar Permisos</h2>
             <div className="relative max-w-xs w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]" size={18} />
               <input
                 type="text"
                 placeholder="Buscar permisos..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                className="w-full pl-10 pr-4 py-2 border border-[var(--color-beige)] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -163,8 +163,8 @@ export default function CreateRolePage() {
 
               return (
                 <Card key={category} className="overflow-hidden">
-                  <div className="bg-[var(--color-light)] px-4 py-3 border-b border-gray-100">
-                    <h3 className="font-bold text-gray-700 uppercase text-xs tracking-wider">
+                  <div className="bg-[var(--color-light)] px-4 py-3 border-b border-[var(--color-beige)]">
+                    <h3 className="font-bold text-[var(--color-foreground)] uppercase text-xs tracking-wider">
                       {category || "General"}
                     </h3>
                   </div>
@@ -186,8 +186,8 @@ export default function CreateRolePage() {
                           }
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{permission.permission_key}</p>
-                          <p className="text-xs text-gray-500 leading-relaxed">{permission.description}</p>
+                          <p className="text-sm font-medium text-[var(--color-foreground)]">{permission.permission_key}</p>
+                          <p className="text-xs text-[var(--color-muted-foreground)] leading-relaxed">{permission.description}</p>
                         </div>
                       </div>
                     ))}

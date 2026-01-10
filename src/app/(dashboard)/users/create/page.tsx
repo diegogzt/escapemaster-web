@@ -104,7 +104,7 @@ export default function CreateUserPage() {
           <h1 className="text-4xl font-extrabold text-primary tracking-tight">
             Crear Nuevo Usuario
           </h1>
-          <p className="text-dark/60 text-lg">
+          <p className="text-[var(--color-foreground)]/60 text-lg">
             Configura el acceso y permisos para un nuevo miembro de tu equipo.
           </p>
         </div>
@@ -124,7 +124,7 @@ export default function CreateUserPage() {
             <Card className="border-none shadow-xl shadow-primary/5 bg-[var(--color-background)] overflow-hidden">
               <div className="h-2 bg-primary w-full" />
               <CardHeader className="px-8 pt-8 pb-4">
-                <CardTitle className="flex items-center text-2xl font-bold text-dark">
+                <CardTitle className="flex items-center text-2xl font-bold text-[var(--color-foreground)]">
                   <UserPlus size={28} className="mr-3 text-primary" />
                   Información Personal
                 </CardTitle>
@@ -162,7 +162,7 @@ export default function CreateUserPage() {
                     className="bg-[var(--color-background)] py-3"
                   />
                   <div className="space-y-3">
-                    <label className="block text-sm font-bold text-gray-700">
+                    <label className="block text-sm font-bold text-[var(--color-foreground)]">
                       Estado de la Cuenta
                     </label>
                     <div className="flex items-center space-x-6 p-3.5 bg-[var(--color-light)]/20 rounded-xl border border-beige/40">
@@ -173,9 +173,9 @@ export default function CreateUserPage() {
                           name="is_active"
                           value="true"
                           defaultChecked
-                          className="w-5 h-5 text-primary focus:ring-primary border-gray-300 transition-all"
+                          className="w-5 h-5 text-primary focus:ring-primary border-[var(--color-beige)] transition-all"
                         />
-                        <span className="ml-3 text-sm font-semibold text-gray-700 group-hover:text-primary transition-colors">
+                        <span className="ml-3 text-sm font-semibold text-[var(--color-foreground)] group-hover:text-primary transition-colors">
                           Activo
                         </span>
                       </label>
@@ -185,9 +185,9 @@ export default function CreateUserPage() {
                           id="inactive"
                           name="is_active"
                           value="false"
-                          className="w-5 h-5 text-primary focus:ring-primary border-gray-300 transition-all"
+                          className="w-5 h-5 text-primary focus:ring-primary border-[var(--color-beige)] transition-all"
                         />
-                        <span className="ml-3 text-sm font-semibold text-gray-700 group-hover:text-primary transition-colors">
+                        <span className="ml-3 text-sm font-semibold text-[var(--color-foreground)] group-hover:text-primary transition-colors">
                           Inactivo
                         </span>
                       </label>
@@ -200,7 +200,7 @@ export default function CreateUserPage() {
             <Card className="border-none shadow-xl shadow-primary/5 bg-[var(--color-background)] overflow-hidden">
               <div className="h-2 bg-accent w-full" />
               <CardHeader className="px-8 pt-8 pb-4">
-                <CardTitle className="flex items-center text-2xl font-bold text-dark">
+                <CardTitle className="flex items-center text-2xl font-bold text-[var(--color-foreground)]">
                   <Lock size={28} className="mr-3 text-accent" />
                   Configuración de Horas y Salario
                 </CardTitle>
@@ -241,7 +241,7 @@ export default function CreateUserPage() {
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="text-dark/60 font-bold hover:text-dark transition-colors px-4"
+                className="text-[var(--color-foreground)]/60 font-bold hover:text-[var(--color-foreground)] transition-colors px-4"
               >
                 Descartar cambios
               </button>
@@ -260,7 +260,7 @@ export default function CreateUserPage() {
             <Card className="border-none shadow-xl shadow-primary/5 bg-[var(--color-background)] overflow-hidden">
               <div className="h-2 bg-secondary w-full" />
               <CardHeader className="px-8 pt-8 pb-4">
-                <CardTitle className="flex items-center text-2xl font-bold text-dark">
+                <CardTitle className="flex items-center text-2xl font-bold text-[var(--color-foreground)]">
                   <Shield size={28} className="mr-3 text-secondary" />
                   Rol y Acceso
                 </CardTitle>
@@ -269,7 +269,7 @@ export default function CreateUserPage() {
               <div className="p-8 space-y-8">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <label className="block text-sm font-bold text-gray-700">
+                    <label className="block text-sm font-bold text-[var(--color-foreground)]">
                       Rol del Sistema
                     </label>
                     {loadingRoles && (
@@ -280,12 +280,12 @@ export default function CreateUserPage() {
                   </div>
                   <div className="relative">
                     <Shield
-                      className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]"
                       size={20}
                     />
                     <select
                       name="role_id"
-                      className="w-full pl-12 pr-10 py-4 border-2 border-beige/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 bg-[var(--color-background)] appearance-none transition-all hover:border-primary/30 font-medium text-dark"
+                      className="w-full pl-12 pr-10 py-4 border-2 border-beige/50 rounded-2xl focus:outline-none focus:ring-4 focus:ring-primary/10 bg-[var(--color-background)] appearance-none transition-all hover:border-primary/30 font-medium text-[var(--color-foreground)]"
                       required
                       disabled={loadingRoles}
                     >
@@ -300,7 +300,7 @@ export default function CreateUserPage() {
                         </option>
                       ))}
                     </select>
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[var(--color-muted-foreground)]">
                       <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20">
                         <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                       </svg>
@@ -328,22 +328,22 @@ export default function CreateUserPage() {
                   </h4>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-xs font-bold text-dark">Admin</p>
-                      <p className="text-[11px] text-dark/60">
+                      <p className="text-xs font-bold text-[var(--color-foreground)]">Admin</p>
+                      <p className="text-[11px] text-[var(--color-foreground)]/60">
                         Acceso total a configuración, finanzas y usuarios.
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-dark">Manager</p>
-                      <p className="text-[11px] text-dark/60">
+                      <p className="text-xs font-bold text-[var(--color-foreground)]">Manager</p>
+                      <p className="text-[11px] text-[var(--color-foreground)]/60">
                         Gestión de salas, reservas y reportes básicos.
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-dark">
+                      <p className="text-xs font-bold text-[var(--color-foreground)]">
                         Staff / Recepción
                       </p>
-                      <p className="text-[11px] text-dark/60">
+                      <p className="text-[11px] text-[var(--color-foreground)]/60">
                         Gestión de reservas diarias y check-in de clientes.
                       </p>
                     </div>

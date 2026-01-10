@@ -110,7 +110,7 @@ export function WidgetConfigModal({
 
       return (
         <div key={optionKey} className="py-2">
-          <label className="block text-sm font-medium text-dark mb-2">
+          <label className="block text-sm font-medium text-[var(--color-foreground)] mb-2">
             {label}
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -142,7 +142,7 @@ export function WidgetConfigModal({
     if (typeof value === "boolean" || optionKey.startsWith("show")) {
       return (
         <div key={optionKey} className="flex items-center justify-between py-2">
-          <label className="text-sm font-medium text-dark">{label}</label>
+          <label className="text-sm font-medium text-[var(--color-foreground)]">{label}</label>
           <button
             type="button"
             onClick={() => handleChange(optionKey, !value)}
@@ -167,7 +167,7 @@ export function WidgetConfigModal({
     if (SELECT_OPTIONS[optionKey]) {
       return (
         <div key={optionKey} className="py-2">
-          <label className="block text-sm font-medium text-dark mb-1">
+          <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
             {label}
           </label>
           <select
@@ -190,7 +190,7 @@ export function WidgetConfigModal({
     if (typeof value === "number") {
       return (
         <div key={optionKey} className="py-2">
-          <label className="block text-sm font-medium text-dark mb-1">
+          <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
             {label}
           </label>
           <input
@@ -211,7 +211,7 @@ export function WidgetConfigModal({
     if (typeof value === "string") {
       return (
         <div key={optionKey} className="py-2">
-          <label className="block text-sm font-medium text-dark mb-1">
+          <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
             {label}
           </label>
           <input
@@ -237,13 +237,13 @@ export function WidgetConfigModal({
               <Settings className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-dark">Configurar Widget</h3>
+              <h3 className="text-lg font-bold text-[var(--color-foreground)]">Configurar Widget</h3>
               <p className="text-sm text-secondary">{def.title}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="text-secondary hover:text-dark p-1 rounded-lg hover:bg-beige"
+            className="text-secondary hover:text-[var(--color-foreground)] p-1 rounded-lg hover:bg-beige"
             aria-label="Cerrar modal"
           >
             <X className="h-5 w-5" />
@@ -260,7 +260,7 @@ export function WidgetConfigModal({
           )}
         </div>
 
-        <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-[var(--color-beige)]">
           <Button variant="ghost" onClick={onClose}>
             Cancelar
           </Button>

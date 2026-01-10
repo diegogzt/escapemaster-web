@@ -77,7 +77,7 @@ export default function CalendarView() {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
         <div className="flex items-center space-x-4">
-          <h2 className="text-2xl font-bold text-dark capitalize">
+          <h2 className="text-2xl font-bold text-[var(--color-foreground)] capitalize">
             {view === "day"
               ? currentDate.toLocaleDateString("es-ES", {
                   weekday: "long",
@@ -89,13 +89,13 @@ export default function CalendarView() {
           <div className="flex space-x-1">
             <button
               onClick={prev}
-              className="p-2 hover:bg-beige hover:text-dark rounded-full transition-colors text-secondary"
+              className="p-2 hover:bg-beige hover:text-[var(--color-foreground)] rounded-full transition-colors text-secondary"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={next}
-              className="p-2 hover:bg-beige hover:text-dark rounded-full transition-colors text-secondary"
+              className="p-2 hover:bg-beige hover:text-[var(--color-foreground)] rounded-full transition-colors text-secondary"
             >
               <ChevronRight size={20} />
             </button>
@@ -111,7 +111,7 @@ export default function CalendarView() {
                 "px-4 py-2 rounded-md text-sm font-medium capitalize transition-all",
                 view === v
                   ? "bg-[var(--color-background)] text-primary shadow-sm"
-                  : "text-gray-500 hover:text-dark"
+                  : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
               )}
             >
               {v === "day" ? "Día" : v === "week" ? "Semana" : "Mes"}
@@ -159,7 +159,7 @@ function MonthView({ date, events }: { date: Date; events: any[] }) {
             "text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full",
             new Date().toDateString() === currentDayDate.toDateString()
               ? "bg-primary text-white"
-              : "text-gray-700"
+              : "text-[var(--color-foreground)]"
           )}
         >
           {day}
@@ -188,7 +188,7 @@ function MonthView({ date, events }: { date: Date; events: any[] }) {
         {["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"].map((d) => (
           <div
             key={d}
-            className="py-3 text-center text-sm font-bold text-gray-600"
+            className="py-3 text-center text-sm font-bold text-[var(--color-muted-foreground)]"
           >
             {d}
           </div>
@@ -215,19 +215,19 @@ function WeekView({ date, events }: { date: Date; events: any[] }) {
     <div className="overflow-x-auto">
       <div className="min-w-[800px]">
         <div className="grid grid-cols-8 border-b border-[var(--color-beige)]">
-          <div className="p-4 text-center text-gray-500 font-medium">Hora</div>
+          <div className="p-4 text-center text-[var(--color-muted-foreground)] font-medium">Hora</div>
           {weekDays.map((d) => (
             <div key={d.toISOString()} className="p-4 text-center border-l border-[var(--color-beige)]">
-              <div className="text-sm font-bold text-gray-700">
+              <div className="text-sm font-bold text-[var(--color-foreground)]">
                 {d.toLocaleDateString("es-ES", { weekday: "short" })}
               </div>
-              <div className="text-xs text-gray-500">{d.getDate()}</div>
+              <div className="text-xs text-[var(--color-muted-foreground)]">{d.getDate()}</div>
             </div>
           ))}
         </div>
         {hours.map((hour) => (
           <div key={hour} className="grid grid-cols-8 border-b border-[var(--color-beige)] min-h-[60px]">
-            <div className="p-2 text-center text-xs text-gray-500 border-r border-[var(--color-beige)]">
+            <div className="p-2 text-center text-xs text-[var(--color-muted-foreground)] border-r border-[var(--color-beige)]">
               {hour}:00
             </div>
             {weekDays.map((d) => {
@@ -273,7 +273,7 @@ function DayView({ date, events }: { date: Date; events: any[] }) {
         );
         return (
           <div key={hour} className="flex border-b border-[var(--color-beige)] min-h-[80px]">
-            <div className="w-20 p-4 text-right text-sm text-gray-500 border-r border-[var(--color-beige)] bg-[var(--color-light)]/30">
+            <div className="w-20 p-4 text-right text-sm text-[var(--color-muted-foreground)] border-r border-[var(--color-beige)] bg-[var(--color-light)]/30">
               {hour}:00
             </div>
             <div className="flex-1 p-2 relative">

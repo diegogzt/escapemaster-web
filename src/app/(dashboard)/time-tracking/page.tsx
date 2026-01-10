@@ -121,14 +121,14 @@ export default function TimeTrackingPage() {
           <h1 className="text-4xl font-bold text-primary tracking-tight">
             Registro de Horas
           </h1>
-          <p className="text-dark/60 mt-1 text-lg">
+          <p className="text-[var(--color-foreground)]/60 mt-1 text-lg">
             Gestiona tu tiempo, tareas y vacaciones.
           </p>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right hidden md:block">
-            <p className="text-sm text-gray-500 font-medium">Estado Actual</p>
-            <p className={`text-lg font-bold ${activeEntry ? "text-green-600" : "text-gray-400"}`}>
+            <p className="text-sm text-[var(--color-muted-foreground)] font-medium">Estado Actual</p>
+            <p className={`text-lg font-bold ${activeEntry ? "text-green-600" : "text-[var(--color-muted-foreground)]"}`}>
               {activeEntry ? "En turno" : "Fuera de turno"}
             </p>
           </div>
@@ -161,7 +161,7 @@ export default function TimeTrackingPage() {
         <div className="col-span-12 lg:col-span-8 space-y-8">
           {/* Active Task Input */}
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
-            <h3 className="text-xl font-bold text-dark mb-6 flex items-center">
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6 flex items-center">
               <ClipboardList size={24} className="mr-2 text-primary" />
               ¿En qué estás trabajando?
             </h3>
@@ -172,7 +172,7 @@ export default function TimeTrackingPage() {
               onChange={(e) => setTaskDescription(e.target.value)}
             />
             {activeEntry && (
-              <p className="mt-4 text-sm text-gray-500">
+              <p className="mt-4 text-sm text-[var(--color-muted-foreground)]">
                 Iniciado a las {format(new Date(activeEntry.check_in_time), "HH:mm", { locale: es })}
               </p>
             )}
@@ -189,8 +189,8 @@ export default function TimeTrackingPage() {
                   {summary?.percentage_complete}%
                 </span>
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Horas Realizadas</p>
-              <h3 className="text-3xl font-bold text-dark">{summary?.total_hours}h <span className="text-sm text-gray-400 font-normal">/ {summary?.target_hours}h</span></h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Horas Realizadas</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{summary?.total_hours}h <span className="text-sm text-[var(--color-muted-foreground)] font-normal">/ {summary?.target_hours}h</span></h3>
             </Card>
 
             <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
@@ -199,8 +199,8 @@ export default function TimeTrackingPage() {
                   <DollarSign size={24} />
                 </div>
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Generado este mes</p>
-              <h3 className="text-3xl font-bold text-dark">{summary?.estimated_earnings}€</h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Generado este mes</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{summary?.estimated_earnings}€</h3>
             </Card>
 
             <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
@@ -209,15 +209,15 @@ export default function TimeTrackingPage() {
                   <Umbrella size={24} />
                 </div>
               </div>
-              <p className="text-sm font-medium text-gray-500 mb-1">Vacaciones Restantes</p>
-              <h3 className="text-3xl font-bold text-dark">12 <span className="text-sm text-gray-400 font-normal">días</span></h3>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Vacaciones Restantes</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">12 <span className="text-sm text-[var(--color-muted-foreground)] font-normal">días</span></h3>
             </Card>
           </div>
 
           {/* History Table */}
           <Card className="border-none shadow-sm bg-[var(--color-background)] overflow-hidden">
             <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-dark flex items-center">
+              <h3 className="text-xl font-bold text-[var(--color-foreground)] flex items-center">
                 <History size={24} className="mr-2 text-primary" />
                 Historial Reciente
               </h3>
@@ -225,7 +225,7 @@ export default function TimeTrackingPage() {
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-[var(--color-light)]/30 text-gray-500 text-xs uppercase tracking-wider">
+                  <tr className="bg-[var(--color-light)]/30 text-[var(--color-muted-foreground)] text-xs uppercase tracking-wider">
                     <th className="px-6 py-4 font-bold">Fecha</th>
                     <th className="px-6 py-4 font-bold">Entrada</th>
                     <th className="px-6 py-4 font-bold">Salida</th>
@@ -236,13 +236,13 @@ export default function TimeTrackingPage() {
                 <tbody className="divide-y divide-gray-50">
                   {entries.filter(e => e.check_out_time).map((entry) => (
                     <tr key={entry.id} className="hover:bg-[var(--color-light)]/20 transition-colors">
-                      <td className="px-6 py-4 text-sm font-bold text-dark">
+                      <td className="px-6 py-4 text-sm font-bold text-[var(--color-foreground)]">
                         {format(new Date(entry.check_in_time), "dd MMM", { locale: es })}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
+                      <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
                         {format(new Date(entry.check_in_time), "HH:mm")}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-500">
+                      <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
                         {format(new Date(entry.check_out_time), "HH:mm")}
                       </td>
                       <td className="px-6 py-4">
@@ -250,7 +250,7 @@ export default function TimeTrackingPage() {
                           {Math.floor(entry.duration_minutes / 60)}h {entry.duration_minutes % 60}m
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                      <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)] max-w-xs truncate">
                         {entry.task_description || "-"}
                       </td>
                     </tr>
@@ -265,7 +265,7 @@ export default function TimeTrackingPage() {
         <div className="col-span-12 lg:col-span-4 space-y-8">
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-dark flex items-center">
+              <h3 className="text-xl font-bold text-[var(--color-foreground)] flex items-center">
                 <Umbrella size={24} className="mr-2 text-primary" />
                 Vacaciones
               </h3>
@@ -278,16 +278,16 @@ export default function TimeTrackingPage() {
               <form onSubmit={handleRequestVacation} className="mb-8 p-4 bg-[var(--color-light)]/30 rounded-2xl border border-beige/50 space-y-4 animate-in fade-in slide-in-from-top-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase">Inicio</label>
+                    <label className="text-xs font-bold text-[var(--color-muted-foreground)] uppercase">Inicio</label>
                     <input name="start_date" type="date" required className="w-full p-2 border border-beige rounded-lg text-sm" />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-gray-500 uppercase">Fin</label>
+                    <label className="text-xs font-bold text-[var(--color-muted-foreground)] uppercase">Fin</label>
                     <input name="end_date" type="date" required className="w-full p-2 border border-beige rounded-lg text-sm" />
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-gray-500 uppercase">Notas</label>
+                  <label className="text-xs font-bold text-[var(--color-muted-foreground)] uppercase">Notas</label>
                   <textarea name="user_notes" className="w-full p-2 border border-beige rounded-lg text-sm" placeholder="Opcional..." />
                 </div>
                 <Button type="submit" className="w-full" loading={actionLoading}>Enviar Solicitud</Button>
@@ -296,14 +296,14 @@ export default function TimeTrackingPage() {
 
             <div className="space-y-4">
               {myVacations.length === 0 ? (
-                <p className="text-center py-8 text-gray-400 text-sm italic">No has solicitado vacaciones aún.</p>
+                <p className="text-center py-8 text-[var(--color-muted-foreground)] text-sm italic">No has solicitado vacaciones aún.</p>
               ) : (
                 myVacations.map((v) => (
                   <div key={v.id} className="p-4 border border-beige/50 rounded-2xl hover:bg-[var(--color-light)]/10 transition-colors">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center">
                         <Calendar size={16} className="text-primary mr-2" />
-                        <span className="text-sm font-bold text-dark">
+                        <span className="text-sm font-bold text-[var(--color-foreground)]">
                           {format(new Date(v.start_date), "dd/MM")} - {format(new Date(v.end_date), "dd/MM")}
                         </span>
                       </div>
@@ -316,9 +316,9 @@ export default function TimeTrackingPage() {
                          v.status === "rejected" ? "Rechazado" : "Pendiente"}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-500">{v.days_count} días solicitados</p>
+                    <p className="text-xs text-[var(--color-muted-foreground)]">{v.days_count} días solicitados</p>
                     {v.admin_notes && (
-                      <div className="mt-2 p-2 bg-[var(--color-background)] rounded-lg border border-beige/30 text-[11px] text-gray-600 italic">
+                      <div className="mt-2 p-2 bg-[var(--color-background)] rounded-lg border border-beige/30 text-[11px] text-[var(--color-muted-foreground)] italic">
                         <span className="font-bold not-italic">Admin:</span> {v.admin_notes}
                       </div>
                     )}

@@ -60,7 +60,7 @@ export default function UsersPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary">Usuarios</h1>
-          <p className="text-dark opacity-75">Gestiona tu equipo y permisos</p>
+          <p className="text-[var(--color-foreground)] opacity-75">Gestiona tu equipo y permisos</p>
         </div>
         <Link href="/users/create">
           <Button>
@@ -78,7 +78,7 @@ export default function UsersPage() {
         >
           <div className="flex-1 relative">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-muted-foreground)]"
               size={18}
             />
             <input
@@ -109,15 +109,15 @@ export default function UsersPage() {
 
       {loading ? (
         <div className="flex items-center justify-center min-h-[400px]">
-          <p className="text-gray-500">Cargando usuarios...</p>
+          <p className="text-[var(--color-muted-foreground)]">Cargando usuarios...</p>
         </div>
       ) : usersList.length === 0 ? (
         <Card className="text-center py-12">
-          <UserPlus className="mx-auto text-gray-400 mb-4" size={48} />
-          <h3 className="text-xl font-bold text-dark mb-2">
+          <UserPlus className="mx-auto text-[var(--color-muted-foreground)] mb-4" size={48} />
+          <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-2">
             No se encontraron usuarios
           </h3>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[var(--color-muted-foreground)] mb-6">
             Prueba con otros filtros o crea uno nuevo
           </p>
           <Link href="/users/create">
@@ -129,10 +129,10 @@ export default function UsersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-[var(--color-light)]/50 border-b border-beige">
-                <th className="px-6 py-4 font-bold text-dark">Usuario</th>
-                <th className="px-6 py-4 font-bold text-dark">Rol</th>
-                <th className="px-6 py-4 font-bold text-dark">Estado</th>
-                <th className="px-6 py-4 font-bold text-dark text-right">
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Usuario</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Rol</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)]">Estado</th>
+                <th className="px-6 py-4 font-bold text-[var(--color-foreground)] text-right">
                   Acciones
                 </th>
               </tr>
@@ -150,10 +150,10 @@ export default function UsersPage() {
                           user.email.charAt(0).toUpperCase()}
                       </div>
                       <div>
-                        <div className="font-bold text-dark">
+                        <div className="font-bold text-[var(--color-foreground)]">
                           {user.full_name || "Sin nombre"}
                         </div>
-                        <div className="text-xs text-gray-500 flex items-center">
+                        <div className="text-xs text-[var(--color-muted-foreground)] flex items-center">
                           <Mail size={12} className="mr-1" />
                           {user.email}
                         </div>
@@ -161,7 +161,7 @@ export default function UsersPage() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center text-sm text-gray-700">
+                    <div className="flex items-center text-sm text-[var(--color-foreground)]">
                       <Shield size={14} className="mr-2 text-primary" />
                       {user.role?.name || "Sin rol"}
                     </div>
@@ -181,7 +181,7 @@ export default function UsersPage() {
                     <div className="flex justify-end gap-2">
                       <Link href={`/users/${user.id}/edit`}>
                         <button
-                          className="p-2 text-gray-400 hover:text-primary transition-colors"
+                          className="p-2 text-[var(--color-muted-foreground)] hover:text-primary transition-colors"
                           title="Editar"
                         >
                           <Edit2 size={18} />
@@ -189,7 +189,7 @@ export default function UsersPage() {
                       </Link>
                       <button
                         onClick={() => handleDeleteUser(user.id)}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        className="p-2 text-[var(--color-muted-foreground)] hover:text-red-500 transition-colors"
                         title="Desactivar"
                       >
                         <Trash2 size={18} />

@@ -136,7 +136,7 @@ export default function RegisterPage() {
               </svg>
             </div>
             <CardTitle level="h2">Verifica tu Email</CardTitle>
-            <p className="text-dark opacity-75 mt-2">
+            <p className="text-[var(--color-foreground)] opacity-75 mt-2">
               Hemos enviado un código de 6 dígitos a{" "}
               <strong>{registeredEmail}</strong>
             </p>
@@ -170,7 +170,7 @@ export default function RegisterPage() {
             </form>
 
             <div className="text-center space-y-2">
-              <p className="text-sm text-gray-500">¿No recibiste el código?</p>
+              <p className="text-sm text-[var(--color-muted-foreground)]">¿No recibiste el código?</p>
               <button
                 type="button"
                 onClick={handleResendCode}
@@ -192,7 +192,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle level="h2">Crear Cuenta</CardTitle>
-          <p className="text-dark opacity-75">Únete a EscapeMaster hoy mismo</p>
+          <p className="text-[var(--color-foreground)] opacity-75">Únete a EscapeMaster hoy mismo</p>
         </CardHeader>
         <form onSubmit={handleRegister}>
           <div className="space-y-4">
@@ -228,7 +228,7 @@ export default function RegisterPage() {
             <Button type="submit" block loading={loading}>
               Registrarse
             </Button>
-            <p className="text-center mt-4 text-sm text-gray-600">
+            <p className="text-center mt-4 text-sm text-[var(--color-muted-foreground)]">
               ¿Ya tienes cuenta?{" "}
               <Link href="/login" className="text-primary font-semibold">
                 Inicia Sesión

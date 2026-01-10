@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
           <CardTitle level="h2">
             {step === "request" ? "Recuperar Contraseña" : "Restablecer Contraseña"}
           </CardTitle>
-          <p className="text-dark opacity-75">
+          <p className="text-[var(--color-foreground)] opacity-75">
             {step === "request"
               ? "Ingresa tu email para recibir instrucciones"
               : `Ingresa el código enviado a ${email}`}
@@ -166,7 +166,7 @@ export default function ForgotPasswordPage() {
         </div>
 
         <CardFooter className="flex justify-center border-t pt-4">
-          <p className="text-sm text-dark opacity-75">
+          <p className="text-sm text-[var(--color-foreground)] opacity-75">
             ¿Te acordaste?{" "}
             <Link
               href="/login"

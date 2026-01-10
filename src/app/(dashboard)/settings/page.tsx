@@ -16,6 +16,20 @@ import {
   Layout,
   Moon,
   Sun,
+  Shield,
+  Zap,
+  Share2,
+  LifeBuoy,
+  CheckCircle2,
+  Rocket,
+  ShieldCheck,
+  Smartphone,
+  Calendar as CalendarIcon,
+  MessageSquare,
+  Sparkles,
+  Lock,
+  ArrowRight,
+  Users,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -43,7 +57,7 @@ export default function SettingsPage() {
     <div className="w-full pb-20">
       <div className="mb-10">
         <h1 className="text-4xl font-bold text-primary mb-2">Ajustes de Organización</h1>
-        <p className="text-lg text-gray-600 ">
+        <p className="text-lg text-[var(--color-foreground)] opacity-60">
           Gestiona los detalles y la configuración de tu empresa.
         </p>
       </div>
@@ -57,7 +71,7 @@ export default function SettingsPage() {
               Personalización Visual
             </h2>
           </div>
-          <Card className="w-full max-w-none bg-[var(--color-background)] border-gray-100">
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
             <CardHeader>
               <CardTitle>Tema y Colores</CardTitle>
             </CardHeader>
@@ -122,7 +136,7 @@ export default function SettingsPage() {
             <Building className="text-primary" size={24} />
             <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Datos Generales</h2>
           </div>
-          <Card className="w-full max-w-none bg-[var(--color-background)] border-gray-100">
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
             <CardHeader>
               <CardTitle>Información de la Organización</CardTitle>
             </CardHeader>
@@ -139,9 +153,9 @@ export default function SettingsPage() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <MapPin className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800 ">Ubicación</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)] ">Ubicación</h2>
           </div>
-          <Card className="w-full max-w-none bg-[var(--color-background)]  border-gray-100 ">
+          <Card className="w-full max-w-none bg-[var(--color-background)]  border-[var(--color-beige)] ">
             <CardHeader>
               <CardTitle className="">Dirección y Horario</CardTitle>
             </CardHeader>
@@ -177,46 +191,169 @@ export default function SettingsPage() {
         {/* Integrations Section */}
         <section>
           <div className="flex items-center gap-2 mb-4">
-            <CreditCard className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-gray-800 ">
-              Integraciones
+            <Zap className="text-primary" size={24} />
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">
+              Ecosistema e Integraciones
             </h2>
           </div>
-          <Card className="w-full max-w-none bg-[var(--color-background)]  border-gray-100 ">
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
             <CardHeader>
-              <CardTitle className="">Servicios Conectados</CardTitle>
+              <CardTitle>Servicios Conectados</CardTitle>
             </CardHeader>
-            <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="flex items-center justify-between p-5 border border-gray-100  rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-light)]/50 /50">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[var(--color-background)]  rounded-lg shadow-sm flex items-center justify-center text-xl font-bold text-indigo-600 border border-gray-100 ">
-                    S
+            <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[
+                { name: "Stripe", desc: "Pagos y suscripciones", icon: CreditCard, color: "text-indigo-600", active: true },
+                { name: "WhatsApp", desc: "Notificaciones automáticas", icon: MessageSquare, color: "text-green-600", active: false },
+                { name: "Google Calendar", desc: "Sincronización de salas", icon: CalendarIcon, color: "text-blue-600", active: false },
+                { name: "Resend", desc: "E-mails transaccionales", icon: Mail, color: "text-[var(--color-foreground)]", active: false },
+                { name: "Instagram", desc: "Publicación de eventos", icon: Smartphone, color: "text-pink-600", active: false },
+              ].map((service) => (
+                <div key={service.name} className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-background-soft)]">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 bg-[var(--color-background)] rounded-lg shadow-sm flex items-center justify-center border border-[var(--color-beige)] ${service.color}`}>
+                      <service.icon size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[var(--color-foreground)]">{service.name}</h4>
+                      <p className="text-xs text-[var(--color-foreground)] opacity-80">{service.desc}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 ">Stripe</h4>
-                    <p className="text-sm text-gray-500 ">Pagos y facturación</p>
+                  <Button variant="outline" size="sm" className="h-8 text-xs">
+                    {service.active ? "Configurar" : "Conectar"}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </section>
+
+        {/* Security Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Shield className="text-primary" size={24} />
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Seguridad y Acceso</h2>
+          </div>
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
+            <CardHeader>
+              <CardTitle>Protección de Datos</CardTitle>
+            </CardHeader>
+            <div className="p-6 pt-0 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 text-primary rounded-lg">
+                      <Lock size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[var(--color-foreground)]">Autenticación en Dos Pasos (2FA)</h4>
+                      <p className="text-sm text-[var(--color-foreground)] opacity-80">Añade una capa extra de seguridad</p>
+                    </div>
+                  </div>
+                  <button className="w-12 h-6 bg-gray-200 rounded-full relative"><div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></button>
+                </div>
+                <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 text-primary rounded-lg">
+                      <ShieldCheck size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[var(--color-foreground)]">Cifrado de Extremo a Extremo</h4>
+                      <p className="text-sm text-[var(--color-foreground)] opacity-80">Datos de clientes 100% protegidos</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full uppercase">Activo</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        {/* Features Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="text-primary" size={24} />
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Características de Élite</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { title: "Analítica Pro", desc: "Informes detallados de rentabilidad y ocupación.", icon: Rocket },
+              { title: "Gestión de Equipos", desc: "Control de horarios y roles para tus empleados.", icon: Users },
+              { title: "Smart Booking", desc: "Algoritmos que optimizan tus salas automáticamente.", icon: Zap },
+            ].map((f) => (
+              <Card key={f.title} className="hover:border-primary/20 bg-[var(--color-background)]">
+                <div className="p-2 w-10 h-10 bg-primary/10 text-primary rounded-lg mb-4 flex items-center justify-center">
+                  <f.icon size={20} />
+                </div>
+                <h4 className="font-bold text-[var(--color-foreground)] mb-1">{f.title}</h4>
+                <p className="text-sm text-[var(--color-foreground)] opacity-80 leading-relaxed">{f.desc}</p>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Plan & Pricing Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <CreditCard className="text-primary" size={24} />
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Plan y Suscripción</h2>
+          </div>
+          <Card className="w-full max-w-none border-2 border-primary bg-primary/5">
+            <div className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
+                  Plan Profesional
+                </div>
+                <h3 className="text-3xl font-bold text-[var(--color-foreground)] mb-2">EscapeMaster Full Access</h3>
+                <p className="text-[var(--color-foreground)] opacity-90 max-w-md">
+                  Todas las herramientas que necesitas para llevar tu escape room al siguiente nivel. Gestión, analítica y marketing en un solo lugar.
+                </p>
+              </div>
+              <div className="bg-[var(--color-background)] p-8 rounded-2xl shadow-xl border border-[var(--color-beige)] text-center min-w-[280px]">
+                <div className="text-sm text-[var(--color-foreground)] opacity-80 mb-1">Pago mensual</div>
+                <div className="flex items-baseline justify-center gap-1">
+                  <span className="text-5xl font-extrabold text-[var(--color-foreground)]">24,79€</span>
+                  <span className="text-lg font-medium text-[var(--color-foreground)] opacity-80">/mes</span>
+                </div>
+                <p className="text-xs text-[var(--color-foreground)] opacity-60 mt-1 italic">(Sin IVA incluido)</p>
+                <div className="mt-6 space-y-3">
+                  <div className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
+                    <CheckCircle2 className="text-green-500" size={16} />
+                    <span>1 Mes de prueba gratis</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
+                    <CheckCircle2 className="text-green-500" size={16} />
+                    <span>Cancelación instantánea</span>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="border-gray-300  ">
-                  Configurar
+                <Button className="w-full mt-8 group">
+                  Empezar Prueba Gratis
+                  <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />
                 </Button>
               </div>
+            </div>
+          </Card>
+        </section>
 
-              <div className="flex items-center justify-between p-5 border border-gray-100  rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-light)]/50 /50">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[var(--color-background)]  rounded-lg shadow-sm flex items-center justify-center text-xl font-bold text-black  border border-gray-100 ">
-                    R
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-900 ">Resend</h4>
-                    <p className="text-sm text-gray-500 ">
-                      Notificaciones por email
-                    </p>
-                  </div>
+        {/* Support Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <LifeBuoy className="text-primary" size={24} />
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Ayuda y Soporte</h2>
+          </div>
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)] italic">
+            <div className="p-6 flex flex-col md:flex-row gap-8 items-center justify-between">
+              <div className="flex items-start gap-4">
+                <div className="p-3 bg-amber-100 text-amber-600 rounded-2xl">
+                  <LifeBuoy size={32} />
                 </div>
-                <Button variant="outline" size="sm" className="border-gray-300  ">
-                  Conectar
-                </Button>
+                <div>
+                  <h4 className="text-xl font-bold text-[var(--color-foreground)]">¿Necesitas asistencia?</h4>
+                  <p className="text-[var(--color-foreground)] opacity-60">Nuestro equipo de expertos está disponible 24/7 para ayudarte con cualquier duda.</p>
+                </div>
+              </div>
+              <div className="flex gap-4">
+                <Button variant="outline">Documentación</Button>
+                <Button>Hablar con Soporte</Button>
               </div>
             </div>
           </Card>

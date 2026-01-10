@@ -98,7 +98,7 @@ export default function HRManagementPage() {
           <h1 className="text-4xl font-bold text-primary tracking-tight">
             Gestión de RRHH
           </h1>
-          <p className="text-dark/60 mt-1 text-lg">
+          <p className="text-[var(--color-foreground)]/60 mt-1 text-lg">
             Control de horarios, vacaciones y nóminas de Game Masters.
           </p>
         </div>
@@ -115,7 +115,7 @@ export default function HRManagementPage() {
         <button
           onClick={() => setActiveTab("entries")}
           className={`pb-4 px-2 text-sm font-bold transition-all relative ${
-            activeTab === "entries" ? "text-primary" : "text-gray-400 hover:text-gray-600"
+            activeTab === "entries" ? "text-primary" : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
           }`}
         >
           Registros de Tiempo
@@ -124,7 +124,7 @@ export default function HRManagementPage() {
         <button
           onClick={() => setActiveTab("vacations")}
           className={`pb-4 px-2 text-sm font-bold transition-all relative ${
-            activeTab === "vacations" ? "text-primary" : "text-gray-400 hover:text-gray-600"
+            activeTab === "vacations" ? "text-primary" : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
           }`}
         >
           Vacaciones Pendientes
@@ -138,7 +138,7 @@ export default function HRManagementPage() {
         <button
           onClick={() => setActiveTab("stats")}
           className={`pb-4 px-2 text-sm font-bold transition-all relative ${
-            activeTab === "stats" ? "text-primary" : "text-gray-400 hover:text-gray-600"
+            activeTab === "stats" ? "text-primary" : "text-[var(--color-muted-foreground)] hover:text-[var(--color-muted-foreground)]"
           }`}
         >
           Resumen Mensual
@@ -152,7 +152,7 @@ export default function HRManagementPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-[var(--color-light)]/30 text-gray-500 text-xs uppercase tracking-wider">
+                <tr className="bg-[var(--color-light)]/30 text-[var(--color-muted-foreground)] text-xs uppercase tracking-wider">
                   <th className="px-6 py-4 font-bold">Empleado</th>
                   <th className="px-6 py-4 font-bold">Fecha</th>
                   <th className="px-6 py-4 font-bold">Entrada</th>
@@ -169,16 +169,16 @@ export default function HRManagementPage() {
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
                           {entry.user_name?.charAt(0) || "U"}
                         </div>
-                        <span className="text-sm font-bold text-dark">{entry.user_name || "Usuario"}</span>
+                        <span className="text-sm font-bold text-[var(--color-foreground)]">{entry.user_name || "Usuario"}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
                       {format(new Date(entry.check_in_time), "dd/MM/yyyy")}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
                       {format(new Date(entry.check_in_time), "HH:mm")}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
                       {entry.check_out_time ? format(new Date(entry.check_out_time), "HH:mm") : "-"}
                     </td>
                     <td className="px-6 py-4">
@@ -192,7 +192,7 @@ export default function HRManagementPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                    <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)] max-w-xs truncate">
                       {entry.task_description || "-"}
                     </td>
                   </tr>
@@ -208,7 +208,7 @@ export default function HRManagementPage() {
           {pendingVacations.length === 0 ? (
             <div className="col-span-full py-12 text-center bg-[var(--color-background)] rounded-2xl border border-dashed border-beige">
               <Umbrella size={48} className="mx-auto text-beige mb-4" />
-              <p className="text-gray-500 font-medium">No hay solicitudes de vacaciones pendientes.</p>
+              <p className="text-[var(--color-muted-foreground)] font-medium">No hay solicitudes de vacaciones pendientes.</p>
             </div>
           ) : (
             pendingVacations.map((v) => (
@@ -219,26 +219,26 @@ export default function HRManagementPage() {
                       {v.user_name?.charAt(0) || "U"}
                     </div>
                     <div>
-                      <h4 className="font-bold text-dark">{v.user_name || "Usuario"}</h4>
-                      <p className="text-xs text-gray-500">Solicitado el {format(new Date(v.created_at), "dd MMM")}</p>
+                      <h4 className="font-bold text-[var(--color-foreground)]">{v.user_name || "Usuario"}</h4>
+                      <p className="text-xs text-[var(--color-muted-foreground)]">Solicitado el {format(new Date(v.created_at), "dd MMM")}</p>
                     </div>
                   </div>
                   <div className="bg-[var(--color-light)]/30 p-4 rounded-xl mb-4">
                     <div className="flex justify-between text-sm mb-2">
-                      <span className="text-gray-500">Periodo:</span>
-                      <span className="font-bold text-dark">
+                      <span className="text-[var(--color-muted-foreground)]">Periodo:</span>
+                      <span className="font-bold text-[var(--color-foreground)]">
                         {format(new Date(v.start_date), "dd/MM")} - {format(new Date(v.end_date), "dd/MM")}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-gray-500">Días totales:</span>
+                      <span className="text-[var(--color-muted-foreground)]">Días totales:</span>
                       <span className="font-bold text-primary">{v.days_count} días</span>
                     </div>
                   </div>
                   {v.user_notes && (
                     <div className="mb-6">
-                      <p className="text-xs font-bold text-gray-400 uppercase mb-1">Notas del empleado:</p>
-                      <p className="text-sm text-gray-600 italic">"{v.user_notes}"</p>
+                      <p className="text-xs font-bold text-[var(--color-muted-foreground)] uppercase mb-1">Notas del empleado:</p>
+                      <p className="text-sm text-[var(--color-muted-foreground)] italic">"{v.user_notes}"</p>
                     </div>
                   )}
                 </div>
@@ -276,15 +276,15 @@ export default function HRManagementPage() {
                   {user.name.charAt(0)}
                 </div>
                 <div>
-                  <h4 className="font-bold text-lg text-dark">{user.name}</h4>
-                  <p className="text-sm text-gray-500">{user.entries_count} turnos este mes</p>
+                  <h4 className="font-bold text-lg text-[var(--color-foreground)]">{user.name}</h4>
+                  <p className="text-sm text-[var(--color-muted-foreground)]">{user.entries_count} turnos este mes</p>
                 </div>
               </div>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span className="text-gray-500 font-medium">Horas Totales</span>
-                    <span className="font-bold text-dark">{user.total_hours.toFixed(1)}h</span>
+                    <span className="text-[var(--color-muted-foreground)] font-medium">Horas Totales</span>
+                    <span className="font-bold text-[var(--color-foreground)]">{user.total_hours.toFixed(1)}h</span>
                   </div>
                   <div className="w-full h-2 bg-[var(--color-light)] rounded-full overflow-hidden">
                     <div 
@@ -298,7 +298,7 @@ export default function HRManagementPage() {
                     <DollarSign size={18} className="mr-1" />
                     <span className="text-sm font-bold">Estimado:</span>
                   </div>
-                  <span className="text-xl font-bold text-dark">
+                  <span className="text-xl font-bold text-[var(--color-foreground)]">
                     {(user.total_hours * 12).toFixed(2)}€
                   </span>
                 </div>

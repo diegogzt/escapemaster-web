@@ -176,7 +176,7 @@ export default function BookingDetailsPage() {
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-gray-600">Cargando detalles de la reserva...</p>
+          <p className="text-[var(--color-muted-foreground)]">Cargando detalles de la reserva...</p>
         </div>
       </div>
     );
@@ -210,7 +210,7 @@ export default function BookingDetailsPage() {
               <CheckCircle size={14} className="mr-1" /> Confirmada
             </span>
           </div>
-          <div className="flex items-center text-gray-600 gap-4">
+          <div className="flex items-center text-[var(--color-muted-foreground)] gap-4">
             <span className="flex items-center">
               <Calendar size={16} className="mr-1" />{" "}
               {new Date(booking.date).toLocaleDateString()}
@@ -235,7 +235,7 @@ export default function BookingDetailsPage() {
           {/* Players List */}
           <Card className="p-0 overflow-hidden">
             <div className="p-4 border-b border-beige bg-[var(--color-light)]/30 flex justify-between items-center">
-              <h3 className="font-bold text-lg text-dark flex items-center">
+              <h3 className="font-bold text-lg text-[var(--color-foreground)] flex items-center">
                 <Users size={20} className="mr-2 text-primary" />
                 Integrantes ({booking.players.length})
               </h3>
@@ -245,7 +245,7 @@ export default function BookingDetailsPage() {
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-[var(--color-light)] text-xs uppercase text-gray-500">
+                <thead className="bg-[var(--color-light)] text-xs uppercase text-[var(--color-muted-foreground)]">
                   <tr>
                     <th className="px-4 py-3">Jugador</th>
                     <th className="px-4 py-3">Contacto</th>
@@ -257,10 +257,10 @@ export default function BookingDetailsPage() {
                 <tbody className="divide-y divide-gray-100">
                   {booking.players.map((player) => (
                     <tr key={player.id} className="hover:bg-[var(--color-light)]">
-                      <td className="px-4 py-3 font-medium text-dark">
+                      <td className="px-4 py-3 font-medium text-[var(--color-foreground)]">
                         {player.name}
                       </td>
-                      <td className="px-4 py-3 text-sm text-gray-600">
+                      <td className="px-4 py-3 text-sm text-[var(--color-muted-foreground)]">
                         <div className="flex items-center">
                           <Mail size={12} className="mr-1" /> {player.email}
                         </div>
@@ -305,7 +305,7 @@ export default function BookingDetailsPage() {
                               </button>
                               <button
                                 onClick={() => handleCopyLink(player.id)}
-                                className="p-1.5 text-gray-500 hover:bg-gray-100 rounded transition-colors"
+                                className="p-1.5 text-[var(--color-muted-foreground)] hover:bg-gray-100 rounded transition-colors"
                                 title="Copiar enlace"
                               >
                                 <Copy size={16} />
@@ -323,7 +323,7 @@ export default function BookingDetailsPage() {
 
           {/* Custom Fields */}
           <Card className="p-6">
-            <h3 className="font-bold text-lg text-dark mb-4 flex items-center">
+            <h3 className="font-bold text-lg text-[var(--color-foreground)] mb-4 flex items-center">
               <FileText size={20} className="mr-2 text-primary" />
               Información Adicional
             </h3>
@@ -333,10 +333,10 @@ export default function BookingDetailsPage() {
                   key={index}
                   className="bg-[var(--color-light)]/30 p-3 rounded-lg border border-beige"
                 >
-                  <span className="text-xs text-gray-500 uppercase font-semibold block mb-1">
+                  <span className="text-xs text-[var(--color-muted-foreground)] uppercase font-semibold block mb-1">
                     {field.label}
                   </span>
-                  <span className="text-dark font-medium">{field.value}</span>
+                  <span className="text-[var(--color-foreground)] font-medium">{field.value}</span>
                 </div>
               ))}
             </div>
@@ -347,12 +347,12 @@ export default function BookingDetailsPage() {
         <div className="space-y-6">
           {/* Payment Summary */}
           <Card className="p-6">
-            <h3 className="font-bold text-lg text-dark mb-4 flex items-center">
+            <h3 className="font-bold text-lg text-[var(--color-foreground)] mb-4 flex items-center">
               <DollarSign size={20} className="mr-2 text-primary" />
               Resumen de Pago
             </h3>
             <div className="space-y-3 mb-6">
-              <div className="flex justify-between text-gray-600">
+              <div className="flex justify-between text-[var(--color-muted-foreground)]">
                 <span>Precio Total</span>
                 <span className="font-medium">{booking.total_price}€</span>
               </div>
@@ -360,7 +360,7 @@ export default function BookingDetailsPage() {
                 <span>Pagado</span>
                 <span className="font-medium">-{booking.paid_amount}€</span>
               </div>
-              <div className="pt-3 border-t border-dashed border-gray-300 flex justify-between text-lg font-bold text-dark">
+              <div className="pt-3 border-t border-dashed border-[var(--color-beige)] flex justify-between text-lg font-bold text-[var(--color-foreground)]">
                 <span>Pendiente</span>
                 <span>{booking.total_price - booking.paid_amount}€</span>
               </div>
@@ -370,12 +370,12 @@ export default function BookingDetailsPage() {
 
           {/* Game Master Assignment */}
           <Card className="p-6">
-            <h3 className="font-bold text-lg text-dark mb-4 flex items-center">
+            <h3 className="font-bold text-lg text-[var(--color-foreground)] mb-4 flex items-center">
               <Shield size={20} className="mr-2 text-primary" />
               Game Master
             </h3>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-[var(--color-foreground)] mb-1">
                 Asignado a:
               </label>
               <select
@@ -393,13 +393,13 @@ export default function BookingDetailsPage() {
               <input
                 type="checkbox"
                 id="assignMe"
-                className="mr-2 h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+                className="mr-2 h-4 w-4 text-primary focus:ring-primary border-[var(--color-beige)] rounded"
                 checked={assignedGM === currentUserId}
                 onChange={toggleAssignMe}
               />
               <label
                 htmlFor="assignMe"
-                className="text-sm text-gray-700 cursor-pointer"
+                className="text-sm text-[var(--color-foreground)] cursor-pointer"
               >
                 Yo haré esta sesión
               </label>
@@ -408,7 +408,7 @@ export default function BookingDetailsPage() {
 
           {/* Internal Comments */}
           <Card className="p-6 flex flex-col h-[400px]">
-            <h3 className="font-bold text-lg text-dark mb-4 flex items-center">
+            <h3 className="font-bold text-lg text-[var(--color-foreground)] mb-4 flex items-center">
               <MessageSquare size={20} className="mr-2 text-primary" />
               Comentarios Internos
             </h3>
@@ -423,11 +423,11 @@ export default function BookingDetailsPage() {
                     <span className="font-bold text-primary">
                       {comment.author}
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-[var(--color-muted-foreground)]">
                       {comment.date}
                     </span>
                   </div>
-                  <p className="text-gray-700">{comment.text}</p>
+                  <p className="text-[var(--color-foreground)]">{comment.text}</p>
                 </div>
               ))}
             </div>
