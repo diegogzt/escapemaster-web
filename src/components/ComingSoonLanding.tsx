@@ -136,6 +136,12 @@ const ComingSoonLanding = () => {
     root.style.setProperty('--color-background', bg);
     root.style.setProperty('--color-foreground', fg);
     
+    if (isDarkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    
     // Also update body background directly for consistency
     document.body.style.backgroundColor = bg;
   }, [activeTheme, isDarkMode]);
@@ -323,7 +329,7 @@ const ComingSoonLanding = () => {
     <div ref={containerRef} className="bg-background text-foreground selection:bg-secondary/30 transition-colors duration-500">
       {/* Header */}
       <header className="header-nav fixed top-0 left-0 w-full z-50 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between bg-white/70 backdrop-blur-xl border border-foreground/5 rounded-full px-6 py-3 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between bg-background/70 backdrop-blur-xl border border-foreground/5 rounded-full px-6 py-3 shadow-sm transition-colors duration-500">
           <div className="flex items-center gap-8">
             <Link href="/" className="text-xl font-bold tracking-tighter text-foreground">
               ESCAPEMASTER
@@ -340,7 +346,7 @@ const ComingSoonLanding = () => {
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2.5 rounded-full border border-foreground/5 bg-white/50 hover:bg-white transition-colors"
+              className="p-2.5 rounded-full border border-foreground/5 bg-background/50 hover:bg-background transition-colors"
               aria-label="Toggle Dark Mode"
             >
               {isDarkMode ? <Sun className="w-4 h-4 text-orange-400" /> : <Moon className="w-4 h-4 text-slate-600" />}
@@ -368,14 +374,14 @@ const ComingSoonLanding = () => {
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-xl flex flex-col p-8">
+        <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex flex-col p-8 transition-colors duration-500">
           <div className="flex justify-between items-center mb-12">
             <div className="text-xl font-bold tracking-tighter text-foreground">ESCAPEMASTER</div>
             <button onClick={() => setIsMenuOpen(false)} className="p-2 text-foreground/40 hover:text-foreground">
               ✕
             </button>
           </div>
-          <nav className="flex flex-col gap-8 text-2xl font-bold">
+          <nav className="flex flex-col gap-8 text-2xl font-bold text-foreground">
             <button onClick={() => { featuresRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Producto</button>
             <button onClick={() => { templatesRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Personalizar</button>
             <button onClick={() => { pricingRef.current?.scrollIntoView({ behavior: 'smooth' }); setIsMenuOpen(false); }} className="text-left py-4 border-b border-foreground/5">Precios</button>
@@ -405,123 +411,128 @@ const ComingSoonLanding = () => {
           <div className="absolute bottom-[20%] right-[20%] w-10 h-10 bg-primary/5 rounded-md -rotate-12" />
         </div>
 
-        <div className="z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-          <div className="text-left animate-on-scroll">
-            <div className="hero-badge inline-block px-4 py-1.5 mb-8 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase">
-              Próximamente 2026
+        <div className="z-10 max-w-7xl mx-auto w-full flex flex-col items-center">
+          <div className="hero-badge inline-block px-4 py-1.5 mb-12 rounded-full border border-primary/20 bg-primary/5 text-primary text-xs font-bold tracking-widest uppercase animate-on-scroll">
+            Próximamente 2026
+          </div>
+          
+          <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center mb-16 px-4">
+            <div className="text-left animate-on-scroll lg:pr-10">
+              <h1 className="hero-title text-5xl md:text-7xl xl:text-8xl font-bold tracking-tighter leading-[0.85] text-foreground">
+                Donde las <br />
+                <span className="text-primary italic font-serif">experiencias</span> <br /> 
+                se hacen realidad.
+              </h1>
             </div>
-            
-            <h1 className="hero-title text-6xl md:text-8xl xl:text-9xl font-bold tracking-tighter mb-8 leading-[0.9]">
-              Donde las <br />
-              <span className="text-primary italic font-serif">experiencias</span> <br /> 
-              se hacen realidad.
-            </h1>
-            
-            <p className="hero-description text-xl md:text-2xl text-foreground/50 font-light leading-relaxed mb-12 max-w-xl">
+
+            <div className="hidden lg:block relative h-[500px] animate-on-scroll">
+              <div className="absolute inset-0 bg-background/40 backdrop-blur-3xl rounded-[4rem] border border-foreground/10 overflow-hidden p-8 shadow-2xl">
+                <div className="flex items-center justify-between mb-10">
+                  <div className="flex gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400/30" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-400/30" />
+                    <div className="w-3 h-3 rounded-full bg-green-400/30" />
+                  </div>
+                  <div className="px-4 py-1.5 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold tracking-widest uppercase text-foreground/40">
+                    Dashboard Demo v2.0
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="col-span-2 bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5">
+                    <div className="flex justify-between items-center mb-6">
+                      <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+                        <Calendar className="w-5 h-5" />
+                      </div>
+                      <div className="h-3 w-32 bg-foreground/5 rounded-full" />
+                    </div>
+                    <div className="space-y-4">
+                      <div className="h-6 w-full bg-foreground/5 rounded-xl" />
+                      <div className="h-6 w-3/4 bg-foreground/5 rounded-xl" />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5 aspect-square flex flex-col">
+                    <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-6">
+                      <BarChart3 className="w-5 h-5" />
+                    </div>
+                    <div className="mt-auto h-28 w-full bg-linear-to-t from-secondary/5 to-transparent rounded-2xl flex items-end px-3 pb-3 gap-1.5">
+                      <div className="h-1/2 flex-1 bg-secondary/20 rounded-t-lg" />
+                      <div className="h-3/4 flex-1 bg-secondary/30 rounded-t-lg" />
+                      <div className="h-1/3 flex-1 bg-secondary/20 rounded-t-lg" />
+                      <div className="h-full flex-1 bg-secondary/40 rounded-t-lg" />
+                    </div>
+                  </div>
+
+                  <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5 aspect-square">
+                    <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                        <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                        <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-foreground/5" />
+                        <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating badges */}
+              <div className="absolute -top-10 -right-10 px-8 py-6 bg-background rounded-3xl shadow-2xl border border-foreground/10 animate-pulse">
+                <div className="text-[10px] font-bold text-foreground/30 mb-2 uppercase tracking-widest">INGRESOS HOY</div>
+                <div className="text-3xl font-bold text-primary">$1,240.00</div>
+              </div>
+
+              <div className="absolute -bottom-10 -left-10 px-8 py-6 bg-background rounded-3xl shadow-2xl border border-foreground/10">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-green-500 overflow-hidden border-4 border-background shadow-sm flex items-center justify-center text-white font-bold text-sm uppercase">
+                    JK
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">NUEVA RESERVA</div>
+                    <div className="text-sm font-bold text-foreground">Laboratorio Zombie</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="max-w-4xl text-center px-6 animate-on-scroll">
+            <p className="hero-description text-xl md:text-2xl text-foreground/50 font-light leading-relaxed mb-12">
               La plataforma definitiva para gestionar, escalar y automatizar tu negocio de salas de escape. 
               Menos gestión, más aventura.
             </p>
 
-            <div className="hero-cta">
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-center gap-3 p-2 rounded-2xl sm:rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-xl hover:shadow-2xl transition-all">
+            <div className="hero-cta flex flex-col items-center gap-8">
+              <form onSubmit={handleSubmit} className="w-full max-w-2xl flex flex-col sm:flex-row items-center gap-3 p-2 rounded-2xl sm:rounded-full bg-background/50 backdrop-blur-md border border-foreground/10 shadow-xl hover:shadow-2xl transition-all">
                 <input 
                   type="email" 
                   placeholder="tu@negocio.com"
-                  className="w-full sm:flex-1 px-6 py-3 bg-transparent focus:outline-none text-foreground placeholder:text-foreground/30"
+                  className="w-full sm:flex-1 px-8 py-4 bg-transparent focus:outline-none text-foreground placeholder:text-foreground/30 text-lg"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <button 
                   type="submit"
-                  className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-bold rounded-xl sm:rounded-full hover:bg-primary/90 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-10 py-4 bg-primary text-white font-bold rounded-xl sm:rounded-full hover:bg-primary/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-primary/20 text-lg"
                 >
                   Probar gratis
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-5 h-5" />
                 </button>
               </form>
-              <div className="mt-6 flex flex-wrap gap-4 text-xs font-medium text-foreground/40">
-                <span className="flex items-center gap-1 text-primary"><CheckCircle2 className="w-3 h-3" /> Sin tarjeta</span>
-                <span className="flex items-center gap-1 text-primary"><CheckCircle2 className="w-3 h-3" /> Instalación en 2 min</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="hidden lg:block relative h-[650px] animate-on-scroll">
-            <div className="absolute inset-0 bg-foreground/5 rounded-[4rem] border border-foreground/10 backdrop-blur-3xl overflow-hidden p-8 shadow-2xl">
-              <div className="flex items-center justify-between mb-10">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400/30" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400/30" />
-                  <div className="w-3 h-3 rounded-full bg-green-400/30" />
-                </div>
-                <div className="px-4 py-1.5 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold tracking-widest uppercase text-foreground/40">
-                  Dashboard Demo v2.0
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
-                <div className="col-span-2 bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5">
-                  <div className="flex justify-between items-center mb-6">
-                    <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                      <Calendar className="w-5 h-5" />
-                    </div>
-                    <div className="h-3 w-32 bg-foreground/5 rounded-full" />
-                  </div>
-                  <div className="space-y-4">
-                    <div className="h-6 w-full bg-foreground/5 rounded-xl" />
-                    <div className="h-6 w-3/4 bg-foreground/5 rounded-xl" />
-                  </div>
-                </div>
-                
-                <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5 aspect-square flex flex-col">
-                  <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-6">
-                    <BarChart3 className="w-5 h-5" />
-                  </div>
-                  <div className="mt-auto h-28 w-full bg-linear-to-t from-secondary/5 to-transparent rounded-2xl flex items-end px-3 pb-3 gap-1.5">
-                    <div className="h-1/2 flex-1 bg-secondary/20 rounded-t-lg" />
-                    <div className="h-3/4 flex-1 bg-secondary/30 rounded-t-lg" />
-                    <div className="h-1/3 flex-1 bg-secondary/20 rounded-t-lg" />
-                    <div className="h-full flex-1 bg-secondary/40 rounded-t-lg" />
-                  </div>
-                </div>
-
-                <div className="bg-background/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-foreground/5 aspect-square">
-                  <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center text-accent mb-6">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-foreground/5" />
-                      <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-foreground/5" />
-                      <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-foreground/5" />
-                      <div className="h-3 flex-1 bg-foreground/5 rounded-full" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating badges */}
-            <div className="absolute -top-10 -right-10 px-8 py-6 bg-background rounded-3xl shadow-2xl border border-foreground/10 animate-pulse">
-              <div className="text-[10px] font-bold text-foreground/30 mb-2 uppercase tracking-widest">INGRESOS HOY</div>
-              <div className="text-3xl font-bold text-primary">$1,240.00</div>
-            </div>
-
-            <div className="absolute -bottom-10 -left-10 px-8 py-6 bg-background rounded-3xl shadow-2xl border border-foreground/10">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-green-500 overflow-hidden border-4 border-white shadow-sm flex items-center justify-center text-white font-bold text-sm uppercase">
-                  JK
-                </div>
-                <div>
-                  <div className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">NUEVA RESERVA</div>
-                  <div className="text-sm font-bold text-foreground">Laboratorio Zombie</div>
-                </div>
+              
+              <div className="flex flex-wrap justify-center gap-8 text-sm font-medium text-foreground/40">
+                <span className="flex items-center gap-2 text-primary/70"><CheckCircle2 className="w-5 h-5" /> Sin tarjeta necesaria</span>
+                <span className="flex items-center gap-2 text-primary/70"><CheckCircle2 className="w-5 h-5" /> Instalación en 2 minutos</span>
               </div>
             </div>
           </div>
