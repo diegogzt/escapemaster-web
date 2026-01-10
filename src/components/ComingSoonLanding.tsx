@@ -140,36 +140,24 @@ const ComingSoonLanding = () => {
   }, []);
 
   React.useEffect(() => {
-    const theme = THEMES[activeTheme] as any;
-    const root = document.documentElement;
+    // 1. Global Dark Mode Sync
+    document.documentElement.classList.toggle('dark', isDarkMode);
+    document.documentElement.style.colorScheme = isDarkMode ? 'dark' : 'light';
     
-    const bg = isDarkMode ? theme.darkBackground : theme.background;
-    const fg = isDarkMode ? theme.darkForeground : theme.foreground;
+    // 2. Base Landing Theme (Always Tropical for the page background)
+    const baseTheme = THEMES.tropical;
+    const bg = isDarkMode ? baseTheme.darkBackground : baseTheme.background;
+    const fg = isDarkMode ? baseTheme.darkForeground : baseTheme.foreground;
+
+    // We apply variables to body to override ThemeProvider
+    document.body.style.setProperty('--color-primary', baseTheme.primary);
+    document.body.style.setProperty('--color-secondary', baseTheme.secondary);
+    document.body.style.setProperty('--color-background', bg);
+    document.body.style.setProperty('--color-foreground', fg);
     
-    // Set CSS variables with !important priority for Tailwind 4
-    root.style.setProperty('--color-primary', theme.primary);
-    root.style.setProperty('--color-secondary', theme.secondary);
-    root.style.setProperty('--color-accent', theme.accent || theme.secondary);
-    root.style.setProperty('--color-background', bg);
-    root.style.setProperty('--color-foreground', fg);
-    
-    // Update theme classes on root
-    Object.keys(THEMES).forEach(t => {
-      root.classList.remove(`theme-${t}`);
-    });
-    root.classList.add(`theme-${activeTheme}`);
-    
-    if (isDarkMode) {
-      root.classList.add('dark');
-      root.style.colorScheme = 'dark';
-    } else {
-      root.classList.remove('dark');
-      root.style.colorScheme = 'light';
-    }
-    
-    // Force background and color transitions
     document.body.style.backgroundColor = bg;
-  }, [activeTheme, isDarkMode]);
+    document.body.style.color = fg;
+  }, [isDarkMode]);
 
   useGSAP(() => {
     // Header Animation
@@ -694,7 +682,15 @@ const ComingSoonLanding = () => {
               ))}
             </div>
 
-            <div className="relative p-2 rounded-[3rem] bg-background border border-foreground/10 shadow-2xl overflow-hidden group">
+            <div 
+              className="relative p-2 rounded-[3rem] bg-background border border-foreground/10 shadow-2xl overflow-hidden group transition-colors duration-500"
+              style={{
+                '--color-primary': (THEMES[activeTheme] as any).primary,
+                '--color-secondary': (THEMES[activeTheme] as any).secondary,
+                '--color-background': isDarkMode ? (THEMES[activeTheme] as any).darkBackground : (THEMES[activeTheme] as any).background,
+                '--color-foreground': isDarkMode ? (THEMES[activeTheme] as any).darkForeground : (THEMES[activeTheme] as any).foreground,
+              } as React.CSSProperties}
+            >
                <div className="absolute inset-0 grid-pattern opacity-20" />
                <div className="relative z-10 p-8 md:p-12">
                   <div className="flex items-center justify-between mb-12">

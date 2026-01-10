@@ -92,6 +92,7 @@ export default function RoomConfigPage() {
       price_per_person: parseFloat(formData.get("price_per_person") as string),
       difficulty_level: parseInt(formData.get("difficulty_level") as string),
       theme: formData.get("theme"),
+      color: formData.get("color"),
       is_active: formData.get("is_active") === "true",
       custom_fields: customFields, // Include custom fields in save
     };
@@ -181,6 +182,33 @@ export default function RoomConfigPage() {
                     defaultValue={roomData.theme}
                     placeholder="Ej: Terror, Aventura"
                   />
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Color de Sala
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="color"
+                        id="room-color"
+                        name="color"
+                        defaultValue={roomData.color || "#3B82F6"}
+                        className="h-10 w-12 p-1 rounded border border-beige cursor-pointer"
+                      />
+                      <input 
+                        type="text"
+                        placeholder="#3B82F6"
+                        defaultValue={roomData.color || "#3B82F6"}
+                        className="flex-1 px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const colorInput = document.getElementById('room-color') as HTMLInputElement;
+                          if (colorInput && /^#[0-9A-F]{6}$/i.test(val)) {
+                            colorInput.value = val;
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-700">
                       Dificultad (1-5)

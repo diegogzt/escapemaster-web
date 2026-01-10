@@ -228,6 +228,22 @@ export const vacations = {
   },
 };
 
+export interface Room {
+  id: string;
+  name: string;
+  description?: string;
+  capacity: number;
+  capacity_min: number;
+  price_per_person: number;
+  duration_minutes: number;
+  difficulty_level: number;
+  theme?: string;
+  image_url?: string;
+  color?: string;
+  status_colors?: Record<string, string>;
+  is_active: boolean;
+}
+
 export const rooms = {
   list: async (params?: any) => {
     try {

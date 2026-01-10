@@ -28,6 +28,7 @@ export default function CreateRoomPage() {
       price_per_person: Number(formData.get("price_per_person")),
       difficulty_level: Number(formData.get("difficulty_level")),
       theme: formData.get("theme"),
+      color: formData.get("color"),
       is_active: true,
     };
 
@@ -86,14 +87,42 @@ export default function CreateRoomPage() {
             />
           </div>
 
-          <div className="col-span-full md:col-span-1">
+          <div className="col-span-full md:col-span-1 grid grid-cols-2 gap-4">
             <Input
               name="theme"
               label="Temática"
-              placeholder="Ej: Terror, Aventura, Misterio..."
+              placeholder="Ej: Terror"
               required
               className="w-full"
             />
+            <div className="space-y-1">
+              <label htmlFor="color" className="block text-sm font-medium text-gray-700">
+                Color de Sala
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="color"
+                  id="color"
+                  name="color"
+                  defaultValue="#3B82F6"
+                  className="h-10 w-12 p-1 rounded border border-gray-300 cursor-pointer"
+                />
+                <input 
+                  type="text"
+                  name="color_text" 
+                  placeholder="#3B82F6"
+                  defaultValue="#3B82F6"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary sm:text-sm"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const colorInput = document.getElementById('color') as HTMLInputElement;
+                    if (colorInput && /^#[0-9A-F]{6}$/i.test(val)) {
+                      colorInput.value = val;
+                    }
+                  }}
+                />
+              </div>
+            </div>
           </div>
 
           <div className="col-span-full">
