@@ -42,6 +42,25 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/dashboard",
+        permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: "/api/:path*",
+          destination: "https://api.escapemaster.es/:path*",
+        },
+      ],
+    };
+  },
 };
 
 export default nextConfig;

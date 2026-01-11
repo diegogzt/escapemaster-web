@@ -212,7 +212,7 @@ export function AppSidebar() {
 
       <div className="border-t p-3 space-y-1">
         <Link
-          href="/settings"
+          href="/profile"
           className={cn(
             "flex items-center gap-3 p-2 rounded-lg hover:bg-accent transition-colors group w-full",
             isCollapsed && "justify-center"

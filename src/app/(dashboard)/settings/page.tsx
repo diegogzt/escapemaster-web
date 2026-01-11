@@ -528,41 +528,41 @@ export default function SettingsPage() {
           </Card>
         </section>
 
-        {/* Security Section */}
+        {/* Feature Highlights (replacing security in this view or just removing personal items) */}
         <section>
           <div className="flex items-center gap-2 mb-4">
             <Shield className="text-primary" size={24} />
-            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Seguridad y Acceso</h2>
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Políticas de Seguridad</h2>
           </div>
           <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
             <CardHeader>
-              <CardTitle>Protección de Datos</CardTitle>
+              <CardTitle>Cumplimiento y Protección</CardTitle>
             </CardHeader>
             <div className="p-6 pt-0 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 text-primary rounded-lg">
-                      <Lock size={20} />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-[var(--color-foreground)]">Autenticación en Dos Pasos (2FA)</h4>
-                      <p className="text-sm text-[var(--color-foreground)] opacity-80">Añade una capa extra de seguridad</p>
-                    </div>
-                  </div>
-                  <button className="w-12 h-6 bg-[var(--color-background-soft)] rounded-full relative"><div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full"></div></button>
-                </div>
-                <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/10 text-primary rounded-lg">
+                    <div className="p-2 bg-primary/10 text-primary rounded-xl">
                       <ShieldCheck size={20} />
                     </div>
                     <div>
-                      <h4 className="font-bold text-[var(--color-foreground)]">Cifrado de Extremo a Extremo</h4>
-                      <p className="text-sm text-[var(--color-foreground)] opacity-80">Datos de clientes 100% protegidos</p>
+                      <h4 className="font-bold text-[var(--color-foreground)]">Cifrado de Datos de Clientes</h4>
+                      <p className="text-sm text-[var(--color-foreground)] opacity-60">Protección activa de datos sensibles.</p>
                     </div>
                   </div>
                   <span className="text-xs font-bold text-green-600 bg-green-500/10 px-2 py-1 rounded-full uppercase">Activo</span>
+                </div>
+                <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)] opacity-40 grayscale cursor-not-allowed">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-500/10 text-gray-500 rounded-xl">
+                      <Lock size={20} />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-[var(--color-foreground)]">Forzar 2FA (Próximamente)</h4>
+                      <p className="text-sm text-[var(--color-foreground)] opacity-60">Obligar a todos los miembros a usar 2FA.</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-gray-500 bg-gray-500/10 px-2 py-1 rounded-full uppercase">Enterprise</span>
                 </div>
               </div>
             </div>

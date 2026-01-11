@@ -1,0 +1,33 @@
+# Registro de Errores: Calendario y Dashboard
+
+Este documento registra los errores técnicos observados durante la carga del calendario y el dashboard en producción (`escapemaster.es`) el 11 de enero de 2026.
+
+## Errores de Consola (JavaScript)
+
+### 1. TypeError en Calendar Widget
+- **Error**: `TypeError: (e || []).map is not a function`
+- **Ubicación**: `e23bbe545290ff4d.js:1:42719`
+- **Causa probable**: El componente intenta iterar sobre una respuesta de la API que no es un array (probablemente recibió un string HTML de un error 404 o un objeto de error `{detail: ...}`).
+- **Impacto**: El widget del calendario en el dashboard no renderiza ningún dato.
+
+### 2. TypeError en Transacciones
+- **Error**: `TypeError: ((intermediate value) || []).map is not a function`
+- **Ubicación**: `e23bbe545290ff4d.js:1:60231`
+- **Causa probable**: Similar al anterior, fallo al procesar la lista de transacciones/reservas recientes.
+
+## Advertencias de UI (Layout/Charts)
+
+### 1. Dimensiones de Gráficos (Chart.js/Recharts)
+- **Advertencia**: `The width(-1) and height(-1) of chart should be greater than 0`
+- **Impacto**: Los gráficos de métricas (Revenue, Occupancy) no se muestran o parpadean al cargar porque el contenedor padre no tiene dimensiones definidas en el momento de la inicialización.
+
+## Pruebas de Red (Network)
+
+- **Status**: 404 Not Found para `/api/bookings` y `/api/rooms`.
+- **Content-Type**: `text/html`.
+- **Evidencia**: Las peticiones interceptadas por el navegador muestran que Next.js está devolviendo la página de error 404 (HTML) en lugar de JSON, indicando que el rewrite en [next.config.ts](file:///Users/dgtovar/work/apps/web/next.config.ts) no se está aplicando correctamente o el proxy de Vercel tiene un conflicto de rutas.
+
+## Capturas de Evidencia
+
+![Errores de Consola](/Users/dgtovar/.gemini/antigravity/brain/8c3761dc-78c4-4ec5-98e0-8d92eed89914/uploaded_image_0_1768133369702.png)
+![Detalle de TypeError](/Users/dgtovar/.gemini/antigravity/brain/8c3761dc-78c4-4ec5-98e0-8d92eed89914/uploaded_image_1_1768133369702.png)
