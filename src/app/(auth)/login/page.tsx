@@ -114,9 +114,17 @@ export default function LoginPage() {
                     labelClassName="text-white"
                     className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/20 focus:border-white/50 transition-all"
                   />
+                  <div className="flex justify-end">
+                    <Link 
+                      href="/forgot-password" 
+                      className="text-xs text-white/50 hover:text-white transition-colors"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </Link>
+                  </div>
                 </div>
               </div>
-              {error && <div className="px-6 pb-2 text-red-300 text-xs">{error}</div>}
+              {error && <div className="px-6 pb-2 text-red-300 text-xs font-semibold animate-shake">{error}</div>}
               <CardFooter className="flex flex-col gap-4 pt-2 pb-8 border-white/10">
                 <Button type="submit" block loading={loading} className="bg-white text-primary font-bold">
                   Iniciar Sesión
