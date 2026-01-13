@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.escapemaster.es";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://manager.escapemaster.es/api";
 
 // Public API client (no auth required for these endpoints)
 const publicApi = axios.create({

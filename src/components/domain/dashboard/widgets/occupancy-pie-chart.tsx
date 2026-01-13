@@ -30,6 +30,7 @@ export function OccupancyPieChartWidget({
   const [dimensions, setDimensions] = useState({ width: 200, height: 200 });
   const [data, setData] = useState<{ name: string; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -65,6 +66,8 @@ export function OccupancyPieChartWidget({
         console.error("Failed to fetch occupancy stats", error);
       } finally {
         setLoading(false);
+        // Delay visual readiness slightly
+        setTimeout(() => setIsReady(true), 300);
       }
     };
     fetchData();
@@ -102,6 +105,7 @@ export function OccupancyPieChartWidget({
               fill="#8884d8"
               paddingAngle={5}
               dataKey="value"
+              isAnimationActive={isReady}
             >
               {data.map((entry, index) => (
                 <Cell

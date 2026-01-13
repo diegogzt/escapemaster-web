@@ -15,7 +15,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, Loader2 } from "lucide-react";
 import { WidgetConfigOptions } from "../types";
 import { dashboard } from "@/services/api";
 
@@ -35,6 +35,7 @@ export function RevenueBarChartWidget({
   const [localDateRange, setLocalDateRange] = useState(dateRange);
   const [data, setData] = useState<RevenueDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isReady, setIsReady] = useState(false);
 
   // Sync with prop changes
   useEffect(() => {
@@ -50,7 +51,7 @@ export function RevenueBarChartWidget({
           const chartData = response.labels.map((label: string, index: number) => ({
             name: label,
             ingresos: response.data[index] || 0,
-            gastos: 0, // Expenses not yet tracked in backend
+            gastos: response.expenses ? (response.expenses[index] || 0) : 0, // Attempt to read expenses
           }));
           setData(chartData);
         }
@@ -58,6 +59,7 @@ export function RevenueBarChartWidget({
         console.error("Failed to fetch revenue", error);
       } finally {
         setLoading(false);
+        setTimeout(() => setIsReady(true), 300);
       }
     };
     fetchData();
@@ -76,11 +78,27 @@ export function RevenueBarChartWidget({
     };
 
     if (loading) {
-        return <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)]">Cargando datos...</div>;
+      return (
+        <div className="h-full w-full flex flex-col items-center justify-center gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-primary/50" />
+          <p className="text-xs font-medium text-[var(--color-muted-foreground)] animate-pulse">
+            Cargando datos...
+          </p>
+        </div>
+      );
     }
-    
+
     if (data.length === 0) {
-        return <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)]">No hay datos de ingresos disponibles.</div>;
+      return (
+        <div className="h-full w-full flex flex-col items-center justify-center gap-2 px-6 text-center">
+          <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
+            No hay datos de ingresos disponibles
+          </p>
+          <p className="text-xs text-secondary">
+            Prueba a cambiar el rango de fechas
+          </p>
+        </div>
+      );
     }
 
     if (chartType === "line") {
@@ -108,6 +126,7 @@ export function RevenueBarChartWidget({
             strokeWidth={2}
             name="Ingresos"
             dot={{ r: 4 }}
+            isAnimationActive={isReady}
           />
           {/* Hide expenses line if all 0? Or just show flat line at 0 */}
            <Line
@@ -117,6 +136,7 @@ export function RevenueBarChartWidget({
             strokeWidth={2}
             name="Gastos"
             dot={{ r: 4 }}
+            isAnimationActive={isReady}
           />
         </LineChart>
       );
@@ -148,6 +168,7 @@ export function RevenueBarChartWidget({
             stroke="var(--color-primary)"
             strokeWidth={2}
             name="Ingresos"
+            isAnimationActive={isReady}
           />
            <Area
             type="monotone"
@@ -157,6 +178,7 @@ export function RevenueBarChartWidget({
             stroke="var(--color-secondary)"
             strokeWidth={2}
             name="Gastos"
+            isAnimationActive={isReady}
           />
         </AreaChart>
       );
@@ -185,12 +207,14 @@ export function RevenueBarChartWidget({
           fill="var(--color-primary)"
           radius={[4, 4, 0, 0]}
           name="Ingresos"
+          isAnimationActive={isReady}
         />
          <Bar
           dataKey="gastos"
           fill="var(--color-secondary)"
           radius={[4, 4, 0, 0]}
           name="Gastos"
+          isAnimationActive={isReady}
         />
       </BarChart>
     );

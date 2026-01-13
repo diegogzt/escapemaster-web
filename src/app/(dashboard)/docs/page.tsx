@@ -46,7 +46,7 @@ export default function DocsPage() {
             personalizadas.
           </p>
           <a
-            href="https://api.escapemaster.es/docs"
+            href="https://manager.escapemaster.es/api/docs"
             target="_blank"
             className="text-primary font-semibold hover:underline"
           >

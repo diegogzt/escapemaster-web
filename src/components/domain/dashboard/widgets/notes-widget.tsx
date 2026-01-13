@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StickyNote, Plus, X } from "lucide-react";
+import { WidgetConfigOptions } from "../types";
 
-export function NotesWidget() {
+export function NotesWidget({}: WidgetConfigOptions) {
   const [notes, setNotes] = useState<string[]>([
     "Revisar inventario de salas",
     "Llamar a proveedor de bebidas",

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
 import { DollarSign, TrendingUp, ArrowUpRight } from "lucide-react";
+import { WidgetConfigOptions } from "../types";
 
-export function RevenueWidget() {
+export function RevenueWidget({}: WidgetConfigOptions) {
   return (
     <div className="bg-[var(--color-background)] p-6 rounded-xl shadow-sm border border-[var(--color-beige)] h-full">
       <div className="flex items-center justify-between mb-4">

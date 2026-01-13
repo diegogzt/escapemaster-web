@@ -284,6 +284,7 @@ function SortableWidget({
         onResize={onResize}
         onConfigure={onConfigure}
         dragHandleProps={{ ...attributes, ...listeners }}
+        style={style}
         isDragging={isDragging}
       />
     </div>
@@ -471,6 +472,7 @@ export function DashboardView() {
 
   return (
     <div className="space-y-6 relative min-h-screen pb-20">
+
       <div className="flex items-center justify-between">
         <nav className="flex items-center text-sm text-secondary">
           <span className="hover:text-[var(--color-foreground)] cursor-pointer">Inicio</span>

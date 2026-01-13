@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Filter, Download, Search, Loader2, AlertCircle } from "lucide-react";
 import Input from "@/components/Input";
 import { bookings as bookingsApi } from "@/services/api";
+import { WidgetConfigOptions } from "../types";
 
 interface Transaction {
   id: string;
@@ -14,7 +15,7 @@ interface Transaction {
   method: string;
 }
 
-export function RevenueTableWidget() {
+export function RevenueTableWidget({}: WidgetConfigOptions) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -1,6 +1,8 @@
 import { MoreHorizontal } from "lucide-react";
+import { useEffect } from "react";
+import { WidgetConfigOptions } from "../types";
 
-export function TeamStatus() {
+export function TeamStatus({}: WidgetConfigOptions) {
   const team = [
     {
       id: 1,
