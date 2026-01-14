@@ -446,6 +446,14 @@ export default function SettingsPage() {
               <Input label="Sitio Web" defaultValue="https://miescaperoom.com" />
               <Input label="Correo Electrónico de Contacto" defaultValue="contacto@miescaperoom.com" />
               <Input label="Teléfono" defaultValue="+34 912 345 678" />
+              <div className="md:col-span-2">
+                <Input 
+                  label="ER Director URL (Configurador de Disponibilidad)" 
+                  defaultValue="https://www.residentriddle.es/"
+                  placeholder="https://su-dominio.es/"
+                  helperText="Esta URL se utiliza para obtener las horas disponibles de tus juegos si utilizas ER Director."
+                />
+              </div>
             </div>
           </Card>
         </section>

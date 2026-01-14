@@ -337,15 +337,18 @@ export default function RoomConfigPage() {
                   <label className="block text-sm font-medium text-[var(--color-foreground)]">
                     Estado
                   </label>
-                  <select
-                    name="is_active"
-                    defaultValue={roomData.is_active ? "true" : "false"}
-                    className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
-                  >
-                    <option value="true">Activa</option>
-                    <option value="false">Inactiva</option>
                   </select>
                 </div>
+                {roomData.erd_game_id && (
+                  <div className="pt-2">
+                    <Input
+                      label="ER Director Game ID"
+                      defaultValue={roomData.erd_game_id}
+                      disabled
+                      helperText="Este ID es configurado por el administrador maestro y se utiliza para sincronizar la disponibilidad con ER Director."
+                    />
+                  </div>
+                )}
               </div>
               <CardFooter className="bg-[var(--color-light)]/30 p-6">
                 <Button type="submit" block loading={saving}>
