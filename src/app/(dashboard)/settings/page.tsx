@@ -451,7 +451,7 @@ export default function SettingsPage() {
                   label="ER Director URL (Configurador de Disponibilidad)" 
                   defaultValue="https://www.residentriddle.es/"
                   placeholder="https://su-dominio.es/"
-                  helperText="Esta URL se utiliza para obtener las horas disponibles de tus juegos si utilizas ER Director."
+                  helpText="Esta URL se utiliza para obtener las horas disponibles de tus juegos si utilizas ER Director."
                 />
               </div>
             </div>

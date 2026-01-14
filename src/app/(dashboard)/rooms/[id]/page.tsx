@@ -352,7 +352,7 @@ export default function RoomConfigPage() {
                       label="ER Director Game ID"
                       defaultValue={roomData.erd_game_id}
                       disabled
-                      helperText="Este ID es configurado por el administrador maestro y se utiliza para sincronizar la disponibilidad con ER Director."
+                      helpText="Este ID es configurado por el administrador maestro y se utiliza para sincronizar la disponibilidad con ER Director."
                     />
                   </div>
                 )}
