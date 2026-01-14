@@ -333,10 +333,13 @@ export default function RoomConfigPage() {
                   required
                   icon={<DollarSign size={18} />}
                 />
-                <div className="space-y-2 pt-2">
-                  <label className="block text-sm font-medium text-[var(--color-foreground)]">
-                    Estado
-                  </label>
+                  <select
+                    name="is_active"
+                    defaultValue={roomData.is_active ? "true" : "false"}
+                    className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
+                  >
+                    <option value="true">Activa</option>
+                    <option value="false">Inactiva</option>
                   </select>
                 </div>
                 {roomData.erd_game_id && (
