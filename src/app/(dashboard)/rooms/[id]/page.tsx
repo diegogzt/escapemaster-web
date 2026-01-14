@@ -333,6 +333,10 @@ export default function RoomConfigPage() {
                   required
                   icon={<DollarSign size={18} />}
                 />
+                <div className="space-y-2 pt-2">
+                  <label className="block text-sm font-medium text-[var(--color-foreground)]">
+                    Estado
+                  </label>
                   <select
                     name="is_active"
                     defaultValue={roomData.is_active ? "true" : "false"}
