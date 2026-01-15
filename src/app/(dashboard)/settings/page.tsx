@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Link from "next/link";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
@@ -527,11 +528,27 @@ export default function SettingsPage() {
                       <p className="text-xs text-[var(--color-foreground)] opacity-80">{service.desc}</p>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" className="h-8 text-xs">
+                    <Button variant="outline" size="sm" className="h-8 text-xs">
                     {service.active ? "Configurar" : "Conectar"}
                   </Button>
                 </div>
               ))}
+              <div className="flex items-center justify-between p-4 border border-primary/30 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center border border-primary/20 text-primary">
+                    <Mail size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-[var(--color-foreground)]">Plantillas de Email</h4>
+                    <p className="text-xs text-[var(--color-foreground)] opacity-80">Configura correos de post-sesión</p>
+                  </div>
+                </div>
+                <Link href="/settings/emails">
+                  <Button size="sm" className="h-8 text-xs">
+                    Gestionar
+                  </Button>
+                </Link>
+              </div>
             </div>
           </Card>
         </section>

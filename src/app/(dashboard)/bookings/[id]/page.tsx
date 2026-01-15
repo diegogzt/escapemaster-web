@@ -207,7 +207,7 @@ export default function BookingDetailsPage() {
               {booking.group_name}
             </h1>
             <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-500/10 text-green-400 flex items-center">
-              <CheckCircle size={14} className="mr-1" /> Confirmada
+              <CheckCircle size={14} className="mr-1" /> {booking.status === "completed" ? "Completada" : "Confirmada"}
             </span>
           </div>
           <div className="flex items-center text-[var(--color-muted-foreground)] gap-4">
@@ -224,6 +224,26 @@ export default function BookingDetailsPage() {
           </div>
         </div>
         <div className="flex gap-2">
+          {booking.status !== "completed" && (
+            <Button 
+              onClick={async () => {
+                if(confirm("¿Estás seguro de que quieres finalizar esta sesión? Se enviará un email al cliente si tienes la plantilla configurada.")) {
+                  try {
+                    setLoading(true);
+                    await bookingsApi.finalize(booking.id, { send_email: true });
+                    window.location.reload();
+                  } catch (err) {
+                    console.error(err);
+                    alert("Error al finalizar la sesión");
+                    setLoading(false);
+                  }
+                }
+              }}
+              className="bg-green-600 hover:bg-green-700"
+            >
+              Finalizar Sesión
+            </Button>
+          )}
           <Button variant="secondary">Editar Reserva</Button>
           <Button variant="danger">Cancelar</Button>
         </div>
