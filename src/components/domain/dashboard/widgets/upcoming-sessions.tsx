@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Clock, User } from "lucide-react";
 import { WidgetConfigOptions } from "../types";
 import { dashboard } from "@/services/api";
+import { useDashboardStore } from "@/store/useDashboardStore";
 
 interface UpcomingSessionsProps extends WidgetConfigOptions {}
 
@@ -20,10 +21,12 @@ export function UpcomingSessions({
   const [sessions, setSessions] = useState<Session[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { fetchSummary } = useDashboardStore();
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const summary = await dashboard.getSummary();
+        const summary = await fetchSummary();
         setSessions(summary.upcoming_bookings || []);
       } catch (error) {
         console.error("Failed to fetch summary", error);
@@ -32,7 +35,7 @@ export function UpcomingSessions({
       }
     };
     fetchData();
-  }, []);
+  }, []); // Store handles caching
 
   const getStatusLabel = (status: string) => {
     switch (status) {

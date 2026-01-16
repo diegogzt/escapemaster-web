@@ -10,6 +10,7 @@ import {
 import { cn } from "@/utils";
 import { WidgetConfigOptions } from "../types";
 import { rooms as roomsApi, bookings as bookingsApi } from "@/services/api";
+import { useDashboardStore } from "@/store/useDashboardStore";
 
 // Color palette for rooms
 const ROOM_COLORS = [
@@ -46,14 +47,18 @@ export function CalendarWidget({
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { fetchBookings } = useDashboardStore();
+
   // Fetch rooms and bookings from API
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
-        const [roomsData, bookingsData] = await Promise.all([
+        // Rooms usually valid to fetch or cache, but user focused on bookings.
+        // Parallel fetch, but bookings comes from store
+        const [roomsData, bookingsList] = await Promise.all([
           roomsApi.list(),
-          bookingsApi.list(),
+          fetchBookings() 
         ]);
         
         // Transform rooms with colors
@@ -64,10 +69,9 @@ export function CalendarWidget({
         }));
         setRooms(transformedRooms);
         
-        // Transform bookings
-        // API returns: { bookings: [...], total: ... }
-        const bookingsList = bookingsData.bookings || [];
-        const transformedBookings: Booking[] = bookingsList.map((b: any) => {
+        // Transform bookings from store data
+        // API returns array (already unwrapped by store)
+        const transformedBookings: Booking[] = (bookingsList || []).map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
           return {
             id: b.id,
@@ -84,7 +88,7 @@ export function CalendarWidget({
       }
     }
     fetchData();
-  }, []);
+  }, []); // Store handles caching internally
 
   // Sync with prop changes
   useEffect(() => {
