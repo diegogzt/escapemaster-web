@@ -32,7 +32,7 @@ export function RevenueBarChartWidget({
   showLegend = true,
   dateRange = "month",
 }: RevenueBarChartWidgetProps) {
-  const [localDateRange, setLocalDateRange] = useState(dateRange);
+  const [localDateRange, setLocalDateRange] = useState<"month" | "quarter" | "year" | "semester" | "week">(dateRange as any);
   const [data, setData] = useState<RevenueDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
