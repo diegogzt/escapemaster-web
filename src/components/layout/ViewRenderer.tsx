@@ -7,7 +7,6 @@ import { CalendarView } from "@/components/views/CalendarView";
 import { BookingsView } from "@/components/views/BookingsView";
 import { TimeTrackingView } from "@/components/views/TimeTrackingView";
 import { usePathname } from "next/navigation";
-import { GlobalPreloader } from "@/components/ui/global-preloader";
 
 // Views that we want to keep alive
 const PERSISTENT_PATHS = ["/dashboard", "/calendar", "/bookings", "/time-tracking"];
@@ -24,7 +23,6 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
       {/* Persistent Views Shell */}
       <div className={isPersistent ? "block" : "hidden"}>
         <div className={pathname === "/dashboard" ? "block" : "hidden"}>
-          <GlobalPreloader />
           <DashboardView />
         </div>
         <div className={pathname === "/calendar" ? "block" : "hidden"}>
