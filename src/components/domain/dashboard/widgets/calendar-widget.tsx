@@ -65,8 +65,9 @@ export function CalendarWidget({
         setRooms(transformedRooms);
         
         // Transform bookings
-        // API returns: id, start_time, room_name, room_id
-        const transformedBookings: Booking[] = (bookingsData || []).map((b: any) => {
+        // API returns: { bookings: [...], total: ... }
+        const bookingsList = bookingsData.bookings || [];
+        const transformedBookings: Booking[] = bookingsList.map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
           return {
             id: b.id,
