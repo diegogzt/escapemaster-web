@@ -234,10 +234,11 @@ export function RevenueBarChartWidget({
           aria-label="Período de tiempo"
           value={localDateRange}
           onChange={(e) =>
-            setLocalDateRange(e.target.value as "month" | "quarter" | "year")
+            setLocalDateRange(e.target.value as "month" | "quarter" | "year" | "semester")
           }
         >
-          <option value="month">Últimos 6 meses (Mes)</option>
+          <option value="month">Último mes</option>
+          <option value="semester">Últimos 6 meses</option>
           <option value="quarter">Trimestral</option>
           <option value="year">Anual</option>
         </select>
