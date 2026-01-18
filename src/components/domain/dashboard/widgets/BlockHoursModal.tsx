@@ -156,7 +156,7 @@ export default function BlockHoursModal({
                   type="date"
                   value={endRecurrence}
                   onChange={(e) => setEndRecurrence(e.target.value)}
-                  required={recurrence !== "none"}
+                  required
                 />
               </div>
             )}
