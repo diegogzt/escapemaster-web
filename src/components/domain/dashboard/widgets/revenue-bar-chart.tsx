@@ -71,8 +71,8 @@ export function RevenueBarChartWidget({
       margin: { top: 5, right: 10, left: 0, bottom: 5 },
     };
 
-    const formatXAxis = (tick: string) => {
-      if (tick && tick.includes("-") && tick.length === 10) {
+    const formatXAxis = (tick: any) => {
+      if (typeof tick === "string" && tick.includes("-") && tick.length === 10) {
         // Assume YYYY-MM-DD and show only DD
         return tick.split("-")[2];
       }
@@ -246,7 +246,7 @@ export function RevenueBarChartWidget({
               </p>
             </div>
         ) : (
-             <ResponsiveContainer width="100%" height="100%">
+             <ResponsiveContainer width="100%" height="100%" minHeight={240}>
                {renderChart()}
              </ResponsiveContainer>
         )}
