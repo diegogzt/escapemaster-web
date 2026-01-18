@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
   Loader2,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/utils";
 import { WidgetConfigOptions } from "../types";
-import { rooms as roomsApi, bookings as bookingsApi } from "@/services/api";
+import { rooms as roomsApi, dashboard as dashboardApi } from "@/services/api";
 import { useDashboardStore } from "@/store/useDashboardStore";
+import BlockHoursModal from "./BlockHoursModal";
 
 // Color palette for rooms
 const ROOM_COLORS = [
@@ -26,6 +28,7 @@ interface Room {
   id: string;
   name: string;
   color: string;
+  duration_minutes: number;
 }
 
 interface Booking {
@@ -44,56 +47,64 @@ export function CalendarWidget({
   const [view, setView] = useState<"month" | "week" | "day">(defaultView);
   const [date, setDate] = useState(new Date());
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { fetchBookings } = useDashboardStore();
+  // Block Mode State
+  const [isBlockMode, setIsBlockMode] = useState(false);
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [selectedBlockDate, setSelectedBlockDate] = useState<Date | null>(null);
 
-  // Fetch rooms and bookings from API
+  const { fetchBookings } = useDashboardStore();
+  const [dayStatuses, setDayStatuses] = useState<Record<string, { status: string; count: number }>>({});
+
+  // Fetch rooms for the modal
   useEffect(() => {
-    async function fetchData() {
+    async function fetchRooms() {
       try {
-        setLoading(true);
-        // Rooms usually valid to fetch or cache, but user focused on bookings.
-        // Parallel fetch, but bookings comes from store
-        const [roomsData, bookingsList] = await Promise.all([
-          roomsApi.list(),
-          fetchBookings() 
-        ]);
-        
-        // Transform rooms with colors
-        const transformedRooms: Room[] = (roomsData || []).map((r: any, index: number) => ({
-          id: r.id,
-          name: r.name,
-          color: ROOM_COLORS[index % ROOM_COLORS.length],
-        }));
-        setRooms(transformedRooms);
-        
-        // Transform bookings from store data
-        // API returns array (already unwrapped by store)
-        const transformedBookings: Booking[] = (bookingsList || []).map((b: any) => {
-          const startTime = b.start_time ? new Date(b.start_time) : null;
-          return {
-            id: b.id,
-            date: startTime ? startTime.toISOString().split("T")[0] : "",
-            room_id: b.room_id,
-            room_name: b.room_name,
-          };
-        });
-        setBookings(transformedBookings);
-      } catch (err) {
-        console.error("Error fetching calendar widget data:", err);
-      } finally {
-        setLoading(false);
+        const data = await roomsApi.list();
+        setRooms(data);
+      } catch (error) {
+        console.error("Error fetching rooms", error);
       }
     }
-    fetchData();
-  }, []); // Store handles caching internally
+    fetchRooms();
+  }, []);
 
-  // Sync with prop changes
+  // Fetch calendar status when date (month/year) changes
   useEffect(() => {
-    setView(defaultView);
-  }, [defaultView]);
+    fetchStatus();
+  }, [date.getMonth(), date.getFullYear()]); 
+
+  async function fetchStatus() {
+    try {
+      setLoading(true);
+      const month = date.getMonth() + 1;
+      const year = date.getFullYear();
+      
+      // Fetch status directly from optimized endpoint
+      const statuses = await dashboardApi.getCalendarStatus(month, year);
+      setDayStatuses(statuses);
+      
+    } catch (err) {
+      console.error("Error fetching calendar status:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const handleDayClick = (d: number, m: number, y: number) => {
+    console.log("Day clicked:", d, m, y, "Block Mode:", isBlockMode);
+    if (isBlockMode) {
+      setSelectedBlockDate(new Date(y, m, d));
+      setShowBlockModal(true);
+    }
+  };
+
+  const handleBlockSave = async (data: any) => {
+    await dashboardApi.blockHours(data);
+    // Refresh calendar
+    await fetchStatus();
+  };
 
   const allDays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
   const days = showWeekends ? allDays : allDays.slice(1, 6);
@@ -112,22 +123,6 @@ export function CalendarWidget({
     "Diciembre",
   ];
 
-  // Helper to get session counts for a date from real data
-  const getSessionsForDate = (d: Date) => {
-    const dateStr = d.toISOString().split("T")[0];
-    const dayBookings = bookings.filter(b => b.date === dateStr);
-    
-    // Count bookings by room
-    const byRoom = rooms.map(room => 
-      dayBookings.filter(b => b.room_id === room.id || b.room_name === room.name).length
-    );
-    
-    return {
-      total: dayBookings.length,
-      byRoom,
-    };
-  };
-
   const getDaysInMonth = (year: number, month: number) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -137,58 +132,10 @@ export function CalendarWidget({
   };
 
   const renderWeekView = () => {
-    const startOfWeek = new Date(date);
-    const day = startOfWeek.getDay();
-    const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
-    startOfWeek.setDate(diff);
-
-    const weekDays = [];
-    for (let i = 0; i < 7; i++) {
-      const current = new Date(startOfWeek);
-      current.setDate(startOfWeek.getDate() + i);
-      weekDays.push(current);
-    }
-
     return (
-      <div className="grid grid-cols-7 gap-1 h-full pt-2">
-        {weekDays.map((d, index) => {
-          const isToday =
-            d.getDate() === new Date().getDate() &&
-            d.getMonth() === new Date().getMonth();
-          const sessions = getSessionsForDate(d);
-
-          return (
-            <div key={index} className="flex flex-col items-center gap-2">
-              <span className="text-xs text-[var(--color-muted-foreground)] font-medium uppercase">
-                {days[d.getDay()]}
-              </span>
-              <span
-                className={cn(
-                  "text-sm font-bold w-8 h-8 flex items-center justify-center rounded-full transition-colors",
-                  isToday
-                    ? "bg-primary text-white"
-                    : "text-[var(--color-foreground)] hover:bg-primary/10 hover:text-primary"
-                )}
-              >
-                {d.getDate()}
-              </span>
-              <div className="mt-1 flex flex-col gap-1 items-center">
-                {sessions.byRoom.map(
-                  (count, i) =>
-                    count > 0 && (
-                      <span
-                        key={i}
-                        className={cn("text-xs font-bold", rooms[i].color)}
-                      >
-                        {count}
-                      </span>
-                    )
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+       <div className="flex items-center justify-center h-full text-muted-foreground text-xs">
+           Vista semanal simplificada
+       </div>
     );
   };
 
@@ -211,31 +158,50 @@ export function CalendarWidget({
           <div key={`blank-${i}`} className="py-2"></div>
         ))}
         {daysArray.map((d) => {
-          const currentDay = new Date(year, month, d);
-          const sessions = getSessionsForDate(currentDay);
+          // Construct date key YYYY-MM-DD
+          const dStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          
+          const statusData = dayStatuses[dStr] || { status: 'empty', count: 0 };
+          const dayStatus = statusData.status;
+
           const isToday =
             d === new Date().getDate() && month === new Date().getMonth();
 
+          let statusColor = "";
+
+          if (dayStatus === "full") {
+            statusColor = "bg-red-200 text-red-800 border-red-300 hover:bg-red-300";
+          } else if (dayStatus === "has_sessions") {
+            statusColor = "bg-green-200 text-green-800 border-green-300 hover:bg-green-300";
+          } else if (dayStatus === "closed") {
+             statusColor = "bg-gray-200 text-gray-500 border-gray-300 opacity-60"; 
+          }
+
+          const baseClasses = "py-2 rounded-lg cursor-pointer transition-colors flex flex-col items-center justify-center gap-0.5 min-h-12 group border relative";
+          
           return (
             <div
               key={d}
+              onClick={() => handleDayClick(d, month, year)}
               className={cn(
-                "py-2 rounded-lg hover:bg-primary/10 cursor-pointer transition-colors flex flex-col items-center justify-center gap-0.5 min-h-12 group",
-                isToday ? "bg-primary/5" : ""
+                baseClasses,
+                statusColor || "hover:bg-primary/5 border-transparent",
+                isToday ? "bg-primary/5 border-primary/20" : "",
+                isBlockMode ? "hover:ring-2 hover:ring-red-400 cursor-crosshair" : ""
               )}
             >
               <span
                 className={cn(
-                  "w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium group-hover:text-primary",
-                  isToday ? "bg-primary text-white group-hover:text-white" : "text-[var(--color-foreground)]"
+                  "w-6 h-6 flex items-center justify-center rounded-full text-xs font-medium",
+                  isToday ? "bg-primary text-white" : "text-[var(--color-foreground)]"
                 )}
               >
                 {d}
               </span>
-              {sessions.total > 0 && (
-                <span className="text-[10px] font-bold text-[var(--color-muted-foreground)]">
-                  {sessions.total} ses.
-                </span>
+              {statusData.count > 0 && (
+                 <span className="text-[10px] font-bold text-[var(--color-muted-foreground)] opacity-75">
+                    {statusData.count}
+                 </span>
               )}
             </div>
           );
@@ -243,6 +209,31 @@ export function CalendarWidget({
       </div>
     );
   };
+  
+  const renderLegend = () => (
+    <div className="flex items-center gap-4 mt-4 px-2 text-xs text-secondary justify-center border-t border-[var(--color-beige)] pt-3">
+        <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-sm bg-green-100 border border-green-200 block"></span>
+            <span>Sesiones</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-sm bg-red-100 border border-red-200 block"></span>
+            <span>Lleno</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+             <div className="w-2.5 h-2.5 rounded-full border border-[var(--color-primary)] flex items-center justify-center">
+                <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]"></div>
+             </div>
+             <span>Hoy</span>
+        </div>
+        {isBlockMode && (
+          <div className="flex items-center gap-1.5 text-red-500 font-bold animate-pulse ml-2">
+            <Lock size={12} />
+            MODE BLOQUEO ACTIVADO
+          </div>
+        )}
+    </div>
+  );
 
   if (loading) {
     return (
@@ -253,35 +244,57 @@ export function CalendarWidget({
   }
 
   return (
-    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
+    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden relative">
+       {/* Block Mode Overlay/Indicator */}
+      {isBlockMode && (
+         <div className="absolute top-0 left-0 right-0 h-1 bg-red-500 z-10 animate-pulse" />
+      )}
+
       <div className="flex items-center justify-between mb-3 flex-shrink-0">
         <div className="flex items-center gap-2">
           <CalendarIcon className="h-5 w-5 text-primary" />
           <h3 className="font-semibold text-[var(--color-foreground)] text-sm">Calendario</h3>
         </div>
-        <div className="flex gap-1 bg-[var(--color-light)] rounded-lg p-1">
-          <button
-            onClick={() => setView("month")}
-            className={cn(
-              "px-2 py-1 text-xs rounded-md transition-colors",
-              view === "month"
-                ? "bg-[var(--color-background)] shadow-sm text-[var(--color-foreground)] font-medium"
-                : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-            )}
-          >
-            Mes
-          </button>
-          <button
-            onClick={() => setView("week")}
-            className={cn(
-              "px-2 py-1 text-xs rounded-md transition-colors",
-              view === "week"
-                ? "bg-[var(--color-background)] shadow-sm text-[var(--color-foreground)] font-medium"
-                : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
-            )}
-          >
-            Semana
-          </button>
+        
+        <div className="flex gap-2">
+             <button
+                onClick={() => setIsBlockMode(!isBlockMode)}
+                className={cn(
+                  "px-2 py-1 text-xs rounded-md transition-all border flex items-center gap-1 font-medium",
+                  isBlockMode
+                    ? "bg-red-100 text-red-700 border-red-200 hover:bg-red-200"
+                    : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50 hover:text-gray-700"
+                )}
+                title="Cerrar horas o días"
+              >
+                <Lock size={12} />
+                {isBlockMode ? "Cancel" : "Cerrar Horas"}
+              </button>
+        
+            <div className="flex gap-1 bg-[var(--color-light)] rounded-lg p-1">
+              <button
+                onClick={() => setView("month")}
+                className={cn(
+                  "px-2 py-1 text-xs rounded-md transition-colors",
+                  view === "month"
+                    ? "bg-[var(--color-background)] shadow-sm text-[var(--color-foreground)] font-medium"
+                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                )}
+              >
+                Mes
+              </button>
+              <button
+                onClick={() => setView("week")}
+                className={cn(
+                  "px-2 py-1 text-xs rounded-md transition-colors",
+                  view === "week"
+                    ? "bg-[var(--color-background)] shadow-sm text-[var(--color-foreground)] font-medium"
+                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                )}
+              >
+                Semana
+              </button>
+            </div>
         </div>
       </div>
 
@@ -324,6 +337,16 @@ export function CalendarWidget({
       <div className="flex-1 min-h-0 overflow-auto">
         {view === "month" ? renderMonthView() : renderWeekView()}
       </div>
+      
+      {renderLegend()}
+      
+      <BlockHoursModal
+        isOpen={showBlockModal}
+        onClose={() => setShowBlockModal(false)}
+        selectedDate={selectedBlockDate}
+        rooms={rooms}
+        onSave={handleBlockSave}
+      />
     </div>
   );
 }

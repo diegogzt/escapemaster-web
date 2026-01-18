@@ -50,11 +50,18 @@ export function CalendarView() {
   const [loading, setLoading] = useState(!calendarState.lastFetched);
   const [error, setError] = useState<string | null>(null);
 
+  const [isMounted, setIsMounted] = useState(false);
+  
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const setView = (v: ViewType) => setCalendarState({ view: v });
   const setCurrentDate = (d: Date) => setCalendarState({ currentDate: d.toISOString() });
   const setSessions = (s: Session[]) => setCalendarState({ sessions: s, lastFetched: Date.now() });
 
   useEffect(() => {
+    if (!isMounted) return;
     async function fetchData() {
       const isFresh = calendarState.lastFetched && (Date.now() - calendarState.lastFetched < 60000);
       if (isFresh && sessions.length > 0) {
@@ -169,7 +176,7 @@ export function CalendarView() {
     setCurrentDate(newDate);
   };
 
-  if (loading && !sessions.length) {
+  if (!isMounted || (loading && !sessions.length)) {
     return (
       <div className="flex flex-col items-center justify-center p-24 bg-white rounded-3xl border border-beige/50">
         <Loader2 className="animate-spin text-primary mb-4" size={40} />

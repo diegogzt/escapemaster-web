@@ -8,6 +8,8 @@ import { RevenueBarChartWidget } from "./widgets/revenue-bar-chart";
 import { OccupancyPieChartWidget } from "./widgets/occupancy-pie-chart";
 import { QuarterlyStatsWidget } from "./widgets/quarterly-stats";
 import { RevenueTableWidget } from "./widgets/revenue-table";
+import { FiscalWidget } from "./widgets/FiscalWidget";
+import { ProjectedEarningsWidget } from "./widgets/ProjectedEarningsWidget";
 import { WidgetDefinition } from "./types";
 
 export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
@@ -120,5 +122,25 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     defaultRowSpan: 20,
     configurableOptions: ["pageSize", "sortBy", "dateRange"],
     defaultConfig: { pageSize: 10, sortBy: "date", dateRange: "month" },
+  },
+  fiscal: {
+    type: "fiscal",
+    title: "Facturación Fiscal",
+    description: "Evolución trimestral de ingresos",
+    component: FiscalWidget,
+    defaultColSpan: 12,
+    defaultRowSpan: 12,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  projected: {
+    type: "projected",
+    title: "Proyección Mensual",
+    description: "Ganado vs Pendiente mes actual",
+    component: ProjectedEarningsWidget,
+    defaultColSpan: 12,
+    defaultRowSpan: 12,
+    configurableOptions: [],
+    defaultConfig: {},
   },
 };

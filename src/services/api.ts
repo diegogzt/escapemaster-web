@@ -165,6 +165,24 @@ export const dashboard = {
       console.error("Error fetching bookings chart:", error);
       throw error;
     }
+  },
+  getCalendarStatus: async (month: number, year: number) => {
+    try {
+      const response = await api.get("/dashboard/calendar-status", { params: { month, year } });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching calendar status:", error);
+      throw error;
+    }
+  },
+  blockHours: async (data: any) => {
+    try {
+      const response = await api.post("/dashboard/block-hours", data);
+      return response.data;
+    } catch (error) {
+       console.error("Error blocking hours:", error);
+       throw error;
+    }
   }
 };
 
@@ -390,6 +408,33 @@ export const emailTemplates = {
   },
   delete: async (id: string) => {
     const response = await api.delete(`/email-templates/${id}`);
+    return response.data;
+  },
+};
+export const reports = {
+  getRevenue: async (params: {
+    start_date: string;
+    end_date: string;
+    type?: "actual" | "projected";
+    group_by?: "day" | "week" | "month" | "quarter" | "year";
+  }) => {
+    const response = await api.get("/reports/revenue", { params });
+    return response.data;
+  },
+  exportBookings: async (format: "pdf" | "excel") => {
+    const response = await api.get("/reports/bookings/export", {
+      params: { format },
+      responseType: "blob",
+    });
+    return response.data;
+  },
+};
+
+export const widgets = {
+  getRevenueSummary: async (period: string = "current_month") => {
+    const response = await api.get("/widgets/revenue-summary", {
+      params: { period },
+    });
     return response.data;
   },
 };

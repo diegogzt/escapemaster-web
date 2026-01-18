@@ -77,29 +77,7 @@ export function RevenueBarChartWidget({
       tick: { fill: "#6B7280", fontSize: 12 },
     };
 
-    if (loading) {
-      return (
-        <div className="h-full w-full flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-primary/50" />
-          <p className="text-xs font-medium text-[var(--color-muted-foreground)] animate-pulse">
-            Cargando datos...
-          </p>
-        </div>
-      );
-    }
 
-    if (data.length === 0) {
-      return (
-        <div className="h-full w-full flex flex-col items-center justify-center gap-2 px-6 text-center">
-          <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
-            No hay datos de ingresos disponibles
-          </p>
-          <p className="text-xs text-secondary">
-            Prueba a cambiar el rango de fechas
-          </p>
-        </div>
-      );
-    }
 
     if (chartType === "line") {
       return (
@@ -244,10 +222,25 @@ export function RevenueBarChartWidget({
         </select>
       </div>
 
-      <div className="flex-1 min-h-[240px]">
-        <ResponsiveContainer width="100%" height="100%">
-          {renderChart()}
-        </ResponsiveContainer>
+      <div className="flex-1 min-h-[240px] relative">
+        {loading ? (
+             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[var(--color-background)] z-10">
+               <Loader2 className="w-6 h-6 animate-spin text-primary/50" />
+               <p className="text-xs font-medium text-[var(--color-muted-foreground)] animate-pulse">
+                 Cargando...
+               </p>
+             </div>
+        ) : data.length === 0 ? (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-6 text-center">
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)]">
+                No hay datos
+              </p>
+            </div>
+        ) : (
+             <ResponsiveContainer width="100%" height="100%">
+               {renderChart()}
+             </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

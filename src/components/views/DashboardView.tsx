@@ -298,8 +298,9 @@ export function DashboardView() {
 
   const [isMounted, setIsMounted] = useState(false);
   
-  // Use persistent store
-  const { widgets, activeCollectionId } = useDashboardLayoutStore();
+  // Use persistent store with safety check
+  const { widgets: rawWidgets, activeCollectionId } = useDashboardLayoutStore();
+  const widgets = Array.isArray(rawWidgets) ? rawWidgets : [];
   const { setWidgets, updateWidgetConfig, setActiveCollectionId, resetLayout: resetStoreLayout } = useDashboardLayoutActions();
 
   useEffect(() => {

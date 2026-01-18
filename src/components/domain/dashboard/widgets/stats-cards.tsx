@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DollarSign, Users, Calendar, Activity } from "lucide-react";
 import { WidgetConfigOptions } from "../types";
 import { dashboard } from "@/services/api";
+import { useAuth } from "@/context/AuthContext";
 
 interface StatsCardsProps extends WidgetConfigOptions {}
 
@@ -18,6 +19,7 @@ export function StatsCards({
   columns = 4,
   visibleStats = ["revenue", "bookings", "customers", "rooms"],
 }: StatsCardsProps) {
+  const { user } = useAuth();
   const [data, setData] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -83,7 +85,8 @@ export function StatsCards({
     },
   ];
 
-  const stats = allStats.filter((s) => visibleStats.includes(s.id));
+  const canViewRevenue = user?.role?.name === 'admin' || user?.role?.name === 'manager' || user?.permissions?.includes('view_reports');
+  const stats = allStats.filter((s) => visibleStats.includes(s.id) && (s.id !== 'revenue' || canViewRevenue));
 
   // Dynamic grid columns based on config
   const gridCols =

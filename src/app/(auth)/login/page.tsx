@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Input from "@/components/Input";
@@ -9,8 +9,16 @@ import { Card, CardHeader, CardTitle, CardFooter } from "@/components/Card";
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/services/api";
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      router.push("/dashboard");
+    }
+  }, [user, router]);
+
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<"login" | "onboard">("login");
   const [onboardData, setOnboardData] = useState({

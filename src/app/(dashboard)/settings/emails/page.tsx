@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
-import Button from "@/components/Button";
 import Input from "@/components/Input";
+import Select from "@/components/Select";
+import RichTextEditor from "@/components/RichTextEditor";
+import Button from "@/components/Button";
 import { Mail, Save, Plus, Trash2, Globe, Sparkles, Loader2, CheckCircle2 } from "lucide-react";
 import { emailTemplates } from "@/services/api";
 
@@ -162,11 +164,10 @@ export default function EmailSettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-[var(--color-foreground)] opacity-60 uppercase tracking-widest mb-2">Cuerpo del Mensaje (HTML compatible)</label>
-                  <textarea
+                  <label className="block text-sm font-bold text-[var(--color-foreground)] opacity-60 uppercase tracking-widest mb-2">Cuerpo del Mensaje</label>
+                  <RichTextEditor
                     value={currentTemplate.body}
-                    onChange={(e) => handleUpdateTemplate(currentTemplate.id, { body: e.target.value })}
-                    className="w-full min-h-[300px] bg-[var(--color-background-soft)] border border-[var(--color-beige)] rounded-2xl p-6 text-[var(--color-foreground)] focus:ring-2 ring-primary/20 outline-hidden font-mono text-sm leading-relaxed"
+                    onChange={(value) => handleUpdateTemplate(currentTemplate.id, { body: value })}
                     placeholder="Escribe aquí el contenido del correo..."
                   />
                 </div>

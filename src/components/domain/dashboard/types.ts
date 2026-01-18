@@ -10,7 +10,9 @@ export type WidgetType =
   | "revenue-chart"
   | "occupancy-chart"
   | "quarterly-stats"
-  | "revenue-table";
+  | "revenue-table"
+  | "fiscal"
+  | "projected";
 
 // Widget-specific configuration options
 export interface WidgetConfigOptions {

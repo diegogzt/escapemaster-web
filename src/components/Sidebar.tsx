@@ -38,7 +38,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-[var(--color-background)] border-r border-[var(--color-beige)] flex flex-col h-screen sticky top-0">
+    <aside className="w-64 bg-[var(--color-background)] border-r border-[var(--color-beige)] flex flex-col h-screen sticky top-0 rounded-r-3xl shadow-sm z-30">
       <div className="p-6 border-b border-[var(--color-beige)]">
         <h1 className="text-xl font-bold text-primary">EscapeMaster</h1>
       </div>

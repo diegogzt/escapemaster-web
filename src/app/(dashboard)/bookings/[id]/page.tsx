@@ -23,7 +23,10 @@ import {
   FileText,
   Copy,
   Loader2,
+  Camera,
+  Image as ImageIcon,
 } from "lucide-react";
+import { Modal } from "@/components/Modal";
 
 // Types for booking details
 interface Player {
@@ -73,6 +76,13 @@ export default function BookingDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
   const [assignedGM, setAssignedGM] = useState("");
+  const [isFinalizeModalOpen, setIsFinalizeModalOpen] = useState(false);
+  const [finalizeData, setFinalizeData] = useState({
+    send_email: true,
+    template_type: "session_completed",
+    photo_url: ""
+  });
+  const [isFinalizing, setIsFinalizing] = useState(false);
 
   // Mock current user ID
   const currentUserId = "gm1";
@@ -226,19 +236,7 @@ export default function BookingDetailsPage() {
         <div className="flex gap-2">
           {booking.status !== "completed" && (
             <Button 
-              onClick={async () => {
-                if(confirm("¿Estás seguro de que quieres finalizar esta sesión? Se enviará un email al cliente si tienes la plantilla configurada.")) {
-                  try {
-                    setLoading(true);
-                    await bookingsApi.finalize(booking.id, { send_email: true });
-                    window.location.reload();
-                  } catch (err) {
-                    console.error(err);
-                    alert("Error al finalizar la sesión");
-                    setLoading(false);
-                  }
-                }
-              }}
+              onClick={() => setIsFinalizeModalOpen(true)}
               className="bg-green-600 hover:bg-green-700"
             >
               Finalizar Sesión
@@ -472,6 +470,101 @@ export default function BookingDetailsPage() {
           </Card>
         </div>
       </div>
+      {/* Finalize Session Modal */}
+      <Modal 
+        isOpen={isFinalizeModalOpen} 
+        onClose={() => !isFinalizing && setIsFinalizeModalOpen(false)}
+        title="Finalizar Sesión"
+      >
+        <div className="space-y-6 py-4">
+          <p className="text-[var(--color-muted-foreground)]">
+            Al finalizar la sesión, el estado de la reserva cambiará a <strong>completada</strong>. 
+            Puedes elegir enviar un email de agradecimiento al cliente.
+          </p>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-xl border border-primary/10">
+              <input
+                type="checkbox"
+                id="sendEmail"
+                className="h-5 w-5 rounded border-beige text-primary focus:ring-primary"
+                checked={finalizeData.send_email}
+                onChange={(e) => setFinalizeData({...finalizeData, send_email: e.target.checked})}
+              />
+              <label htmlFor="sendEmail" className="font-medium cursor-pointer">
+                Enviar email de seguimiento
+              </label>
+            </div>
+
+            {finalizeData.send_email && (
+              <div className="space-y-4 pl-8 border-l-2 border-primary/10">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold opacity-70">Tipo de Plantilla</label>
+                  <select 
+                    className="w-full p-2.5 bg-[var(--color-background)] border border-beige rounded-xl focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                    value={finalizeData.template_type}
+                    onChange={(e) => setFinalizeData({...finalizeData, template_type: e.target.value})}
+                  >
+                    <option value="session_completed">Sesión Completada (Estándar)</option>
+                    <option value="session_photo">Sesión con Foto</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold opacity-70 flex items-center gap-2">
+                    <Camera size={14} /> URL de la Foto (Opcional)
+                  </label>
+                  <div className="relative">
+                    <input 
+                      type="text"
+                      placeholder="https://ejemplo.com/foto.jpg"
+                      className="w-full pl-10 pr-4 py-2.5 bg-[var(--color-background)] border border-beige rounded-xl focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                      value={finalizeData.photo_url}
+                      onChange={(e) => setFinalizeData({...finalizeData, photo_url: e.target.value})}
+                    />
+                    <ImageIcon size={18} className="absolute left-3 top-1/2 -translate-y-1/2 opacity-40" />
+                  </div>
+                  <p className="text-[10px] opacity-50 px-1">
+                    Usa esta URL si quieres incluir una foto de la sesión en el email (la plantilla debe contener el marcador {"{{photo}}"}).
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <Button 
+              variant="secondary" 
+              className="flex-1"
+              onClick={() => setIsFinalizeModalOpen(false)}
+              disabled={isFinalizing}
+            >
+              Cancelar
+            </Button>
+            <Button 
+              className="flex-1 bg-green-600 hover:bg-green-700"
+              disabled={isFinalizing}
+              onClick={async () => {
+                try {
+                  setIsFinalizing(true);
+                  await bookingsApi.finalize(booking.id, finalizeData);
+                  window.location.reload();
+                } catch (err) {
+                  console.error(err);
+                  alert("Error al finalizar la sesión");
+                  setIsFinalizing(false);
+                }
+              }}
+            >
+              {isFinalizing ? (
+                <>
+                  <Loader2 size={18} className="mr-2 animate-spin" /> Finalizando...
+                </>
+              ) : "Finalizar Ahora"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

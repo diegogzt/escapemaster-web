@@ -19,8 +19,10 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useDataStore } from "@/stores/data-store";
+import { useAuth } from "@/context/AuthContext";
 
 export function TimeTrackingView() {
+  const { user } = useAuth();
   const { timeTrackingState, setTimeTrackingState } = useDataStore();
   const [loading, setLoading] = useState(!timeTrackingState.lastFetched);
   const [actionLoading, setActionLoading] = useState(false);
@@ -129,7 +131,7 @@ export function TimeTrackingView() {
       </div>
 
       <div className="grid grid-cols-12 gap-8">
-        <div className="col-span-12 lg:col-span-8 space-y-8">
+        <div className="col-span-12 lg:col-span-12 space-y-8">
           <Card className="p-8">
             <h3 className="text-xl font-bold mb-6 flex items-center"><ClipboardList size={24} className="mr-2" />¿En qué estás trabajando?</h3>
             <textarea className="w-full p-4 border rounded-2xl min-h-[120px]" placeholder="Describe tu tarea..." value={taskDescription} onChange={(e) => setTaskDescription(e.target.value)} />
@@ -137,7 +139,9 @@ export function TimeTrackingView() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="p-6"><p className="text-sm font-medium opacity-60">Horas Realizadas</p><h3 className="text-3xl font-bold">{summary?.total_hours}h / {summary?.target_hours}h</h3></Card>
-            <Card className="p-6"><p className="text-sm font-medium opacity-60">Generado este mes</p><h3 className="text-3xl font-bold">{summary?.estimated_earnings}€</h3></Card>
+            {(user?.role?.name === 'admin' || user?.role?.name === 'manager' || user?.permissions?.includes('view_reports')) && (
+              <Card className="p-6"><p className="text-sm font-medium opacity-60">Generado este mes</p><h3 className="text-3xl font-bold">{summary?.estimated_earnings}€</h3></Card>
+            )}
             <Card className="p-6"><p className="text-sm font-medium opacity-60">Vacaciones Restantes</p><h3 className="text-3xl font-bold">12 días</h3></Card>
           </div>
 
