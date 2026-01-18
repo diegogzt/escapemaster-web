@@ -45,15 +45,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 
-// Updated default layout with higher resolution values (12 columns, 10px rows)
-const DEFAULT_LAYOUT: WidgetConfig[] = [
-  { id: "stats-1", type: "stats", colSpan: 48, rowSpan: 6 },
-  { id: "quarterly-1", type: "quarterly-stats", colSpan: 24, rowSpan: 12 },
-  { id: "revenue-chart-1", type: "revenue-chart", colSpan: 24, rowSpan: 16 },
-  { id: "upcoming-1", type: "upcoming", colSpan: 24, rowSpan: 20 },
-  { id: "occupancy-1", type: "occupancy-chart", colSpan: 12, rowSpan: 14 },
-  { id: "calendar-1", type: "calendar", colSpan: 12, rowSpan: 16 },
-];
+import {
+  useDashboardLayoutStore,
+  useDashboardLayoutActions,
+  DEFAULT_LAYOUT,
+} from "@/stores/dashboard-layout-store";
+
+
+// Local DEFAULT_LAYOUT removed in favor of store import
 
 function WidgetItem({
   widget,
@@ -293,13 +292,15 @@ function SortableWidget({
 
 export function DashboardView() {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [widgets, setWidgets] = useState<WidgetConfig[]>([]);
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   const [isMounted, setIsMounted] = useState(false);
+  
+  // Use persistent store
+  const { widgets, activeCollectionId } = useDashboardLayoutStore();
+  const { setWidgets, updateWidgetConfig, setActiveCollectionId, resetLayout: resetStoreLayout } = useDashboardLayoutActions();
 
   useEffect(() => {
     setIsMounted(true);
@@ -318,17 +319,15 @@ export function DashboardView() {
   const [isLoadingTemplates, setIsLoadingTemplates] = useState(false);
   const [configModalWidget, setConfigModalWidget] = useState<WidgetConfig | null>(null);
   const [showCollectionsModal, setShowCollectionsModal] = useState(false);
-  const [activeCollectionId, setActiveCollectionId] = useState<string | null>(null);
+  
+  // Track if we have synced with server to enable auto-save
+  const [isServerSynced, setIsServerSynced] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleConfigureWidget = (widget: WidgetConfig) => setConfigModalWidget(widget);
   
   const handleSaveWidgetConfig = (widgetId: string, config: WidgetConfigOptions) => {
-    setWidgets((prev) =>
-      prev.map((w) =>
-        w.id === widgetId ? { ...w, config: { ...w.config, ...config } } : w
-      )
-    );
+    updateWidgetConfig(widgetId, config);
   };
 
   const applyTemplate = (template: DashboardTemplate) => {
@@ -346,25 +345,35 @@ export function DashboardView() {
   useEffect(() => {
     if (!isMounted) return;
 
-    const loadLayout = async () => {
+    // Load from server in background to sync, but don't block UI
+    const syncLayout = async () => {
       try {
+        // We already display widgets from local store.
+        // We fetch from server to check for updates or initial load if local is empty (handled by default in store).
         const collections = await dashboardService.getCollections();
         const activeCollection = collections.find((c) => c.is_active);
 
         if (activeCollection) {
+          // If server has a collection, we update our local store to match
+          // Optional: Only if local is "dirty"? For now, server authority on load seems safer to keep sync.
+          // BUT user wants speed. If we overwrite immediately, we might cause a jump.
+          // Let's only overwrite if we strictly rely on server.
+          // User request: "guardes en cache... y si no han habido cambios...".
+          // Strategy: Use local cache immediately. Fetch server. If server is different, update? 
+          // For now, let's update store, it will trigger re-render efficiently.
           setWidgets(activeCollection.layout as WidgetConfig[]);
           setActiveCollectionId(activeCollection.id);
         } else {
-          setWidgets(DEFAULT_LAYOUT);
+            // No active collection on server.
+            // If we have nothing in store, set default? Store already has default.
         }
       } catch (e) {
-        console.error("Failed to load dashboard layout", e);
-        setWidgets(DEFAULT_LAYOUT);
+        console.error("Failed to sync dashboard layout", e);
       } finally {
-        setIsLoaded(true);
+        setIsServerSynced(true);
       }
     };
-    loadLayout();
+    syncLayout();
 
     const fetchTemplates = async () => {
       setIsLoadingTemplates(true);
@@ -378,13 +387,15 @@ export function DashboardView() {
       }
     };
     fetchTemplates();
-  }, [isMounted]);
+  }, [isMounted, setWidgets, setActiveCollectionId]);
 
   useEffect(() => {
     if (!isMounted) return;
     
     const autoSave = async () => {
-      if (isLoaded && activeCollectionId && !isSaving) {
+      // Only auto-save if we have synced with server at least once (to avoid overwriting server with stale local default)
+      // and we have an active collection.
+      if (isServerSynced && activeCollectionId && !isSaving) {
         try {
           await dashboardService.updateCollection(activeCollectionId, {
             layout: widgets as any,
@@ -395,9 +406,10 @@ export function DashboardView() {
       }
     };
 
+    // Debounce auto-save
     const timer = setTimeout(() => { autoSave(); }, 2000);
     return () => clearTimeout(timer);
-  }, [widgets, isLoaded, activeCollectionId, isSaving, isMounted]);
+  }, [widgets, isServerSynced, activeCollectionId, isSaving, isMounted]);
 
   const handleSaveLayout = async () => {
     setIsSaving(true);
@@ -434,11 +446,11 @@ export function DashboardView() {
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      setWidgets((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
+        // We need a helper for arrayMove with the store setters, or just calculate new array and set it
+        // Since arrayMove returns a new array, we can use setWidgets
+        const oldIndex = widgets.findIndex((item) => item.id === active.id);
+        const newIndex = widgets.findIndex((item) => item.id === over.id);
+        setWidgets(arrayMove(widgets, oldIndex, newIndex));
     }
     setActiveId(null);
   };
@@ -473,15 +485,15 @@ export function DashboardView() {
   };
 
   const resetLayout = () => {
-    setWidgets(widgets.map((w) => {
-      const def = WIDGET_REGISTRY[w.type];
-      return { ...w, colSpan: def.defaultColSpan, rowSpan: def.defaultRowSpan || 8 };
-    }));
+      resetStoreLayout(DEFAULT_LAYOUT);
   };
 
   const activeWidget = activeId ? widgets.find((w) => w.id === activeId) : null;
 
   if (!isMounted) {
+    // Return a lightweight placeholder or the "skeleton" structure if possible.
+    // Since we can't render DndContext on server, we must wait.
+    // BUT this wait is now ~100ms (hydration) instead of 5s (API).
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
