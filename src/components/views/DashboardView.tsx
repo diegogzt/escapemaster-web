@@ -299,12 +299,19 @@ export function DashboardView() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  }, [isMounted]);
 
   const [templates, setTemplates] = useState<DashboardTemplate[]>([]);
   const [showTemplateSelector, setShowTemplateSelector] = useState(false);
@@ -337,6 +344,8 @@ export function DashboardView() {
   };
 
   useEffect(() => {
+    if (!isMounted) return;
+
     const loadLayout = async () => {
       try {
         const collections = await dashboardService.getCollections();
@@ -369,9 +378,11 @@ export function DashboardView() {
       }
     };
     fetchTemplates();
-  }, []);
+  }, [isMounted]);
 
   useEffect(() => {
+    if (!isMounted) return;
+    
     const autoSave = async () => {
       if (isLoaded && activeCollectionId && !isSaving) {
         try {
@@ -386,7 +397,7 @@ export function DashboardView() {
 
     const timer = setTimeout(() => { autoSave(); }, 2000);
     return () => clearTimeout(timer);
-  }, [widgets, isLoaded, activeCollectionId, isSaving]);
+  }, [widgets, isLoaded, activeCollectionId, isSaving, isMounted]);
 
   const handleSaveLayout = async () => {
     setIsSaving(true);
@@ -469,6 +480,14 @@ export function DashboardView() {
   };
 
   const activeWidget = activeId ? widgets.find((w) => w.id === activeId) : null;
+
+  if (!isMounted) {
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 relative min-h-screen pb-20">
