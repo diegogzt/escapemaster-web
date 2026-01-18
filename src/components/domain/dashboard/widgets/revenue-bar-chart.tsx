@@ -71,10 +71,19 @@ export function RevenueBarChartWidget({
       margin: { top: 5, right: 10, left: 0, bottom: 5 },
     };
 
+    const formatXAxis = (tick: string) => {
+      if (tick && tick.includes("-") && tick.length === 10) {
+        // Assume YYYY-MM-DD and show only DD
+        return tick.split("-")[2];
+      }
+      return tick;
+    };
+
     const commonAxisProps = {
       axisLine: false,
       tickLine: false,
-      tick: { fill: "#6B7280", fontSize: 12 },
+      tick: { fill: "#6B7280", fontSize: 10 },
+      tickFormatter: formatXAxis,
     };
 
 

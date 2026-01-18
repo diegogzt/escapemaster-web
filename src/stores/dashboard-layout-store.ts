@@ -21,6 +21,8 @@ export const DEFAULT_LAYOUT: WidgetConfig[] = [
   { id: "upcoming-1", type: "upcoming", colSpan: 24, rowSpan: 20 },
   { id: "occupancy-1", type: "occupancy-chart", colSpan: 12, rowSpan: 14 },
   { id: "calendar-1", type: "calendar", colSpan: 12, rowSpan: 16 },
+  { id: "fiscal-1", type: "fiscal", colSpan: 24, rowSpan: 12 },
+  { id: "projected-1", type: "projected", colSpan: 24, rowSpan: 12 },
 ];
 
 export const useDashboardLayoutStore = create<DashboardLayoutState>()(

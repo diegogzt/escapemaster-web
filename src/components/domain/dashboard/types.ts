@@ -38,6 +38,8 @@ export interface WidgetConfigOptions {
   // Generic
   title?: string;
   refreshInterval?: number; // in seconds
+  defaultPeriod?: "week" | "month" | "quarter" | "year";
+  targetMonthly?: number;
 }
 
 export interface WidgetConfig {

@@ -31,6 +31,8 @@ const CONFIG_LABELS: Record<keyof WidgetConfigOptions, string> = {
   title: "Título personalizado",
   refreshInterval: "Intervalo de actualización (seg)",
   visibleStats: "Estadísticas visibles",
+  defaultPeriod: "Período por defecto",
+  targetMonthly: "Meta mensual (€)",
 };
 
 // Options for select fields
