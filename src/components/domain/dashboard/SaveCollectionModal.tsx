@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { X, Save, FolderPlus, Trash2, Check } from "lucide-react";
 import Button from "@/components/Button";
 import { WidgetConfig, WidgetType } from "./types";
-import dashboardService, { UserWidgetCollection } from "@/services/dashboard";
+import { widgets as dashboardService, type UserWidgetCollection } from "@/services/api";
 
 interface SaveCollectionModalProps {
   isOpen: boolean;

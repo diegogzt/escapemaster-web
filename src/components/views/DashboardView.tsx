@@ -25,7 +25,7 @@ import { WidgetConfigModal } from "@/components/domain/dashboard/WidgetConfigMod
 import { SaveCollectionModal } from "@/components/domain/dashboard/SaveCollectionModal";
 import { TemplatePreviewCompact } from "@/components/domain/dashboard/TemplatePreview";
 import { cn } from "@/utils";
-import dashboardService, { DashboardTemplate } from "@/services/dashboard";
+import { widgets as dashboardService, type DashboardTemplate } from "@/services/api";
 import {
   DndContext,
   closestCenter,

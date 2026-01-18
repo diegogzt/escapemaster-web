@@ -62,7 +62,7 @@ export function CalendarWidget({
     async function fetchRooms() {
       try {
         const data = await roomsApi.list();
-        setRooms(data);
+        setRooms(data?.rooms || data || []);
       } catch (error) {
         console.error("Error fetching rooms", error);
       }

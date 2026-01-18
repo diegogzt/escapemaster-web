@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import dashboardService, { WidgetDefinition as APIWidgetDefinition } from "@/services/dashboard";
+import { widgets as dashboardService, type WidgetDefinition as APIWidgetDefinition } from "@/services/api";
 import { WIDGET_REGISTRY } from "./widget-registry";
 import { WidgetDefinition, WidgetConfigOptions } from "./types";
 
