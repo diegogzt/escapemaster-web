@@ -553,6 +553,35 @@ export default function SettingsPage() {
           </Card>
         </section>
 
+        {/* System Configuration Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+             <Settings2 className="text-primary" size={24} />
+             <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Configuración del Sistema</h2>
+          </div>
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
+            <CardHeader>
+               <CardTitle>Administración Global</CardTitle>
+            </CardHeader>
+            <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-background-soft)]">
+                  <div className="flex items-center gap-3">
+                     <div className="w-10 h-10 bg-[var(--color-background)] rounded-lg shadow-sm flex items-center justify-center border border-[var(--color-beige)] text-primary">
+                        <Layout size={20} />
+                     </div>
+                     <div>
+                        <h4 className="font-bold text-[var(--color-foreground)]">Widgets del Dashboard</h4>
+                        <p className="text-xs text-[var(--color-foreground)] opacity-80">Dimensiones mínimas y configuración global.</p>
+                     </div>
+                  </div>
+                  <Link href="/settings/widgets">
+                    <Button variant="outline" size="sm" className="h-8 text-xs">Acceder</Button>
+                  </Link>
+               </div>
+            </div>
+          </Card>
+        </section>
+
         {/* Feature Highlights (replacing security in this view or just removing personal items) */}
         <section>
           <div className="flex items-center gap-2 mb-4">

@@ -459,6 +459,8 @@ export interface WidgetDefinition {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  min_col_span?: number;
+  min_row_span?: number;
 }
 
 export interface UserWidgetCollection {
@@ -500,6 +502,11 @@ export const widgets = {
   // Get all widget definitions
   getWidgetDefinitions: async (): Promise<WidgetDefinition[]> => {
     const response = await api.get("/widgets/definitions");
+    return response.data;
+  },
+
+  updateDefinition: async (id: string, data: Partial<WidgetDefinition>): Promise<WidgetDefinition> => {
+    const response = await api.put(`/widgets/definitions/${id}`, data);
     return response.data;
   },
 

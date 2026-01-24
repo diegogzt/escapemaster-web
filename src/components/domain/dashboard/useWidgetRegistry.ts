@@ -39,6 +39,8 @@ export function useWidgetRegistry() {
                 ...localDef.defaultConfig,
                 ...(apiDef.default_config as WidgetConfigOptions),
               },
+              minColSpan: apiDef.min_col_span ?? localDef.minColSpan,
+              minRowSpan: apiDef.min_row_span ?? localDef.minRowSpan,
             };
           }
           // Note: If widget exists in API but not locally, we can't render it
