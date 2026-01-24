@@ -244,7 +244,7 @@ export function CalendarWidget({
   }
 
   return (
-    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden relative">
+    <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full min-h-[420px] flex flex-col overflow-hidden relative">
        {/* Block Mode Overlay/Indicator */}
       {isBlockMode && (
          <div className="absolute top-0 left-0 right-0 h-1 bg-red-500 z-10 animate-pulse" />

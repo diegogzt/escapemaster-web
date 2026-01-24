@@ -58,6 +58,8 @@ export interface WidgetDefinition {
   component: React.ComponentType<WidgetConfigOptions>;
   defaultColSpan: number;
   defaultRowSpan?: number;
+  minColSpan?: number;
+  minRowSpan?: number;
   // Define which config options this widget supports
   configurableOptions?: (keyof WidgetConfigOptions)[];
   defaultConfig?: WidgetConfigOptions;

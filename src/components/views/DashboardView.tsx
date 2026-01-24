@@ -478,8 +478,13 @@ export function DashboardView() {
   const handleResize = (id: string, newSpan: number, dimension: "width" | "height") => {
     setWidgets(widgets.map((w) => {
       if (w.id === id) {
-        if (dimension === "width") return { ...w, colSpan: Math.max(1, Math.min(48, newSpan)) };
-        return { ...w, rowSpan: Math.max(5, newSpan) };
+        const def = WIDGET_REGISTRY[w.type];
+        if (dimension === "width") {
+            const minW = def?.minColSpan || 1;
+            return { ...w, colSpan: Math.max(minW, Math.min(48, newSpan)) };
+        }
+        const minH = def?.minRowSpan || 5;
+        return { ...w, rowSpan: Math.max(minH, newSpan) };
       }
       return w;
     }));
