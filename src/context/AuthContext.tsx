@@ -37,24 +37,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     Cookies.set("token", token, { expires: 7 }); // 7 days
     setIsAuthenticated(true);
     
-      // Fetch user data immediately after login
-      auth.me().then((userData) => {
-        setUser(userData);
-
-        if (!userData.organization_id) {
-          router.push("/onboarding");
-        } else {
-          router.push("/dashboard");
-        }
-      }).catch((error) => {
-        console.error("Login failed during user fetch:", error);
-        // If we can't get user data, we still have the token, but we might be in an inconsistent state
-        // Let's force a reload or logout to be safe if this is critical
-        logout();
-      });
-    },
-    [router, logout]
-  );
+    // Fetch user data immediately after login
+    auth.me().then((userData) => {
+      setUser(userData);
+      if (!userData.organization_id) {
+        router.push("/onboarding");
+      } else {
+        router.push("/dashboard");
+      }
+    }).catch((error) => {
+      console.error("Login failed during user fetch:", error);
+      // If we can't get user data, we might want to logout or show error
+      // For now, we'll just log it, but ideally we should handle it.
+    });
+  }, [router]);
 
   const updateUser = useCallback(async (data: any) => {
     setUser((prev: any) => ({ ...prev, ...data }));

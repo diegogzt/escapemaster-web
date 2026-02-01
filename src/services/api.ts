@@ -165,24 +165,6 @@ export const dashboard = {
       console.error("Error fetching bookings chart:", error);
       throw error;
     }
-  },
-  getCalendarStatus: async (month: number, year: number) => {
-    try {
-      const response = await api.get("/dashboard/calendar-status", { params: { month, year } });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching calendar status:", error);
-      throw error;
-    }
-  },
-  blockHours: async (data: any) => {
-    try {
-      const response = await api.post("/dashboard/block-hours", data);
-      return response.data;
-    } catch (error) {
-       console.error("Error blocking hours:", error);
-       throw error;
-    }
   }
 };
 
@@ -212,10 +194,6 @@ export const bookings = {
   },
   update: async (id: string, data: any) => {
     const response = await api.put(`/bookings/${id}`, data);
-    return response.data;
-  },
-  finalize: async (id: string, data: { send_email: boolean }) => {
-    const response = await api.post(`/bookings/${id}/finalize`, data);
     return response.data;
   },
 };
@@ -388,158 +366,5 @@ export const admin = {
     return response.data;
   },
 };
-
-export const emailTemplates = {
-  list: async () => {
-    const response = await api.get("/email-templates");
-    return response.data;
-  },
-  get: async (id: string) => {
-    const response = await api.get(`/email-templates/${id}`);
-    return response.data;
-  },
-  create: async (data: any) => {
-    const response = await api.post("/email-templates", data);
-    return response.data;
-  },
-  update: async (id: string, data: any) => {
-    const response = await api.put(`/email-templates/${id}`, data);
-    return response.data;
-  },
-  delete: async (id: string) => {
-    const response = await api.delete(`/email-templates/${id}`);
-    return response.data;
-  },
-};
-export const reports = {
-  getRevenue: async (params: {
-    start_date: string;
-    end_date: string;
-    type?: "actual" | "projected";
-    group_by?: "day" | "week" | "month" | "quarter" | "year";
-  }) => {
-    const response = await api.get("/reports/revenue", { params });
-    return response.data;
-  },
-  exportBookings: async (format: "pdf" | "excel") => {
-    const response = await api.get("/reports/bookings/export", {
-      params: { format },
-      responseType: "blob",
-    });
-    return response.data;
-  },
-};
-
-export interface DashboardTemplate {
-  id: string;
-  name: string;
-  description: string | null;
-  layout: WidgetLayoutConfig[];
-  is_default: boolean;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface WidgetLayoutConfig {
-  id: string;
-  type: string;
-  colSpan: number;
-  rowSpan: number;
-  config?: Record<string, unknown>;
-}
-
-export interface WidgetDefinition {
-  id: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  component_path: string;
-  default_config: Record<string, unknown>;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-  min_col_span?: number;
-  min_row_span?: number;
-}
-
-export interface UserWidgetCollection {
-  id: string;
-  user_id: string;
-  name: string;
-  description: string | null;
-  layout: WidgetLayoutConfig[];
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface CreateCollectionRequest {
-  name: string;
-  description?: string;
-  layout: WidgetLayoutConfig[];
-}
-
-export const widgets = {
-  getRevenueSummary: async (period: string = "current_month") => {
-    const response = await api.get("/widgets/revenue-summary", {
-      params: { period },
-    });
-    return response.data;
-  },
-  // Get all available dashboard templates
-  getTemplates: async (): Promise<DashboardTemplate[]> => {
-    const response = await api.get("/widgets/templates");
-    return response.data;
-  },
-
-  // Get a specific template by ID
-  getTemplate: async (templateId: string): Promise<DashboardTemplate> => {
-    const response = await api.get(`/widgets/templates/${templateId}`);
-    return response.data;
-  },
-
-  // Get all widget definitions
-  getWidgetDefinitions: async (): Promise<WidgetDefinition[]> => {
-    const response = await api.get("/widgets/definitions");
-    return response.data;
-  },
-
-  updateDefinition: async (id: string, data: Partial<WidgetDefinition>): Promise<WidgetDefinition> => {
-    const response = await api.put(`/widgets/definitions/${id}`, data);
-    return response.data;
-  },
-
-  // User Widget Collections
-  getCollections: async (): Promise<UserWidgetCollection[]> => {
-    const response = await api.get("/widgets/collections");
-    return response.data;
-  },
-
-  getCollection: async (collectionId: string): Promise<UserWidgetCollection> => {
-    const response = await api.get(`/widgets/collections/${collectionId}`);
-    return response.data;
-  },
-
-  createCollection: async (data: CreateCollectionRequest): Promise<UserWidgetCollection> => {
-    const response = await api.post("/widgets/collections", data);
-    return response.data;
-  },
-
-  updateCollection: async (collectionId: string, data: Partial<CreateCollectionRequest>): Promise<UserWidgetCollection> => {
-    const response = await api.put(`/widgets/collections/${collectionId}`, data);
-    return response.data;
-  },
-
-  deleteCollection: async (collectionId: string): Promise<void> => {
-    await api.delete(`/widgets/collections/${collectionId}`);
-  },
-
-  activateCollection: async (collectionId: string): Promise<UserWidgetCollection> => {
-    const response = await api.post(`/widgets/collections/${collectionId}/activate`);
-    return response.data;
-  },
-};
-
 
 export default api;

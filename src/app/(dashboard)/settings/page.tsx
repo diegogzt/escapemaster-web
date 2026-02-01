@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import Link from "next/link";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
@@ -447,14 +446,6 @@ export default function SettingsPage() {
               <Input label="Sitio Web" defaultValue="https://miescaperoom.com" />
               <Input label="Correo Electrónico de Contacto" defaultValue="contacto@miescaperoom.com" />
               <Input label="Teléfono" defaultValue="+34 912 345 678" />
-              <div className="md:col-span-2">
-                <Input 
-                  label="ER Director URL (Configurador de Disponibilidad)" 
-                  defaultValue="https://www.residentriddle.es/"
-                  placeholder="https://su-dominio.es/"
-                  helpText="Esta URL se utiliza para obtener las horas disponibles de tus juegos si utilizas ER Director."
-                />
-              </div>
             </div>
           </Card>
         </section>
@@ -528,56 +519,11 @@ export default function SettingsPage() {
                       <p className="text-xs text-[var(--color-foreground)] opacity-80">{service.desc}</p>
                     </div>
                   </div>
-                    <Button variant="outline" size="sm" className="h-8 text-xs">
+                  <Button variant="outline" size="sm" className="h-8 text-xs">
                     {service.active ? "Configurar" : "Conectar"}
                   </Button>
                 </div>
               ))}
-              <div className="flex items-center justify-between p-4 border border-primary/30 rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white dark:bg-slate-800 rounded-lg shadow-sm flex items-center justify-center border border-primary/20 text-primary">
-                    <Mail size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-[var(--color-foreground)]">Plantillas de Email</h4>
-                    <p className="text-xs text-[var(--color-foreground)] opacity-80">Configura correos de post-sesión</p>
-                  </div>
-                </div>
-                <Link href="/settings/emails">
-                  <Button size="sm" className="h-8 text-xs">
-                    Gestionar
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </Card>
-        </section>
-
-        {/* System Configuration Section */}
-        <section>
-          <div className="flex items-center gap-2 mb-4">
-             <Settings2 className="text-primary" size={24} />
-             <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Configuración del Sistema</h2>
-          </div>
-          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
-            <CardHeader>
-               <CardTitle>Administración Global</CardTitle>
-            </CardHeader>
-            <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-               <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl hover:border-primary/30 transition-colors bg-[var(--color-background-soft)]">
-                  <div className="flex items-center gap-3">
-                     <div className="w-10 h-10 bg-[var(--color-background)] rounded-lg shadow-sm flex items-center justify-center border border-[var(--color-beige)] text-primary">
-                        <Layout size={20} />
-                     </div>
-                     <div>
-                        <h4 className="font-bold text-[var(--color-foreground)]">Widgets del Dashboard</h4>
-                        <p className="text-xs text-[var(--color-foreground)] opacity-80">Dimensiones mínimas y configuración global.</p>
-                     </div>
-                  </div>
-                  <Link href="/settings/widgets">
-                    <Button variant="outline" size="sm" className="h-8 text-xs">Acceder</Button>
-                  </Link>
-               </div>
             </div>
           </Card>
         </section>
