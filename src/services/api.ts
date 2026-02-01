@@ -316,6 +316,106 @@ export const users = {
   },
 };
 
+export const emailTemplates = {
+  list: async () => {
+    const response = await api.get("/email-templates");
+    return response.data;
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/email-templates/${id}`);
+    return response.data;
+  },
+  create: async (data: any) => {
+    const response = await api.post("/email-templates", data);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/email-templates/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/email-templates/${id}`);
+    return response.data;
+  },
+};
+
+export interface WidgetDefinition {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  component_path: string;
+  default_config: any;
+  min_col_span: number;
+  min_row_span: number;
+}
+
+export interface DashboardTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  layout: any;
+  is_default: boolean;
+}
+
+export interface UserWidgetCollection {
+  id: string;
+  name: string;
+  description?: string;
+  layout: any;
+  is_active: boolean;
+}
+
+export const widgets = {
+  getWidgetDefinitions: async () => {
+    const response = await api.get("/widgets/definitions");
+    return response.data;
+  },
+  updateDefinition: async (id: string, data: any) => {
+    const response = await api.put(`/widgets/definitions/${id}`, data);
+    return response.data;
+  },
+  getTemplates: async () => {
+    const response = await api.get("/widgets/templates");
+    return response.data;
+  },
+  getCollections: async () => {
+    const response = await api.get("/widgets/collections");
+    return response.data;
+  },
+  createCollection: async (data: any) => {
+    const response = await api.post("/widgets/collections", data);
+    return response.data;
+  },
+  updateCollection: async (id: string, data: any) => {
+    const response = await api.put(`/widgets/collections/${id}`, data);
+    return response.data;
+  },
+  deleteCollection: async (id: string) => {
+    const response = await api.delete(`/widgets/collections/${id}`);
+    return response.data;
+  },
+  activateCollection: async (id: string) => {
+    const response = await api.post(`/widgets/collections/${id}/activate`);
+    return response.data;
+  },
+  getRevenueSummary: async (period: string = "month") => {
+    const response = await api.get("/dashboard/stats", { params: { period } });
+    return response.data;
+  },
+};
+
+export const reports = {
+  getRevenue: async (params?: any) => {
+    const response = await api.get("/reports/revenue", { params });
+    return response.data;
+  },
+  getBookings: async (params?: any) => {
+    const response = await api.get("/reports/bookings", { params });
+    return response.data;
+  },
+};
+
 export const roles = {
   list: async () => {
     try {

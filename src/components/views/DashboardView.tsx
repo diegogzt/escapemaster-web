@@ -332,7 +332,7 @@ export function DashboardView() {
   };
 
   const applyTemplate = (template: DashboardTemplate) => {
-    const newLayout: WidgetConfig[] = template.layout.map((item) => ({
+    const newLayout: WidgetConfig[] = template.layout.map((item: any) => ({
       id: item.id,
       type: item.type as WidgetType,
       colSpan: item.colSpan,
@@ -352,7 +352,7 @@ export function DashboardView() {
         // We already display widgets from local store.
         // We fetch from server to check for updates or initial load if local is empty (handled by default in store).
         const collections = await dashboardService.getCollections();
-        const activeCollection = collections.find((c) => c.is_active);
+        const activeCollection = collections.find((c: any) => c.is_active);
 
         if (activeCollection) {
           // If server has a collection, we update our local store to match
