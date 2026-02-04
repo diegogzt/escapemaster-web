@@ -348,6 +348,8 @@ export interface WidgetDefinition {
   default_config: any;
   min_col_span: number;
   min_row_span: number;
+  default_col_span: number;
+  default_row_span: number;
 }
 
 export interface DashboardTemplate {

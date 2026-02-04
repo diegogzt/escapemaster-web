@@ -60,6 +60,9 @@ export interface WidgetDefinition {
   defaultRowSpan?: number;
   minColSpan?: number;
   minRowSpan?: number;
+  // Configurable Defaults from API
+  apiDefaultColSpan?: number;
+  apiDefaultRowSpan?: number;
   // Define which config options this widget supports
   configurableOptions?: (keyof WidgetConfigOptions)[];
   defaultConfig?: WidgetConfigOptions;

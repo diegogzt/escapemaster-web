@@ -60,10 +60,10 @@ export default function WidgetSettingsPage() {
       <div className="bg-[var(--color-background)] rounded-xl shadow-sm border border-[var(--color-beige)] overflow-hidden">
         {/* Table Header */}
         <div className="grid grid-cols-12 gap-4 p-4 border-b border-[var(--color-beige)] bg-[var(--color-background-soft)] font-medium text-sm text-[var(--color-muted-foreground)]">
-          <div className="col-span-5">Widget Details</div>
-          <div className="col-span-3">Component Identifier</div>
-          <div className="col-span-2 text-center">Min Columns</div>
-          <div className="col-span-2 text-center">Min Rows</div>
+          <div className="col-span-1 text-center font-bold text-xs uppercase tracking-wider">Def Col</div>
+          <div className="col-span-1 text-center font-bold text-xs uppercase tracking-wider">Def Row</div>
+          <div className="col-span-1 text-center font-bold text-xs uppercase tracking-wider">Min Col</div>
+          <div className="col-span-1 text-center font-bold text-xs uppercase tracking-wider">Min Row</div>
         </div>
 
         {/* Rows */}
@@ -84,14 +84,19 @@ export default function WidgetSettingsPage() {
 function WidgetRow({ definition, onSave }: { definition: WidgetDefinition, onSave?: () => void }) {
   const [minCol, setMinCol] = useState(definition.min_col_span || 1);
   const [minRow, setMinRow] = useState(definition.min_row_span || 1);
+  const [defCol, setDefCol] = useState(definition.default_col_span || 12);
+  const [defRow, setDefRow] = useState(definition.default_row_span || 8);
+  
   const [isSaving, setIsSaving] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
-  // Update state when incoming definition changes (after successful refresh)
+  // Update state when incoming definition changes
   useEffect(() => {
     setMinCol(definition.min_col_span || 1);
     setMinRow(definition.min_row_span || 1);
-  }, [definition.min_col_span, definition.min_row_span]);
+    setDefCol(definition.default_col_span || 12);
+    setDefRow(definition.default_row_span || 8);
+  }, [definition]);
 
   // Reset success state after 2s
   useEffect(() => {
@@ -103,14 +108,18 @@ function WidgetRow({ definition, onSave }: { definition: WidgetDefinition, onSav
 
   const hasChanges = 
     minCol !== (definition.min_col_span || 1) || 
-    minRow !== (definition.min_row_span || 1);
+    minRow !== (definition.min_row_span || 1) ||
+    defCol !== (definition.default_col_span || 12) ||
+    defRow !== (definition.default_row_span || 8);
 
   const handleSave = async () => {
     try {
       setIsSaving(true);
       await dashboardService.updateDefinition(definition.id, {
         min_col_span: minCol,
-        min_row_span: minRow
+        min_row_span: minRow,
+        default_col_span: defCol,
+        default_row_span: defRow
       });
       setIsSuccess(true);
       if (onSave) onSave();
@@ -124,65 +133,81 @@ function WidgetRow({ definition, onSave }: { definition: WidgetDefinition, onSav
 
   return (
     <div className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-[var(--color-background-soft)] transition-colors group">
-      <div className="col-span-5">
-        <h3 className="font-semibold text-[var(--color-heading)]">{definition.name}</h3>
-        <p className="text-sm text-[var(--color-muted-foreground)]">{definition.description || "No description"}</p>
-        <span className="text-xs font-mono text-primary bg-primary/10 px-2 py-0.5 rounded mt-1 inline-block">
+      <div className="col-span-4">
+        <h3 className="font-semibold text-[var(--color-heading)] truncate" title={definition.name}>{definition.name}</h3>
+        <span className="text-xs font-mono text-primary bg-primary/10 px-2 py-0.5 rounded mt-1 inline-block truncate max-w-full">
           {definition.slug}
         </span>
       </div>
       
-      <div className="col-span-3">
-        <code className="text-xs bg-gray-100 px-2 py-1 rounded text-gray-600 block truncate" title={definition.component_path}>
-          {definition.component_path}
-        </code>
-      </div>
-
-      <div className="col-span-2 px-4">
+      {/* Inputs Grid */}
+      <div className="col-span-8 grid grid-cols-4 gap-4">
         <Input 
           type="number" 
           min={1} 
-          max={12} 
+          max={48} 
+          value={defCol} 
+          onChange={(e) => setDefCol(parseInt(e.target.value) || 1)}
+          wrapperClassName="mb-0"
+          className="text-center h-9 text-sm"
+          title="Default Column Span"
+        />
+        <Input 
+          type="number" 
+          min={1} 
+          max={48} 
+          value={defRow} 
+          onChange={(e) => setDefRow(parseInt(e.target.value) || 1)}
+          wrapperClassName="mb-0"
+          className="text-center h-9 text-sm"
+          title="Default Row Span"
+        />
+        <Input 
+          type="number" 
+          min={1} 
+          max={48} 
           value={minCol} 
           onChange={(e) => setMinCol(parseInt(e.target.value) || 1)}
           wrapperClassName="mb-0"
-          className="text-center h-10"
-        />
-      </div>
-
-      <div className="col-span-2 px-4 relative flex items-center justify-center gap-2">
-        <Input 
-          type="number" 
-          min={1} 
-          max={12} 
-          value={minRow} 
-          onChange={(e) => setMinRow(parseInt(e.target.value) || 1)}
-          wrapperClassName="mb-0"
-          className="text-center h-10"
+          className="text-center h-9 text-sm"
+          title="Min Column Span"
         />
         
-        {/* Floating Action Button for Row */}
-        {(hasChanges || isSuccess) && (
-          <div className="absolute -right-2 top-1/2 -translate-y-1/2 flex items-center">
-             {isSuccess ? (
-                <div className="bg-green-100 text-green-600 p-2 rounded-full shadow-sm animate-in zoom-in">
-                  <CheckCircle2 size={18} />
-                </div>
-             ) : (
-                <Button 
-                   type="button"
-                   size="sm" 
-                   variant="primary" 
-                   className="h-10 w-10 p-0 rounded-full shadow-md" 
-                   onClick={handleSave}
-                   loading={isSaving}
-                   title="Save Changes"
-                >
-                   <Save size={18} />
-                </Button>
-             )}
-          </div>
-        )}
+        <div className="relative">
+          <Input 
+            type="number" 
+            min={1} 
+            max={48} 
+            value={minRow} 
+            onChange={(e) => setMinRow(parseInt(e.target.value) || 1)}
+            wrapperClassName="mb-0"
+            className="text-center h-9 text-sm"
+            title="Min Row Span"
+          />
+          
+          {/* Floating Action Button */}
+          {(hasChanges || isSuccess) && (
+            <div className="absolute -right-3 top-1/2 -translate-y-1/2 flex items-center z-10">
+               {isSuccess ? (
+                  <div className="bg-green-100 text-green-600 p-1.5 rounded-full shadow-md animate-in zoom-in border border-green-200">
+                    <CheckCircle2 size={16} />
+                  </div>
+               ) : (
+                  <Button 
+                     type="button"
+                     size="sm" 
+                     variant="primary" 
+                     className="h-8 w-8 p-0 rounded-full shadow-md" 
+                     onClick={handleSave}
+                     loading={isSaving}
+                     title="Save Changes"
+                  >
+                     <Save size={14} />
+                  </Button>
+               )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

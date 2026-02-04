@@ -41,6 +41,8 @@ export function useWidgetRegistry() {
               },
               minColSpan: apiDef.min_col_span ?? localDef.minColSpan,
               minRowSpan: apiDef.min_row_span ?? localDef.minRowSpan,
+              defaultColSpan: apiDef.default_col_span ?? localDef.defaultColSpan,
+              defaultRowSpan: apiDef.default_row_span ?? localDef.defaultRowSpan,
             };
           }
           // Note: If widget exists in API but not locally, we can't render it

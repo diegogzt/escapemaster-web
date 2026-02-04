@@ -15,11 +15,12 @@ import {
   Save,
 } from "lucide-react";
 import Button from "@/components/Button";
-import { WIDGET_REGISTRY } from "@/components/domain/dashboard/widget-registry";
+import { useWidgetRegistry } from "@/components/domain/dashboard/useWidgetRegistry";
 import {
   WidgetConfig,
   WidgetType,
   WidgetConfigOptions,
+  WidgetDefinition
 } from "@/components/domain/dashboard/types";
 import { WidgetConfigModal } from "@/components/domain/dashboard/WidgetConfigModal";
 import { SaveCollectionModal } from "@/components/domain/dashboard/SaveCollectionModal";
@@ -51,11 +52,9 @@ import {
   DEFAULT_LAYOUT,
 } from "@/stores/dashboard-layout-store";
 
-
-// Local DEFAULT_LAYOUT removed in favor of store import
-
 function WidgetItem({
   widget,
+  registry,
   isEditMode,
   onRemove,
   onResize,
@@ -63,8 +62,10 @@ function WidgetItem({
   dragHandleProps,
   style,
   isDragging,
+  isBlinking: externalIsBlinking,
 }: {
   widget: WidgetConfig;
+  registry: Record<string, WidgetDefinition>;
   isEditMode: boolean;
   onRemove?: (id: string) => void;
   onResize?: (
@@ -76,8 +77,9 @@ function WidgetItem({
   dragHandleProps?: any;
   style?: React.CSSProperties;
   isDragging?: boolean;
+  isBlinking?: boolean;
 }) {
-  const def = WIDGET_REGISTRY[widget.type];
+  const def = registry[widget.type];
   const [isBlinking, setIsBlinking] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
 
@@ -118,16 +120,18 @@ function WidgetItem({
         delta = Math.round(diff / colWidth);
         newSpan = startColSpan + delta;
 
-        if (newSpan < 1 || newSpan > 48) {
-          isLimitReached = true;
+        if (newSpan < (def.minColSpan || 1) || newSpan > 48) {
+           newSpan = Math.max((def.minColSpan || 1), Math.min(48, newSpan));
+           isLimitReached = true;
         }
       } else {
         const diff = currentY - startY;
         delta = Math.round(diff / rowHeight);
         newSpan = startRowSpan + delta;
 
-        if (newSpan < 5) {
-          isLimitReached = true;
+        if (newSpan < (def.minRowSpan || 1)) {
+           newSpan = Math.max((def.minRowSpan || 1), newSpan);
+           isLimitReached = true;
         }
       }
 
@@ -136,14 +140,14 @@ function WidgetItem({
           setIsBlinking(true);
           setTimeout(() => setIsBlinking(false), 300);
         }
-      } else {
-        if (
+      } 
+      
+      if (
           (dimension === "width" && newSpan !== widget.colSpan) ||
           (dimension === "height" && newSpan !== widget.rowSpan)
         ) {
           onResize?.(widget.id, newSpan, dimension);
         }
-      }
     };
 
     const handleMouseUp = () => {
@@ -166,7 +170,7 @@ function WidgetItem({
         "relative group h-full w-full transition-all duration-200 bg-[var(--color-background)] rounded-xl shadow-sm border border-[var(--color-beige)] overflow-hidden",
         isEditMode && "ring-2 ring-dashed ring-primary/30 cursor-default",
         isDragging && "opacity-30",
-        isBlinking && "ring-4 ring-red-500 ring-opacity-100"
+        (isBlinking || externalIsBlinking) && "ring-4 ring-red-500 ring-opacity-100"
       )}
     >
       {isEditMode && (
@@ -235,6 +239,7 @@ function WidgetItem({
 
 function SortableWidget({
   widget,
+  registry,
   isEditMode,
   onRemove,
   onResize,
@@ -242,6 +247,7 @@ function SortableWidget({
   isMobile,
 }: {
   widget: WidgetConfig;
+  registry: Record<string, any>;
   isEditMode: boolean;
   onRemove: (id: string) => void;
   onResize: (
@@ -278,6 +284,7 @@ function SortableWidget({
     <div ref={setNodeRef} style={style} className="relative h-full">
       <WidgetItem
         widget={widget}
+        registry={registry}
         isEditMode={isEditMode}
         onRemove={onRemove}
         onResize={onResize}
@@ -295,8 +302,10 @@ export function DashboardView() {
   const [showAddWidget, setShowAddWidget] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-
   const [isMounted, setIsMounted] = useState(false);
+
+  // Use dynamic registry
+  const { registry } = useWidgetRegistry();
   
   // Use persistent store with safety check
   const { widgets: rawWidgets, activeCollectionId } = useDashboardLayoutStore();
@@ -349,24 +358,12 @@ export function DashboardView() {
     // Load from server in background to sync, but don't block UI
     const syncLayout = async () => {
       try {
-        // We already display widgets from local store.
-        // We fetch from server to check for updates or initial load if local is empty (handled by default in store).
         const collections = await dashboardService.getCollections();
         const activeCollection = collections.find((c: any) => c.is_active);
 
         if (activeCollection) {
-          // If server has a collection, we update our local store to match
-          // Optional: Only if local is "dirty"? For now, server authority on load seems safer to keep sync.
-          // BUT user wants speed. If we overwrite immediately, we might cause a jump.
-          // Let's only overwrite if we strictly rely on server.
-          // User request: "guardes en cache... y si no han habido cambios...".
-          // Strategy: Use local cache immediately. Fetch server. If server is different, update? 
-          // For now, let's update store, it will trigger re-render efficiently.
           setWidgets(activeCollection.layout as WidgetConfig[]);
           setActiveCollectionId(activeCollection.id);
-        } else {
-            // No active collection on server.
-            // If we have nothing in store, set default? Store already has default.
         }
       } catch (e) {
         console.error("Failed to sync dashboard layout", e);
@@ -394,8 +391,6 @@ export function DashboardView() {
     if (!isMounted) return;
     
     const autoSave = async () => {
-      // Only auto-save if we have synced with server at least once (to avoid overwriting server with stale local default)
-      // and we have an active collection.
       if (isServerSynced && activeCollectionId && !isSaving) {
         try {
           await dashboardService.updateCollection(activeCollectionId, {
@@ -407,7 +402,6 @@ export function DashboardView() {
       }
     };
 
-    // Debounce auto-save
     const timer = setTimeout(() => { autoSave(); }, 2000);
     return () => clearTimeout(timer);
   }, [widgets, isServerSynced, activeCollectionId, isSaving, isMounted]);
@@ -447,8 +441,6 @@ export function DashboardView() {
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-        // We need a helper for arrayMove with the store setters, or just calculate new array and set it
-        // Since arrayMove returns a new array, we can use setWidgets
         const oldIndex = widgets.findIndex((item) => item.id === active.id);
         const newIndex = widgets.findIndex((item) => item.id === over.id);
         setWidgets(arrayMove(widgets, oldIndex, newIndex));
@@ -462,12 +454,12 @@ export function DashboardView() {
   };
 
   const addWidget = (type: WidgetType) => {
-    const def = WIDGET_REGISTRY[type];
+    const def = registry[type]; // Use dynamic registry
     const newWidget: WidgetConfig = {
       id: `${type}-${Date.now()}`,
       type: type,
-      colSpan: def.defaultColSpan,
-      rowSpan: def.defaultRowSpan || 8,
+      colSpan: def.defaultColSpan, // Use dynamic default
+      rowSpan: def.defaultRowSpan || 8, // Use dynamic default
     };
     setWidgets([...widgets, newWidget]);
     setShowAddWidget(false);
@@ -478,13 +470,15 @@ export function DashboardView() {
   const handleResize = (id: string, newSpan: number, dimension: "width" | "height") => {
     setWidgets(widgets.map((w) => {
       if (w.id === id) {
-        const def = WIDGET_REGISTRY[w.type];
+        const def = registry[w.type]; // Use dynamic registry
         if (dimension === "width") {
             const minW = def?.minColSpan || 1;
             return { ...w, colSpan: Math.max(minW, Math.min(48, newSpan)) };
         }
         const minH = def?.minRowSpan || 5;
-        return { ...w, rowSpan: Math.max(minH, newSpan) };
+        // Use dynamic Min Row Span if available
+        const limitH = def?.minRowSpan || 5;
+        return { ...w, rowSpan: Math.max(limitH, newSpan) };
       }
       return w;
     }));
@@ -497,9 +491,6 @@ export function DashboardView() {
   const activeWidget = activeId ? widgets.find((w) => w.id === activeId) : null;
 
   if (!isMounted) {
-    // Return a lightweight placeholder or the "skeleton" structure if possible.
-    // Since we can't render DndContext on server, we must wait.
-    // BUT this wait is now ~100ms (hydration) instead of 5s (API).
     return (
       <div className="flex h-[50vh] w-full items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -597,7 +588,7 @@ export function DashboardView() {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.values(WIDGET_REGISTRY).map((def) => {
+              {Object.values(registry).map((def) => {
                 const isAdded = widgets.some((w) => w.type === def.type);
                 return (
                   <button key={def.type} onClick={() => addWidget(def.type as WidgetType)} className={cn("flex flex-col items-start p-4 border-2 rounded-lg transition-all text-left relative overflow-hidden", isAdded ? "border-primary/30 bg-primary/5" : "border-beige hover:border-primary hover:bg-[var(--color-light)]")}>
@@ -615,14 +606,28 @@ export function DashboardView() {
         <SortableContext items={widgets.map((w) => w.id)} strategy={rectSortingStrategy}>
           <div className={cn("grid gap-4", isMobile ? "grid-cols-1 auto-rows-auto" : "auto-rows-[10px]")} style={isMobile ? {} : { gridTemplateColumns: "repeat(48, minmax(0, 1fr))" }}>
             {widgets.map((widget) => (
-              <SortableWidget key={widget.id} widget={widget} isEditMode={isEditMode} onRemove={removeWidget} onResize={handleResize} onConfigure={handleConfigureWidget} isMobile={isMobile} />
+              <SortableWidget 
+                key={widget.id} 
+                widget={widget} 
+                registry={registry} // Pass registry
+                isEditMode={isEditMode} 
+                onRemove={removeWidget} 
+                onResize={handleResize} 
+                onConfigure={handleConfigureWidget} 
+                isMobile={isMobile} 
+              />
             ))}
           </div>
         </SortableContext>
         <DragOverlay modifiers={[restrictToWindowEdges]}>
           {activeWidget ? (
             <div style={{ width: "100%", height: "100%", cursor: "grabbing" }}>
-               <WidgetItem widget={activeWidget} isEditMode={isEditMode} isDragging />
+               <WidgetItem 
+                  widget={activeWidget} 
+                  registry={registry} // Pass registry
+                  isEditMode={isEditMode} 
+                  isDragging 
+               />
             </div>
           ) : null}
         </DragOverlay>
