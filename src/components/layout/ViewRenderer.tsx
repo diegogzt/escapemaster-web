@@ -17,32 +17,50 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
 
   console.log(`VIEW_RENDERER: pathname=${pathname}`);
 
+  // Track which persistent views have been visited to enable lazy mounting
+  const [visited, setVisited] = React.useState<Record<string, boolean>>({});
+
+  React.useEffect(() => {
+    if (PERSISTENT_PATHS.includes(pathname)) {
+      setVisited(prev => prev[pathname] ? prev : { ...prev, [pathname]: true });
+    }
+  }, [pathname]);
+
   // If we are on a persistent path, we want to show the persistent version
   const isPersistent = PERSISTENT_PATHS.includes(pathname);
 
   return (
     <div className="relative w-full h-full">
-      {/* Persistent Views Shell */}
+      {/* Persistent Views Shell - Lazy loaded and then kept alive */}
       <div className={isPersistent ? "block" : "hidden"}>
-        <div className={pathname === "/dashboard" ? "block" : "hidden"}>
-          <DashboardView />
-        </div>
-        <div className={pathname === "/calendar" ? "block" : "hidden"}>
-          <CalendarView />
-        </div>
-        <div className={pathname === "/bookings" ? "block" : "hidden"}>
-          <BookingsView />
-        </div>
-        <div className={pathname === "/time-tracking" ? "block" : "hidden"}>
-          <TimeTrackingView />
-        </div>
-        {/* Add more views here as needed */}
+        {visited["/dashboard"] && (
+          <div className={pathname === "/dashboard" ? "block" : "hidden"}>
+            <DashboardView />
+          </div>
+        )}
+        {visited["/calendar"] && (
+          <div className={pathname === "/calendar" ? "block" : "hidden"}>
+            <CalendarView />
+          </div>
+        )}
+        {visited["/bookings"] && (
+          <div className={pathname === "/bookings" ? "block" : "hidden"}>
+            <BookingsView />
+          </div>
+        )}
+        {visited["/time-tracking"] && (
+          <div className={pathname === "/time-tracking" ? "block" : "hidden"}>
+            <TimeTrackingView />
+          </div>
+        )}
       </div>
 
-      {/* Non-persistent content (Actual page children for subpages like /bookings/1) */}
-      <div className={!isPersistent ? "block" : "hidden"}>
-        {children}
-      </div>
+      {/* Non-persistent content (Actual page children for subpages like /reports) */}
+      {!isPersistent && (
+        <div className="block">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
