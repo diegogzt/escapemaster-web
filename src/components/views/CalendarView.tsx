@@ -131,7 +131,7 @@ export function CalendarView() {
       }
     }
     fetchData();
-  }, [calendarState.currentDate, calendarState.view]);
+  }, [isMounted, calendarState.currentDate, calendarState.view]);
 
   const isSameDay = (d1: Date, d2: Date) => 
     d1.getDate() === d2.getDate() && 
