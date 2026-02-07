@@ -55,18 +55,20 @@ export function CalendarWidget({
         setLoading(true);
         const firstDay = startOfMonth(date);
         const lastDay = endOfMonth(date);
+        const dateFrom = format(firstDay, "yyyy-MM-dd");
+        const dateTo = format(lastDay, "yyyy-MM-dd");
         
-        const [roomsData, bookingsData] = await Promise.all([
-          roomsApi.list(),
-          bookingsApi.list({
-            date_from: format(firstDay, "yyyy-MM-dd"),
-            date_to: format(lastDay, "yyyy-MM-dd"),
-            page_size: 200
-          }),
-        ]);
-        
-        // Transform rooms with colors
-        const roomsArr = Array.isArray(roomsData) ? roomsData : (roomsData?.rooms || []);
+        console.log(`[CalendarWidget] Fetching: ${dateFrom} to ${dateTo}`);
+
+        // Individual try-catch for rooms
+        let roomsArr = [];
+        try {
+          const roomsData = await roomsApi.list();
+          roomsArr = Array.isArray(roomsData) ? roomsData : (roomsData?.rooms || []);
+        } catch (rErr) {
+          console.warn("[CalendarWidget] Failed to fetch rooms", rErr);
+        }
+
         const transformedRooms: Room[] = (roomsArr || []).map((r: any, index: number) => ({
           id: r.id,
           name: r.name,
@@ -74,7 +76,12 @@ export function CalendarWidget({
         }));
         setRooms(transformedRooms);
         
-        // Transform bookings
+        const bookingsData = await bookingsApi.list({
+          date_from: dateFrom,
+          date_to: dateTo,
+          page_size: 200
+        });
+        
         const bookingsArr = Array.isArray(bookingsData) ? bookingsData : (bookingsData?.bookings || []);
         const transformedBookings: Booking[] = (bookingsArr || []).map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
@@ -86,8 +93,8 @@ export function CalendarWidget({
           };
         });
         setBookings(transformedBookings);
-      } catch (err) {
-        console.error("Error fetching calendar widget data:", err);
+      } catch (err: any) {
+        console.error("[CalendarWidget] Critical fetch error:", err);
       } finally {
         setLoading(false);
       }

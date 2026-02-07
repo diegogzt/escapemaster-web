@@ -72,32 +72,38 @@ export function CalendarView() {
 
       try {
         setLoading(true);
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
+        setError(null);
         
         const firstDayStr = format(startOfMonth(currentDate), "yyyy-MM-dd");
         const lastDayStr = format(endOfMonth(currentDate), "yyyy-MM-dd");
 
-        console.log("DEBUG: CalendarView fetching from", firstDayStr, "to", lastDayStr);
+        console.log(`[Calendar] Fetching month: ${firstDayStr} to ${lastDayStr}`);
 
-        const [bookingsResponse, roomsData] = await Promise.all([
-          bookingsApi.list({ date_from: firstDayStr, date_to: lastDayStr, page_size: 1000 }),
-          roomsApi.list(),
-        ]);
-        
-        const roomsMap: Record<string, any> = {};
-        const roomsResult = roomsData?.rooms || (Array.isArray(roomsData) ? roomsData : []);
-        roomsResult.forEach((room: any) => { roomsMap[room.id] = room; });
+        // Individual try-catch for rooms to avoid blocking the whole fetch if rooms fail
+        let roomsMap: Record<string, any> = {};
+        try {
+          const roomsData = await roomsApi.list();
+          const roomsResult = roomsData?.rooms || (Array.isArray(roomsData) ? roomsData : []);
+          roomsResult.forEach((room: any) => { roomsMap[room.id] = room; });
+        } catch (rErr) {
+          console.warn("[Calendar] Failed to fetch rooms, colors might be affected", rErr);
+        }
+
+        const bookingsResponse = await bookingsApi.list({ 
+          date_from: firstDayStr, 
+          date_to: lastDayStr, 
+          page_size: 1000 
+        });
         
         const bookingsList = bookingsResponse?.bookings || (Array.isArray(bookingsResponse) ? bookingsResponse : []);
         
         if (!Array.isArray(bookingsList)) {
-          console.error("bookingsList is not an array:", bookingsList);
+          console.error("[Calendar] API response bookings is not an array", bookingsList);
           throw new Error("Respuesta de API inválida");
         }
 
         const transformedSessions: Session[] = bookingsList
-          .filter((b: any) => b.start_time) // Safety check
+          .filter((b: any) => b.start_time)
           .map((b: any) => {
             const roomName = b.room_name || "Sin sala";
             const status = (b.booking_status || "pending") as any;
@@ -110,10 +116,16 @@ export function CalendarView() {
           });
         
         setSessions(transformedSessions);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching calendar data:", err);
-        setError("Error al cargar el calendario");
+      } catch (err: any) {
+        console.error("[Calendar] Critical fetch error:", err);
+        const status = err.response?.status;
+        if (status === 403) {
+          setError("Acceso denegado (403). Es posible que necesites permisos adicionales o que la sesión haya expirado.");
+        } else if (status === 401) {
+          setError("Sesión expirada. Por favor, vuelve a iniciar sesión.");
+        } else {
+          setError("Error al cargar el calendario. Por favor, reintenta.");
+        }
       } finally {
         setLoading(false);
       }
