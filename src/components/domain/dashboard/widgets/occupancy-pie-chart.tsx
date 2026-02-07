@@ -74,12 +74,12 @@ export function OccupancyPieChartWidget({
   }, []);
 
   // Calculate dynamic radii based on available space
-  const minDim = Math.min(
+  const minDim = Math.max(0, Math.min(
     dimensions.width,
     dimensions.height - (showLegend ? 40 : 0)
-  );
-  const outerRadius = Math.max(30, minDim * 0.35);
-  const innerRadius = Math.max(20, outerRadius * 0.6);
+  ));
+  const outerRadius = Math.max(10, minDim * 0.35);
+  const innerRadius = Math.max(5, outerRadius * 0.6);
 
   return (
     <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
@@ -93,7 +93,7 @@ export function OccupancyPieChartWidget({
              <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)]">Cargando...</div>
         ) : data.length === 0 ? (
              <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)] text-sm p-4 text-center">No hay reservas registradas en este periodo.</div>
-        ) : (
+        ) : dimensions.width > 0 && dimensions.height > 0 ? (
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -124,7 +124,7 @@ export function OccupancyPieChartWidget({
             )}
           </PieChart>
         </ResponsiveContainer>
-        )}
+        ) : null}
       </div>
     </div>
   );

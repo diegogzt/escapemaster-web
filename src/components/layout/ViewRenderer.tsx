@@ -15,6 +15,8 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { activeView } = useUIStore();
 
+  console.log(`VIEW_RENDERER: pathname=${pathname}`);
+
   // If we are on a persistent path, we want to show the persistent version
   const isPersistent = PERSISTENT_PATHS.includes(pathname);
 

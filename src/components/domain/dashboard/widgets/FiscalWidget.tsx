@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { BarChart3, TrendingUp } from "lucide-react";
 import { reports } from "@/services/api";
 import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip, Cell } from "recharts";
@@ -8,6 +8,22 @@ import { WidgetConfigOptions } from "../types";
 export function FiscalWidget({ className }: WidgetConfigOptions & { className?: string }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        setDimensions({ width, height });
+      }
+    };
+
+    updateDimensions();
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    if (containerRef.current) resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
+  }, []);
 
   useEffect(() => {
     console.log("DEBUG: Se ha cargado el widget Facturación Fiscal");
@@ -57,7 +73,8 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
         </div>
       </div>
 
-      <div className="flex-1 h-[180px] w-full mt-2">
+      <div ref={containerRef} className="flex-1 h-[180px] w-full mt-2 relative">
+        {dimensions.width > 0 && dimensions.height > 0 ? (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data.breakdown}>
             <XAxis 
@@ -78,6 +95,7 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+        ) : null}
       </div>
 
       <div className="mt-4 pt-4 border-t border-[var(--color-light)]/50 flex justify-between items-center">
