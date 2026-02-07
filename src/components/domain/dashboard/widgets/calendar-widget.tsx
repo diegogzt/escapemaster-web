@@ -45,7 +45,7 @@ export function CalendarWidget({
   const [date, setDate] = useState(new Date());
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   // Fetch rooms and bookings from API
   useEffect(() => {
@@ -256,13 +256,6 @@ export function CalendarWidget({
     );
   };
 
-  if (loading) {
-    return (
-      <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex items-center justify-center min-h-[200px]">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
-  }
 
   return (
     <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">

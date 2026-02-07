@@ -48,7 +48,7 @@ export function CalendarView() {
   const currentDate = new Date(calendarState.currentDate);
   const sessions = (calendarState.sessions || []).map(s => ({ ...s, start: new Date(s.start), end: new Date(s.end) }));
   
-  const [loading, setLoading] = useState(!calendarState.lastFetched);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const [isMounted, setIsMounted] = useState(false);
@@ -64,9 +64,9 @@ export function CalendarView() {
   useEffect(() => {
     if (!isMounted) return;
     async function fetchData() {
+      // Basic cache check
       const isFresh = calendarState.lastFetched && (Date.now() - calendarState.lastFetched < 60000);
       if (isFresh && sessions.length > 0) {
-        setLoading(false);
         return;
       }
 
@@ -190,11 +190,10 @@ export function CalendarView() {
     setCurrentDate(newDate);
   };
 
-  if (!isMounted || (loading && !sessions.length)) {
+  if (!isMounted) {
     return (
       <div className="flex flex-col items-center justify-center p-24 bg-white rounded-3xl border border-beige/50">
         <Loader2 className="animate-spin text-primary mb-4" size={40} />
-        <p className="text-muted-foreground font-medium">Cargando reservas...</p>
       </div>
     );
   }
