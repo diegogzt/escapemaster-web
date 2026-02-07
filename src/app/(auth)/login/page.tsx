@@ -10,6 +10,9 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/services/api";
 import { Mail, Key, Lock, CheckCircle } from "lucide-react";
 
+// Disable static prerendering due to useSearchParams
+export const dynamic = 'force-dynamic';
+
 export default function LoginPage() {
   const { login, user } = useAuth();
   const router = useRouter();
