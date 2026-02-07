@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import api, { users, roles } from "@/services/api";
+import api, { users, roles, auth } from "@/services/api";
 import {
   Shield,
   Mail,
@@ -14,6 +14,9 @@ import {
   ArrowLeft,
   UserPlus,
   AlertCircle,
+  CheckCircle,
+  Copy,
+  ExternalLink,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -23,31 +26,44 @@ export default function CreateUserPage() {
   const [loadingRoles, setLoadingRoles] = useState(true);
   const [error, setError] = useState("");
   const [rolesList, setRolesList] = useState<any[]>([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [invitationCode, setInvitationCode] = useState("");
+  const [createdUserEmail, setCreatedUserEmail] = useState("");
 
   useEffect(() => {
-    const fetchRoles = async () => {
+    const fetchData = async () => {
       try {
         setLoadingRoles(true);
         setError("");
-        const data = await roles.list();
+        
+        // Fetch roles and user info (for invitation code) in parallel
+        const [rolesData, meData] = await Promise.all([
+          roles.list(),
+          auth.me()
+        ]);
 
         // Handle both object {roles: []} and array [] responses
-        const list = data.roles || (Array.isArray(data) ? data : []);
+        const list = rolesData.roles || (Array.isArray(rolesData) ? rolesData : []);
         setRolesList(list);
+        
+        // Get invitation code from current user's organization
+        if (meData?.invitation_code) {
+          setInvitationCode(meData.invitation_code);
+        }
 
         if (list.length === 0) {
           console.warn("No roles found in API response");
         }
       } catch (err: any) {
-        console.error("Error fetching roles:", err);
+        console.error("Error fetching data:", err);
         const detail = err.response?.data?.detail || err.message;
-        setError(`Error al cargar roles: ${detail}`);
+        setError(`Error al cargar datos: ${detail}`);
       } finally {
         setLoadingRoles(false);
       }
     };
 
-    fetchRoles();
+    fetchData();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -71,7 +87,8 @@ export default function CreateUserPage() {
 
     try {
       await users.create(userData);
-      router.push("/users");
+      setCreatedUserEmail(userData.email as string);
+      setShowSuccessModal(true);
     } catch (err: any) {
       console.error("Error creating user:", err);
 
@@ -357,6 +374,77 @@ export default function CreateUserPage() {
           </div>
         </div>
       </form>
+      
+      {/* Success Modal with Invitation Code */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--color-background)] rounded-3xl shadow-2xl max-w-md w-full p-8 space-y-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-green-600" />
+              </div>
+              <h2 className="text-2xl font-bold text-[var(--color-foreground)]">
+                ¡Usuario Creado!
+              </h2>
+              <p className="text-[var(--color-foreground)]/60 mt-2">
+                Se ha invitado a <strong>{createdUserEmail}</strong> a tu organización.
+              </p>
+            </div>
+
+            <div className="bg-beige/20 rounded-2xl p-6 space-y-4">
+              <p className="text-sm text-[var(--color-foreground)]/80">
+                El nuevo usuario debe usar este código de invitación para completar su registro:
+              </p>
+              
+              <div className="flex items-center gap-3">
+                <div className="flex-1 bg-[var(--color-background)] border-2 border-primary/30 rounded-xl px-4 py-3 font-mono text-2xl text-center font-bold tracking-widest text-primary">
+                  {invitationCode || "------"}
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(invitationCode);
+                    alert("Código copiado al portapapeles!");
+                  }}
+                  className="p-3 bg-primary/10 hover:bg-primary/20 rounded-xl transition-colors"
+                  title="Copiar código"
+                >
+                  <Copy className="w-5 h-5 text-primary" />
+                </button>
+              </div>
+
+              <div className="text-xs text-[var(--color-foreground)]/60 space-y-1">
+                <p className="flex items-center gap-2">
+                  <ExternalLink className="w-3 h-3" />
+                  Enlace de registro: <strong>manager.escapemaster.es/login</strong>
+                </p>
+                <p>El usuario debe seleccionar "Acceder con código" e ingresar el código de arriba.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  const link = `https://manager.escapemaster.es/login?code=${invitationCode}`;
+                  navigator.clipboard.writeText(link);
+                  alert("Enlace copiado al portapapeles!");
+                }}
+              >
+                <Copy className="w-4 h-4 mr-2" />
+                Copiar Enlace
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={() => router.push("/users")}
+              >
+                Ir a Usuarios
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
