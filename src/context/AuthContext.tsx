@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           } catch (error: any) {
             console.error("AUTH: Failed to fetch user data:", error);
-            if (error.response?.status === 401) {
+            if (error.response?.status === 401 || error.response?.status === 403) {
               logout();
             }
           }

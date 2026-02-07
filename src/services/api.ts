@@ -22,7 +22,7 @@ api.interceptors.request.use(
     }
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Bearer ${token.trim()}`;
     }
     return config;
   },
@@ -33,7 +33,10 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Treat 403 (often returned by FastAPI HTTPBearer on missing token) same as 401
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      console.warn(`AUTH: Unauthorized/Forbidden access (${error.response.status}) on ${error.config.url}`);
+      
       // Clear token and redirect to login if unauthorized
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
@@ -41,11 +44,15 @@ api.interceptors.response.use(
         document.cookie =
           "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 
-        // Only redirect if not already on login/register
+        // Only redirect if not already on login/register/onboarding
+        const path = window.location.pathname;
         if (
-          !window.location.pathname.includes("/login") &&
-          !window.location.pathname.includes("/register")
+          !path.includes("/login") &&
+          !path.includes("/register") &&
+          !path.includes("/onboarding") &&
+          !path.includes("/reset-password")
         ) {
+          console.log("AUTH: Redirecting to login due to API auth error");
           window.location.href = "/login";
         }
       }
