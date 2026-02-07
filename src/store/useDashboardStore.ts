@@ -59,8 +59,9 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
     try {
       const data = await dashboardApi.getSummary();
-      set({ summary: data, summaryLastFetched: now });
-      return data;
+      const safeData = data && !data.error ? data : null;
+      set({ summary: safeData, summaryLastFetched: now });
+      return safeData;
     } catch (error) {
       console.error("Store: fetchSummary failed", error);
       throw error;
@@ -76,8 +77,9 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
     // TODO: Improve to period-based cache if needed.
     try {
         const data = await dashboardApi.getStats(period);
-        set({ stats: data });
-        return data;
+        const safeData = data && !data.error ? data : null;
+        set({ stats: safeData });
+        return safeData;
     } catch (error) {
         throw error;
     }

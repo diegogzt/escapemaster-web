@@ -18,6 +18,7 @@ export function RevenueWidget({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("DEBUG: Se ha cargado el widget Ingresos");
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -70,14 +71,14 @@ export function RevenueWidget({
           Total este {defaultPeriod === "month" ? "mes" : defaultPeriod === "year" ? "año" : "semana"}
         </p>
         <h2 className="text-3xl font-bold text-[var(--color-foreground)]">
-          €{currentData.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          €{(currentData.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
         </h2>
       </div>
 
       <div className="mt-4 pt-4 border-t border-[var(--color-beige)]">
         <div className="flex items-center justify-between text-sm">
           <span className="text-[var(--color-muted-foreground)]">Meta {defaultPeriod === "month" ? "mensual" : defaultPeriod === "year" ? "anual" : "semanal"}</span>
-          <span className="font-medium text-[var(--color-foreground)]">€{targetMonthly.toLocaleString()}</span>
+          <span className="font-medium text-[var(--color-foreground)]">€{(targetMonthly || 0).toLocaleString()}</span>
         </div>
         <div className="mt-2 h-2 w-full bg-[var(--color-light)] rounded-full overflow-hidden">
           <div

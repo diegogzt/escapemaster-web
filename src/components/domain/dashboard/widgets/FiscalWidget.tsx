@@ -10,6 +10,7 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("DEBUG: Se ha cargado el widget Facturación Fiscal");
     const fetchData = async () => {
       try {
         const now = new Date();
@@ -71,8 +72,8 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
               contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
             />
             <Bar dataKey="amount" radius={[4, 4, 0, 0]}>
-              {data.breakdown.map((entry: any, index: number) => (
-                <Cell key={`cell-${index}`} fill={entry.amount > 0 ? "#2c5f2d" : "#e5e7eb"} />
+              {(data.breakdown || []).map((entry: any, index: number) => (
+                <Cell key={`cell-${index}`} fill={(entry.amount || 0) > 0 ? "#2c5f2d" : "#e5e7eb"} />
               ))}
             </Bar>
           </BarChart>
@@ -82,7 +83,7 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
       <div className="mt-4 pt-4 border-t border-[var(--color-light)]/50 flex justify-between items-center">
         <span className="text-sm font-medium text-[var(--color-muted-foreground)]">Total Anual</span>
         <span className="text-lg font-bold text-[var(--color-foreground)]">
-          €{data.total_revenue.toLocaleString()}
+          €{(data.total_revenue || 0).toLocaleString()}
         </span>
       </div>
     </div>

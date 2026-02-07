@@ -13,7 +13,14 @@ const api = axios.create({
 // Add a request interceptor to include the token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    let token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    
+    // Fallback to cookie if localStorage is empty (e.g. partially loaded or SSR)
+    if (!token && typeof document !== "undefined") {
+      const match = document.cookie.match(/(^| )token=([^;]+)/);
+      if (match) token = match[2];
+    }
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }

@@ -16,6 +16,7 @@ import {
 import Button from "@/components/Button";
 import { bookings as bookingsApi, rooms as roomsApi } from "@/services/api";
 import { useDataStore } from "@/stores/data-store";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 
 type ViewType = "month" | "week" | "day";
 
@@ -45,7 +46,7 @@ export function CalendarView() {
   
   const view = calendarState.view;
   const currentDate = new Date(calendarState.currentDate);
-  const sessions = calendarState.sessions.map(s => ({ ...s, start: new Date(s.start), end: new Date(s.end) }));
+  const sessions = (calendarState.sessions || []).map(s => ({ ...s, start: new Date(s.start), end: new Date(s.end) }));
   
   const [loading, setLoading] = useState(!calendarState.lastFetched);
   const [error, setError] = useState<string | null>(null);
@@ -73,17 +74,16 @@ export function CalendarView() {
         setLoading(true);
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        const firstDayStr = `${year}-${String(month + 1).padStart(2, '0')}-01`;
-        const lastDay = new Date(year, month + 1, 0);
-        const lastDayStr = `${lastDay.getFullYear()}-${String(lastDay.getMonth() + 1).padStart(2, '0')}-${String(lastDay.getDate()).padStart(2, '0')}`;
+        
+        const firstDayStr = format(startOfMonth(currentDate), "yyyy-MM-dd");
+        const lastDayStr = format(endOfMonth(currentDate), "yyyy-MM-dd");
+
+        console.log("DEBUG: CalendarView fetching from", firstDayStr, "to", lastDayStr);
 
         const [bookingsResponse, roomsData] = await Promise.all([
           bookingsApi.list({ date_from: firstDayStr, date_to: lastDayStr, page_size: 1000 }),
           roomsApi.list(),
-        ]).catch(err => {
-          console.error("Promise.all failed:", err);
-          throw err;
-        });
+        ]);
         
         const roomsMap: Record<string, any> = {};
         const roomsResult = roomsData?.rooms || (Array.isArray(roomsData) ? roomsData : []);
@@ -96,16 +96,18 @@ export function CalendarView() {
           throw new Error("Respuesta de API inválida");
         }
 
-        const transformedSessions: Session[] = bookingsList.map((b: any) => {
-          const roomName = b.room_name || "Sin sala";
-          const status = (b.booking_status || "pending") as any;
-          const start = new Date(b.start_time);
-          const end = b.end_time ? new Date(b.end_time) : new Date(start.getTime() + 90 * 60000);
-          let color = b.room_color || "#3B82F6";
-          if (b.room_id && roomsMap[b.room_id]?.status_colors?.[status]) color = roomsMap[b.room_id].status_colors[status];
-          
-          return { id: b.id, title: roomName, customer: b.guest?.full_name || "Sin cliente", start, end, room: roomName, status, color };
-        });
+        const transformedSessions: Session[] = bookingsList
+          .filter((b: any) => b.start_time) // Safety check
+          .map((b: any) => {
+            const roomName = b.room_name || "Sin sala";
+            const status = (b.booking_status || "pending") as any;
+            const start = new Date(b.start_time);
+            const end = b.end_time ? new Date(b.end_time) : new Date(start.getTime() + 90 * 60000);
+            let color = b.room_color || "#3B82F6";
+            if (b.room_id && roomsMap[b.room_id]?.status_colors?.[status]) color = roomsMap[b.room_id].status_colors[status];
+            
+            return { id: b.id, title: roomName, customer: b.guest?.full_name || "Sin cliente", start, end, room: roomName, status, color };
+          });
         
         setSessions(transformedSessions);
         setError(null);

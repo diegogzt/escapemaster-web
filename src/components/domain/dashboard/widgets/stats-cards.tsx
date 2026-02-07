@@ -24,6 +24,7 @@ export function StatsCards({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("DEBUG: Se ha cargado el widget Tarjetas de Estadísticas");
     const fetchData = async () => {
       try {
         const stats = await dashboard.getStats("month");

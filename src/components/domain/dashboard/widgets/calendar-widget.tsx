@@ -10,6 +10,7 @@ import {
 import { cn } from "@/utils";
 import { WidgetConfigOptions } from "../types";
 import { rooms as roomsApi, bookings as bookingsApi } from "@/services/api";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 
 // Color palette for rooms
 const ROOM_COLORS = [
@@ -48,16 +49,25 @@ export function CalendarWidget({
 
   // Fetch rooms and bookings from API
   useEffect(() => {
+    console.log("DEBUG: Sincronizando datos del widget Calendario para", date.getMonth() + 1, date.getFullYear());
     async function fetchData() {
       try {
         setLoading(true);
+        const firstDay = startOfMonth(date);
+        const lastDay = endOfMonth(date);
+        
         const [roomsData, bookingsData] = await Promise.all([
           roomsApi.list(),
-          bookingsApi.list(),
+          bookingsApi.list({
+            date_from: format(firstDay, "yyyy-MM-dd"),
+            date_to: format(lastDay, "yyyy-MM-dd"),
+            page_size: 200
+          }),
         ]);
         
         // Transform rooms with colors
-        const transformedRooms: Room[] = (roomsData || []).map((r: any, index: number) => ({
+        const roomsArr = Array.isArray(roomsData) ? roomsData : (roomsData?.rooms || []);
+        const transformedRooms: Room[] = (roomsArr || []).map((r: any, index: number) => ({
           id: r.id,
           name: r.name,
           color: ROOM_COLORS[index % ROOM_COLORS.length],
@@ -65,12 +75,12 @@ export function CalendarWidget({
         setRooms(transformedRooms);
         
         // Transform bookings
-        // API returns: id, start_time, room_name, room_id
-        const transformedBookings: Booking[] = (bookingsData || []).map((b: any) => {
+        const bookingsArr = Array.isArray(bookingsData) ? bookingsData : (bookingsData?.bookings || []);
+        const transformedBookings: Booking[] = (bookingsArr || []).map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
           return {
             id: b.id,
-            date: startTime ? startTime.toISOString().split("T")[0] : "",
+            date: startTime ? format(startTime, "yyyy-MM-dd") : "",
             room_id: b.room_id,
             room_name: b.room_name,
           };
@@ -83,7 +93,7 @@ export function CalendarWidget({
       }
     }
     fetchData();
-  }, []);
+  }, [date.getFullYear(), date.getMonth()]);
 
   // Sync with prop changes
   useEffect(() => {
@@ -109,7 +119,7 @@ export function CalendarWidget({
 
   // Helper to get session counts for a date from real data
   const getSessionsForDate = (d: Date) => {
-    const dateStr = d.toISOString().split("T")[0];
+    const dateStr = format(d, "yyyy-MM-dd");
     const dayBookings = bookings.filter(b => b.date === dateStr);
     
     // Count bookings by room

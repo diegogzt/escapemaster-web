@@ -22,12 +22,14 @@ export function useWidgetRegistry() {
     const syncRegistry = async () => {
       try {
         const apiDefinitions = await dashboardService.getWidgetDefinitions();
+        console.log("DEBUG: API Widget Definitions received:", apiDefinitions);
         
         // Merge API definitions with local registry
         // API can override default_config, but components come from local registry
         const mergedRegistry: SyncedWidgetRegistry = { ...WIDGET_REGISTRY };
         
-        apiDefinitions.forEach((apiDef: APIWidgetDefinition) => {
+        if (Array.isArray(apiDefinitions)) {
+          apiDefinitions.forEach((apiDef: APIWidgetDefinition) => {
           const localDef = WIDGET_REGISTRY[apiDef.slug];
           if (localDef) {
             // Merge API config with local definition
@@ -48,6 +50,9 @@ export function useWidgetRegistry() {
           // Note: If widget exists in API but not locally, we can't render it
           // since we don't have the component. This is intentional.
         });
+        } else {
+          console.warn("DEBUG: apiDefinitions is not an array:", apiDefinitions);
+        }
         
         setRegistry(mergedRegistry);
         setError(null);

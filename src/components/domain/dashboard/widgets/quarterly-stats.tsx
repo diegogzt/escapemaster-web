@@ -21,6 +21,7 @@ export function QuarterlyStatsWidget({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("DEBUG: Se ha cargado el widget Resumen Trimestral");
     const fetchData = async () => {
       setLoading(true);
       try {
@@ -93,7 +94,7 @@ export function QuarterlyStatsWidget({
             <Users className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Jugadores</span>
           </div>
-          <p className="text-xl font-bold text-[var(--color-foreground)]">{totalPlayers.toLocaleString()}</p>
+          <p className="text-xl font-bold text-[var(--color-foreground)]">{(totalPlayers || 0).toLocaleString()}</p>
         </div>
 
         <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">

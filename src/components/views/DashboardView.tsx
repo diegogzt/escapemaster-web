@@ -309,6 +309,7 @@ export function DashboardView() {
   
   // Use persistent store with safety check
   const { widgets: rawWidgets, activeCollectionId } = useDashboardLayoutStore();
+  console.log("DEBUG: DashboardView widgets from store:", rawWidgets);
   const widgets = Array.isArray(rawWidgets) ? rawWidgets : [];
   const { setWidgets, updateWidgetConfig, setActiveCollectionId, resetLayout: resetStoreLayout } = useDashboardLayoutActions();
 
@@ -341,8 +342,13 @@ export function DashboardView() {
   };
 
   const applyTemplate = (template: DashboardTemplate) => {
+    console.log("DEBUG: Applying template:", template);
+    if (!template || !Array.isArray(template.layout)) {
+      console.error("DEBUG: Invalid template layout:", template);
+      return;
+    }
     const newLayout: WidgetConfig[] = template.layout.map((item: any) => ({
-      id: item.id,
+      id: item.id || `tpl-${Date.now()}-${Math.random()}`,
       type: item.type as WidgetType,
       colSpan: item.colSpan,
       rowSpan: item.rowSpan,
@@ -359,11 +365,18 @@ export function DashboardView() {
     const syncLayout = async () => {
       try {
         const collections = await dashboardService.getCollections();
-        const activeCollection = collections.find((c: any) => c.is_active);
+        console.log("DEBUG: Dashboard collections received:", collections);
+        
+        if (Array.isArray(collections)) {
+          const activeCollection = collections.find((c: any) => c.is_active);
 
-        if (activeCollection) {
-          setWidgets(activeCollection.layout as WidgetConfig[]);
-          setActiveCollectionId(activeCollection.id);
+          if (activeCollection) {
+            console.log("DEBUG: Setting widgets from active collection:", activeCollection);
+            setWidgets(activeCollection.layout as WidgetConfig[]);
+            setActiveCollectionId(activeCollection.id);
+          }
+        } else {
+           console.warn("DEBUG: collections is not an array:", collections);
         }
       } catch (e) {
         console.error("Failed to sync dashboard layout", e);
@@ -377,7 +390,13 @@ export function DashboardView() {
       setIsLoadingTemplates(true);
       try {
         const data = await dashboardService.getTemplates();
-        setTemplates(data);
+        console.log("DEBUG: Dashboard templates received:", data);
+        if (Array.isArray(data)) {
+          setTemplates(data);
+        } else {
+          console.warn("DEBUG: templates data is not an array:", data);
+          setTemplates([]);
+        }
       } catch (error) {
         console.error("Failed to fetch templates:", error);
       } finally {
@@ -455,11 +474,15 @@ export function DashboardView() {
 
   const addWidget = (type: WidgetType) => {
     const def = registry[type]; // Use dynamic registry
+    if (!def) {
+      console.warn(`DEBUG: Widget definition not found for type: ${type}`);
+      return;
+    }
     const newWidget: WidgetConfig = {
       id: `${type}-${Date.now()}`,
       type: type,
-      colSpan: def.defaultColSpan, // Use dynamic default
-      rowSpan: def.defaultRowSpan || 8, // Use dynamic default
+      colSpan: def.defaultColSpan || 48,
+      rowSpan: def.defaultRowSpan || 8,
     };
     setWidgets([...widgets, newWidget]);
     setShowAddWidget(false);
@@ -471,14 +494,14 @@ export function DashboardView() {
     setWidgets(widgets.map((w) => {
       if (w.id === id) {
         const def = registry[w.type]; // Use dynamic registry
+        if (!def) return w;
+        
         if (dimension === "width") {
-            const minW = def?.minColSpan || 1;
+            const minW = def.minColSpan || 1;
             return { ...w, colSpan: Math.max(minW, Math.min(48, newSpan)) };
         }
-        const minH = def?.minRowSpan || 5;
-        // Use dynamic Min Row Span if available
-        const limitH = def?.minRowSpan || 5;
-        return { ...w, rowSpan: Math.max(limitH, newSpan) };
+        const minH = def.minRowSpan || 1;
+        return { ...w, rowSpan: Math.max(minH, newSpan) };
       }
       return w;
     }));
@@ -588,7 +611,8 @@ export function DashboardView() {
               </button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.values(registry).map((def) => {
+              {Object.values(registry || {}).map((def) => {
+                if (!def) return null;
                 const isAdded = widgets.some((w) => w.type === def.type);
                 return (
                   <button key={def.type} onClick={() => addWidget(def.type as WidgetType)} className={cn("flex flex-col items-start p-4 border-2 rounded-lg transition-all text-left relative overflow-hidden", isAdded ? "border-primary/30 bg-primary/5" : "border-beige hover:border-primary hover:bg-[var(--color-light)]")}>

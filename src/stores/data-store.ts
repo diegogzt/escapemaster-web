@@ -66,7 +66,7 @@ export const useDataStore = create<DataState>()(
         if (get().isLoaded.rooms && !force) return;
         try {
           const data = await roomsApi.list();
-          const list = data?.rooms || data || [];
+          const list = Array.isArray(data?.rooms) ? data.rooms : (Array.isArray(data) ? data : []);
           set((state) => ({ 
             rooms: list, 
             isLoaded: { ...state.isLoaded, rooms: true } 
@@ -80,8 +80,9 @@ export const useDataStore = create<DataState>()(
         if (get().isLoaded.roles && !force) return;
         try {
           const data = await rolesApi.list();
+          const list = Array.isArray(data?.roles) ? data.roles : (Array.isArray(data) ? data : []);
           set((state) => ({ 
-            roles: data, 
+            roles: list, 
             isLoaded: { ...state.isLoaded, roles: true } 
           }));
         } catch (error) {
@@ -93,7 +94,7 @@ export const useDataStore = create<DataState>()(
         if (get().isLoaded.users && !force) return;
         try {
           const data = await usersApi.list();
-          const list = data?.users || data || [];
+          const list = Array.isArray(data?.users) ? data.users : (Array.isArray(data) ? data : []);
           set((state) => ({ 
             users: list, 
             isLoaded: { ...state.isLoaded, users: true } 

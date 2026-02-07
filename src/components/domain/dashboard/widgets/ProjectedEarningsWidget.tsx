@@ -10,9 +10,10 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("DEBUG: Se ha cargado el widget Proyección Mensual");
     const fetchData = async () => {
       try {
-        const result = await widgets.getRevenueSummary("current_month");
+        const result = await widgets.getRevenueSummary("month");
         setData(result);
       } catch (error) {
         console.error("Failed to fetch revenue summary", error);
@@ -57,10 +58,10 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
       <div className="flex-1 flex flex-col justify-end">
         <div className="flex items-baseline gap-2 mb-2">
           <span className="text-3xl font-bold text-[var(--color-foreground)]">
-            €{data.gross_revenue.toLocaleString()}
+            €{(data.gross_revenue || 0).toLocaleString()}
           </span>
           <span className="text-sm font-medium text-[var(--color-muted-foreground)]">
-            / €{total.toLocaleString()}
+            / €{(total || 0).toLocaleString()}
           </span>
         </div>
 
@@ -79,7 +80,7 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
               <span className="text-xs font-medium">Ya ganado</span>
             </div>
             <span className="text-sm font-bold text-[var(--color-foreground)] block">
-              €{data.gross_revenue.toLocaleString()}
+              €{(data.gross_revenue || 0).toLocaleString()}
             </span>
           </div>
           <div className="bg-[var(--color-light)]/30 p-3 rounded-xl">
@@ -88,7 +89,7 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
               <span className="text-xs font-medium">Por ganar</span>
             </div>
             <span className="text-sm font-bold text-[var(--color-foreground)] block">
-              €{data.pending_revenue.toLocaleString()}
+              €{(data.pending_revenue || 0).toLocaleString()}
             </span>
           </div>
         </div>

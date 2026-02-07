@@ -90,7 +90,7 @@ export function BookingsView() {
       }
 
       const response = await bookingsApi.list(params);
-      const bookingsList = response?.bookings || response || [];
+      const bookingsList = Array.isArray(response?.bookings) ? response.bookings : (Array.isArray(response) ? response : []);
       
       const transformedBookings = bookingsList.map((b: any) => ({
         id: b.id,

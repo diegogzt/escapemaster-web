@@ -49,9 +49,9 @@ export function TimeTrackingView() {
       ]);
       
       setTimeTrackingState({
-        summary: summaryData,
-        entries: entriesData,
-        vacations: vacationsData,
+        summary: summaryData && !summaryData.error ? summaryData : null,
+        entries: Array.isArray(entriesData) ? entriesData : [],
+        vacations: Array.isArray(vacationsData) ? vacationsData : [],
         lastFetched: Date.now()
       });
 

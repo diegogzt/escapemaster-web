@@ -70,7 +70,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: CalendarWidget,
     defaultColSpan: 12,
     defaultRowSpan: 16,
-    minRowSpan: 44, // Ensures ~440px height to avoid internal scroll
+    minColSpan: 4,
+    minRowSpan: 4,
     configurableOptions: ["defaultView", "showWeekends"],
     defaultConfig: { defaultView: "month", showWeekends: true },
   },
