@@ -39,8 +39,7 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
     try {
       const response = await bookingsApi.list();
-      // Handle the object response structure if needed, similar to widget fix
-      const list = response.bookings || (Array.isArray(response) ? response : []);
+      const list = Array.isArray(response?.bookings) ? response.bookings : (Array.isArray(response) ? response : []);
       set({ bookings: list, bookingsLastFetched: now });
       return list;
     } catch (error) {

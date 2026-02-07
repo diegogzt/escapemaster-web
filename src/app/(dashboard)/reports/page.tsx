@@ -106,12 +106,16 @@ export default function ReportsPage() {
     async function fetchReportData() {
       try {
         setLoading(true);
-        const [bookingsData, roomsData, dashboardStats] = await Promise.all([
-          bookingsApi.list(),
+        const [bookingsResponse, roomsData, dashboardStats] = await Promise.all([
+          bookingsApi.list({ page_size: 1000 }), // Get more for reports
           roomsApi.list(),
           dashboard.getStats(),
         ]);
         
+        const bList = Array.isArray(bookingsResponse?.bookings) 
+          ? bookingsResponse.bookings 
+          : (Array.isArray(bookingsResponse) ? bookingsResponse : []);
+
         // Calculate revenue by day of week
         const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
         const revenueByDay: Record<string, { ingresos: number; count: number }> = {};
@@ -128,7 +132,7 @@ export default function ReportsPage() {
         let totalRevenue = 0;
         
         // API returns: id, start_time, total_price, room_name, booking_status
-        (bookingsData || []).forEach((b: any) => {
+        bList.forEach((b: any) => {
           const price = Number(b.total_price) || 0;
           totalRevenue += price;
           
@@ -187,12 +191,12 @@ export default function ReportsPage() {
         // Set stats
         setStats({
           totalRevenue,
-          totalBookings: (bookingsData || []).length,
+          totalBookings: bList.length,
           profit: Math.round(totalRevenue * 0.7),
         });
 
         // Set recent bookings
-        const sortedBookings = [...(bookingsData || [])]
+        const sortedBookings = [...bList]
           .sort((a: any, b: any) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
           .slice(0, 5);
         setRecentBookings(sortedBookings);
