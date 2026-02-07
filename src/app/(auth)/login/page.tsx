@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Input from "@/components/Input";
@@ -8,12 +8,10 @@ import Button from "@/components/Button";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/components/Card";
 import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/services/api";
-import { Mail, Key, Lock, CheckCircle } from "lucide-react";
+import { Mail, Key, Lock, CheckCircle, Loader2 } from "lucide-react";
 
-// Disable static prerendering due to useSearchParams
-export const dynamic = 'force-dynamic';
-
-export default function LoginPage() {
+// Inner component that uses useSearchParams
+function LoginContent() {
   const { login, user } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -399,5 +397,18 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+// Main export with Suspense wrapper
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-primary">
+        <Loader2 className="w-8 h-8 text-white animate-spin" />
+      </div>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
