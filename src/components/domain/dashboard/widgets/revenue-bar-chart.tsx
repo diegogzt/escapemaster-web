@@ -63,13 +63,15 @@ export function RevenueBarChartWidget({
       setLoading(true);
       try {
         const response = await dashboard.getRevenue(localDateRange);
-        if (response && response.labels) {
+        if (response && Array.isArray(response.labels)) {
           const chartData = response.labels.map((label: string, index: number) => ({
             name: label,
-            ingresos: response.data[index] || 0,
-            gastos: response.expenses ? (response.expenses[index] || 0) : 0, // Attempt to read expenses
+            ingresos: (response.data && response.data[index]) || 0,
+            gastos: response.expenses ? (response.expenses[index] || 0) : 0,
           }));
           setData(chartData);
+        } else {
+          setData([]);
         }
       } catch (error) {
         console.error("Failed to fetch revenue", error);

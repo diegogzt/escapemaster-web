@@ -59,12 +59,12 @@ export const useDashboardStore = create<DashboardState>((set, get) => ({
 
     try {
       const data = await dashboardApi.getSummary();
-      const safeData = data && !data.error ? data : null;
+      const safeData = data && !data.error ? data : { upcoming_bookings: [] };
       set({ summary: safeData, summaryLastFetched: now });
       return safeData;
     } catch (error) {
       console.error("Store: fetchSummary failed", error);
-      throw error;
+      return { upcoming_bookings: [] };
     }
   },
 

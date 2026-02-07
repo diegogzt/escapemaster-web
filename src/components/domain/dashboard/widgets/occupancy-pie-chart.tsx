@@ -55,12 +55,14 @@ export function OccupancyPieChartWidget({
     const fetchData = async () => {
       try {
         const stats = await dashboard.getStats("month"); // Default to month for occupancy
-        if (stats.top_rooms) {
+        if (stats && Array.isArray(stats.top_rooms)) {
              const chartData = stats.top_rooms.map((room: any) => ({
                  name: room.name,
-                 value: room.count
+                 value: room.count || 0
              }));
              setData(chartData);
+        } else {
+             setData([]);
         }
       } catch (error) {
         console.error("Failed to fetch occupancy stats", error);

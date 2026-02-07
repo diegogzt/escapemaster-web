@@ -27,7 +27,7 @@ export function UpcomingSessions({
     const fetchData = async () => {
       try {
         const summary = await fetchSummary();
-        setSessions(summary.upcoming_bookings || []);
+        setSessions(summary?.upcoming_bookings || []);
       } catch (error) {
         console.error("Failed to fetch summary", error);
       } finally {
