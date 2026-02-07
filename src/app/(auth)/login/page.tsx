@@ -59,7 +59,15 @@ export default function LoginPage() {
       setActiveTab("login");
       alert("¡Registro completado! Ahora puedes iniciar sesión con tu nueva contraseña.");
     } catch (err: any) {
-      setError(err.response?.data?.detail || "Error al completar el registro. Verifica tus datos.");
+      // Show specific error from backend
+      const detail = err.response?.data?.detail;
+      if (typeof detail === 'string') {
+        setError(detail);
+      } else if (Array.isArray(detail) && detail.length > 0) {
+        setError(detail.map((e: any) => e.msg || e).join(', '));
+      } else {
+        setError("Error al completar el registro. Verifica tus datos.");
+      }
     } finally {
       setLoading(false);
     }
