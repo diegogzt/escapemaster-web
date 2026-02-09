@@ -1,0 +1,27 @@
+# Escapemaster Staff Mobile - Contexto para IA
+
+## 📋 Rol y Contexto
+
+Estás trabajando en la aplicación móvil para Game Masters y personal de sala (Staff).
+
+## 🏗️ Propósito
+
+Permitir a los Game Masters gestionar sesiones en tiempo real, marcar checklists, controlar el flujo de los jugadores y recibir notificaciones importantes desde sus dispositivos móviles.
+
+## 🛠️ Tech Stack
+
+- **Framework:** React Native / Expo
+- **Navegación:** Expo Router
+- **Estilos:** NativeWind (Tailwind CSS para Mobile)
+- **Almacenamiento:** Expo SecureStore para tokens.
+
+## 📁 Estructura Clave
+
+- `app/`: Rutas de la aplicación móvil.
+- `components/`: UI optimizada para gestos y pantallas pequeñas.
+- `services/`: Cliente API adaptado para entornos móviles.
+
+## 🎨 Guías y Estándares
+
+- Optimizar para uso con una sola mano y entornos de baja luz (Dark Mode preferente).
+- Asegurar que el estado de conexión sea gestionado correctamente (optimistic updates).
