@@ -10,7 +10,6 @@ import {
 import { cn } from "@/utils";
 import { WidgetConfigOptions } from "../types";
 import { rooms as roomsApi, bookings as bookingsApi } from "@/services/api";
-import { format, startOfMonth, endOfMonth } from "date-fns";
 
 // Color palette for rooms
 const ROOM_COLORS = [
@@ -45,62 +44,46 @@ export function CalendarWidget({
   const [date, setDate] = useState(new Date());
   const [rooms, setRooms] = useState<Room[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Fetch rooms and bookings from API
   useEffect(() => {
-    console.log("DEBUG: Sincronizando datos del widget Calendario para", date.getMonth() + 1, date.getFullYear());
     async function fetchData() {
       try {
         setLoading(true);
-        const firstDay = startOfMonth(date);
-        const lastDay = endOfMonth(date);
-        const dateFrom = format(firstDay, "yyyy-MM-dd");
-        const dateTo = format(lastDay, "yyyy-MM-dd");
+        const [roomsData, bookingsData] = await Promise.all([
+          roomsApi.list(),
+          bookingsApi.list(),
+        ]);
         
-        console.log(`[CalendarWidget] Fetching: ${dateFrom} to ${dateTo}`);
-
-        // Individual try-catch for rooms
-        let roomsArr = [];
-        try {
-          const roomsData = await roomsApi.list();
-          roomsArr = Array.isArray(roomsData) ? roomsData : (roomsData?.rooms || []);
-        } catch (rErr) {
-          console.warn("[CalendarWidget] Failed to fetch rooms", rErr);
-        }
-
-        const transformedRooms: Room[] = (roomsArr || []).map((r: any, index: number) => ({
+        // Transform rooms with colors
+        const transformedRooms: Room[] = (roomsData || []).map((r: any, index: number) => ({
           id: r.id,
           name: r.name,
           color: ROOM_COLORS[index % ROOM_COLORS.length],
         }));
         setRooms(transformedRooms);
         
-        const bookingsData = await bookingsApi.list({
-          date_from: dateFrom,
-          date_to: dateTo,
-          page_size: 200
-        });
-        
-        const bookingsArr = Array.isArray(bookingsData) ? bookingsData : (bookingsData?.bookings || []);
-        const transformedBookings: Booking[] = (bookingsArr || []).map((b: any) => {
+        // Transform bookings
+        // API returns: id, start_time, room_name, room_id
+        const transformedBookings: Booking[] = (bookingsData || []).map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
           return {
             id: b.id,
-            date: startTime ? format(startTime, "yyyy-MM-dd") : "",
+            date: startTime ? startTime.toISOString().split("T")[0] : "",
             room_id: b.room_id,
             room_name: b.room_name,
           };
         });
         setBookings(transformedBookings);
-      } catch (err: any) {
-        console.error("[CalendarWidget] Critical fetch error:", err);
+      } catch (err) {
+        console.error("Error fetching calendar widget data:", err);
       } finally {
         setLoading(false);
       }
     }
     fetchData();
-  }, [date.getFullYear(), date.getMonth()]);
+  }, []);
 
   // Sync with prop changes
   useEffect(() => {
@@ -126,7 +109,7 @@ export function CalendarWidget({
 
   // Helper to get session counts for a date from real data
   const getSessionsForDate = (d: Date) => {
-    const dateStr = format(d, "yyyy-MM-dd");
+    const dateStr = d.toISOString().split("T")[0];
     const dayBookings = bookings.filter(b => b.date === dateStr);
     
     // Count bookings by room
@@ -256,6 +239,13 @@ export function CalendarWidget({
     );
   };
 
+  if (loading) {
+    return (
+      <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex items-center justify-center min-h-[200px]">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">

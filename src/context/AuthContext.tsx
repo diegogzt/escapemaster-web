@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const expirationTime = payload.exp * 1000; // Convert to milliseconds
 
           if (Date.now() >= expirationTime) {
-            console.log("AUTH: Token expired, logging out");
+            console.log("Token expired, logging out");
             logout();
             setLoading(false);
             return;
@@ -86,7 +86,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(userData);
 
             // Check if user needs onboarding (no organization)
-            const publicRoutes = ["/", "/login", "/register", "/forgot-password", "/reset-password", "/privacy", "/cookies"];
+            const publicRoutes = [
+              "/",
+              "/login",
+              "/register",
+              "/forgot-password",
+              "/reset-password",
+              "/privacy",
+              "/cookies",
+            ];
             const onboardingRoute = "/onboarding";
 
             if (
@@ -94,29 +102,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               pathname !== onboardingRoute &&
               !publicRoutes.includes(pathname)
             ) {
-              console.log(`AUTH: User has no org, redirecting from ${pathname} to /onboarding`);
               router.push("/onboarding");
             }
           } catch (error: any) {
-            console.error("AUTH: Failed to fetch user data:", error);
-            if (error.response?.status === 401 || error.response?.status === 403) {
+            if (error.response?.status === 401) {
               logout();
             }
           }
         } catch (error) {
-          console.error("AUTH: Failed to validate auth:", error);
+          console.error("Failed to validate auth:", error);
+          // If token is malformed or validation fails, logout
           logout();
         }
       } else {
         setIsAuthenticated(false);
         setUser(null);
         // Redirect to login if not authenticated and on protected route
-        const publicRoutes = ["/", "/login", "/register", "/forgot-password", "/reset-password", "/privacy", "/cookies"];
-        
-        const isPublic = publicRoutes.includes(pathname) || pathname.startsWith("/reset-password");
-        
-        if (!isPublic) {
-           console.log(`AUTH: Fallback redirect for unauth user from ${pathname} to /login`);
+        const publicRoutes = [
+          "/",
+          "/login",
+          "/register",
+          "/forgot-password",
+          "/reset-password",
+          "/privacy",
+          "/cookies",
+        ];
+        if (
+          !publicRoutes.includes(pathname) &&
+          !pathname.startsWith("/reset-password")
+        ) {
+           // Fallback redirect if middleware misses it
            router.push("/login");
         }
       }

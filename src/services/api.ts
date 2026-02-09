@@ -13,16 +13,9 @@ const api = axios.create({
 // Add a request interceptor to include the token
 api.interceptors.request.use(
   (config) => {
-    let token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    
-    // Fallback to cookie if localStorage is empty (e.g. partially loaded or SSR)
-    if (!token && typeof document !== "undefined") {
-      const match = document.cookie.match(/(^| )token=([^;]+)/);
-      if (match) token = match[2];
-    }
-
+    const token = localStorage.getItem("token");
     if (token) {
-      config.headers.Authorization = `Bearer ${token.trim()}`;
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -33,10 +26,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Treat 403 (often returned by FastAPI HTTPBearer on missing token) same as 401
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      console.warn(`AUTH: Unauthorized/Forbidden access (${error.response.status}) on ${error.config.url}`);
-      
+    if (error.response?.status === 401) {
       // Clear token and redirect to login if unauthorized
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
@@ -44,15 +34,11 @@ api.interceptors.response.use(
         document.cookie =
           "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 
-        // Only redirect if not already on login/register/onboarding
-        const path = window.location.pathname;
+        // Only redirect if not already on login/register
         if (
-          !path.includes("/login") &&
-          !path.includes("/register") &&
-          !path.includes("/onboarding") &&
-          !path.includes("/reset-password")
+          !window.location.pathname.includes("/login") &&
+          !window.location.pathname.includes("/register")
         ) {
-          console.log("AUTH: Redirecting to login due to API auth error");
           window.location.href = "/login";
         }
       }
@@ -362,8 +348,6 @@ export interface WidgetDefinition {
   default_config: any;
   min_col_span: number;
   min_row_span: number;
-  default_col_span: number;
-  default_row_span: number;
 }
 
 export interface DashboardTemplate {

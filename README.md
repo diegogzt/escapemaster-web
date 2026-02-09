@@ -1,4 +1,4 @@
-# 🖥️ Escapemaster Web
+# 🖥️ Escapemaster Gestor
 
 > The modern, responsive frontend for the Escapemaster hospitality ecosystem.
 
@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-Escapemaster Web is the primary interface for hotel staff and escape room owners. It provides a customizable dashboard, booking management, and configuration settings, all wrapped in a dynamic theming system.
+Escapemaster Gestor is the primary interface for hotel staff and escape room owners. It provides a customizable dashboard, booking management, and configuration settings, all wrapped in a dynamic theming system.
 
 ## 🏗️ Architecture & Stack
 
@@ -27,7 +27,7 @@ The application is built on **Next.js 16** using the **App Router** architecture
 ## 📂 Project Structure
 
 ```
-escapemaster-web/
+manager/gestor/
 ├── src/
 │   ├── app/              # Next.js App Router pages
 │   │   ├── (auth)/       # Login/Register routes
@@ -113,8 +113,8 @@ npm run test:e2e:ui
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/diegogzt/escapemaster-web.git
-   cd escapemaster-web
+   git clone https://github.com/diegogzt/manager-gestor.git
+   cd manager-gestor
    ```
 
 2. **Install dependencies:**

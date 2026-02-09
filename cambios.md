@@ -231,12 +231,12 @@ Ubicación: src/types/api.ts
 4. **Conexión API:** Configura lib/api/client.ts y prueba un fetch simple en el Dashboard.
 ## **7. 🐛 Correcciones y Mejoras (8 de Diciembre 2025)**
 
-### **7.1. Autenticación (Backend - escapemaster-api)**
+### **7.1. Autenticación (Backend - manager-api)**
 * **Normalización de Email:** Se implementó `email.lower().strip()` en `auth_service.py` (métodos `forgot_password` y `reset_password`) para evitar errores por mayúsculas/espacios.
 * **Búsqueda Insensible a Mayúsculas:** Se cambió la consulta de usuario a `User.email.ilike(email)` para mayor robustez.
 * **Depuración:** Se añadieron logs detallados en el flujo de reset de contraseña.
 
-### **7.2. Autenticación (Frontend - escapemaster-web)**
+### **7.2. Autenticación (Frontend - manager-gestor)**
 * **Normalización de Input:** En `src/app/(auth)/forgot-password/page.tsx`, el email ingresado se convierte a minúsculas antes de enviarlo a la API.
 
 ### **3.4. Módulo: Reportes y Finanzas (Analytics)**

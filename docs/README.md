@@ -28,7 +28,7 @@ La aplicación está construida sobre **Next.js 16** utilizando la arquitectura 
 ### Estructura del Proyecto
 
 ```
-escapemaster-web/
+manager-gestor/
 ├── src/
 │   ├── app/              # Next.js App Router pages
 │   │   ├── (auth)/       # Login/Register routes
@@ -116,8 +116,8 @@ npm run test:e2e:ui
 ### 1. Clonar Repositorio
 
 ```bash
-git clone https://github.com/diegogzt/escapemaster-web.git
-cd escapemaster-web
+git clone https://github.com/diegogzt/manager-gestor.git
+cd manager-gestor
 ```
 
 ### 2. Instalar Dependencias
@@ -149,7 +149,7 @@ La aplicación estará disponible en: `http://localhost:3000`
 Para documentación completa del sistema, ver:
 - [Docs Escapemaster](../../docs/README.md) - Documentación centralizada
 - [Contexto para IA](../../docs/03-contexto-ia/) - Guía para desarrolladores
-- [Backend API](../../backend/api/docs/) - Documentación de la API
+- [Backend API](../../manager/api/docs/) - Documentación de la API
 - [Guías de Usuario](../../docs/02-guias-usuario/) - Documentación para usuarios finales
 
 ## 🎨 Sistema de Temas
@@ -371,7 +371,7 @@ Configurar en Vercel:
 ## 🐛 Reportar Issues
 
 Para reportar bugs o sugerir mejoras:
-- GitHub Issues: https://github.com/diegogzt/escapemaster-web/issues
+- GitHub Issues: https://github.com/diegogzt/manager-gestor/issues
 - Contacto: soporte@escapemaster.es
 
 ---

@@ -1,6 +1,6 @@
 # Registro de Cambios y Hoja de Ruta (Frontend & API)
 
-Este documento resume los cambios recientes realizados en `escapemaster-web` para mejorar la interfaz y la experiencia de usuario, así como los requisitos necesarios en la API (`escapemaster-api`) para soportar estas nuevas funcionalidades de manera persistente.
+Este documento resume los cambios recientes realizados en `manager-gestor` para mejorar la interfaz y la experiencia de usuario, así como los requisitos necesarios en la API (`manager-api`) para soportar estas nuevas funcionalidades de manera persistente.
 
 ## 1. Cambios Recientes en Escapemaster Web
 
@@ -79,7 +79,7 @@ El dashboard ha sido refactorizado para ser más modular y visualmente consisten
 
 ## 2. Requisitos de API (Backend Changes)
 
-Para que las funcionalidades del frontend sean persistentes y dinámicas, se requieren los siguientes cambios en `escapemaster-api`.
+Para que las funcionalidades del frontend sean persistentes y dinámicas, se requieren los siguientes cambios en `manager-api`.
 
 ### 2.1. Preferencias de Usuario / Organización
 
@@ -127,7 +127,7 @@ Para que el usuario no pierda su organización de widgets al recargar.
 
 ## 3. Futuras Integraciones Frontend
 
-Pasos a seguir en `escapemaster-web` para completar la migración a una aplicación totalmente funcional.
+Pasos a seguir en `manager-gestor` para completar la migración a una aplicación totalmente funcional.
 
 1.  **Capa de Servicios (API Client)**:
 

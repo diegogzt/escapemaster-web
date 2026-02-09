@@ -1,0 +1,32 @@
+# Escapemaster Gestor - Contexto para IA
+
+## 📋 Rol y Contexto
+
+Estás trabajando en el Dashboard de Gestión (Gestor) para dueños de salas de Escape Room. Es el frontend principal del lado de la empresa.
+
+## 🏗️ Propósito
+
+Proporcionar una interfaz administrativa robusta para que los dueños gestionen sus salas, horarios, reservas, personal (RRHH) y estadísticas de rendimiento.
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Estilos:** Tailwind CSS v4
+- **Componentes:** Escapemaster UI Kit (en `manager/ui-kit`)
+- **Gestión de Estado:** React Context + Hooks
+- **Animaciones:** GSAP + Framer Motion
+- **Drag & Drop:** @dnd-kit
+
+## 📁 Estructura Clave
+
+- `app/`: Rutas y páginas de Next.js.
+- `components/`: Componentes específicos de la aplicación.
+- `services/`: Lógica de comunicación con la API (Axios).
+- `context/`: Proveedores de estado global (Auth, Theme).
+- `utils/`: Funciones de utilidad y formateo.
+
+## 🎨 Guías y Estándares
+
+- **Priorizar UI Kit:** Usar siempre componentes de `manager/ui-kit` antes de crear nuevos.
+- **Responsividad:** El gestor debe ser 100% responsive, optimizado para tablets y móviles.
+- **Rendimiento:** El calendario es una pieza crítica; usar virtualización y evitar re-renders innecesarios.
