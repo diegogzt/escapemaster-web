@@ -91,13 +91,12 @@ export default function BookingForm({
     const fetchRooms = async () => {
       try {
         const data = await rooms.list();
-        if (Array.isArray(data)) {
-          setRoomOptions(
-            data.map((r: any) => ({ value: r.id, label: r.name }))
-          );
-          if (!isEdit && data.length > 0) {
-            setFormData((prev) => ({ ...prev, room_id: data[0].id }));
-          }
+        const roomsList = data?.rooms || (Array.isArray(data) ? data : []);
+        setRoomOptions(
+          roomsList.map((r: any) => ({ value: r.id, label: r.name }))
+        );
+        if (!isEdit && roomsList.length > 0) {
+          setFormData((prev) => ({ ...prev, room_id: roomsList[0].id }));
         }
       } catch (err) {
         console.error("Error loading rooms", err);

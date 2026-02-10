@@ -139,8 +139,11 @@ export default function ReportsPage() {
         
         let totalRevenue = 0;
         
+        // Extract array from paginated response
+        const bookingsList = bookingsData?.bookings || (Array.isArray(bookingsData) ? bookingsData : []);
+        
         // API returns: id, start_time, total_price, room_name, booking_status
-        (bookingsData || []).forEach((b: any) => {
+        bookingsList.forEach((b: any) => {
           const price = Number(b.total_price) || 0;
           totalRevenue += price;
           
@@ -199,12 +202,12 @@ export default function ReportsPage() {
         // Set stats
         setStats({
           totalRevenue,
-          totalBookings: (bookingsData || []).length,
+          totalBookings: bookingsList.length,
           profit: Math.round(totalRevenue * 0.7),
         });
 
         // Set recent bookings
-        const sortedBookings = [...(bookingsData || [])]
+        const sortedBookings = [...bookingsList]
           .sort((a: any, b: any) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
           .slice(0, 5);
         setRecentBookings(sortedBookings);

@@ -41,7 +41,8 @@ export default function CalendarView() {
           date_to: end.toISOString(),
           page_size: 100 
         });
-        setEvents(data);
+        const list = data?.bookings || (Array.isArray(data) ? data : []);
+        setEvents(list);
       } catch (err) {
         console.error("Failed to load bookings:", err);
         setEvents([]);
