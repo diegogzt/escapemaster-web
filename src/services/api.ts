@@ -348,6 +348,8 @@ export interface WidgetDefinition {
   default_config: any;
   min_col_span: number;
   min_row_span: number;
+  default_col_span?: number;
+  default_row_span?: number;
 }
 
 export interface DashboardTemplate {
@@ -401,6 +403,44 @@ export const widgets = {
   },
   getRevenueSummary: async (period: string = "month") => {
     const response = await api.get("/dashboard/stats", { params: { period } });
+    return response.data;
+  },
+};
+
+export const payments = {
+  list: async (params?: { page?: number; limit?: number; status?: string; date_from?: string; date_to?: string }) => {
+    try {
+      const response = await api.get("/payments", { params });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching payments:", error);
+      throw error;
+    }
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/payments/${id}`);
+    return response.data;
+  },
+  create: async (data: {
+    booking_id: string;
+    amount?: number;
+    payment_method: string;
+    stripe_payment_intent_id?: string;
+    notes?: string;
+  }) => {
+    const response = await api.post("/payments", data);
+    return response.data;
+  },
+  createCheckoutSession: async (data: {
+    booking_id: string;
+    success_url: string;
+    cancel_url: string;
+  }) => {
+    const response = await api.post("/payments/checkout-session", data);
+    return response.data;
+  },
+  refund: async (paymentId: string, data?: { amount?: number; reason?: string }) => {
+    const response = await api.post(`/payments/${paymentId}/refund`, data || {});
     return response.data;
   },
 };

@@ -10,7 +10,6 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("DEBUG: Se ha cargado el widget Proyección Mensual");
     const fetchData = async () => {
       try {
         const result = await widgets.getRevenueSummary("month");

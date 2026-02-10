@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { NavItem } from "./nav-item";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
@@ -122,7 +123,7 @@ export function AppSidebar() {
                     await auth.switchOrganization(orgId);
                     window.location.reload(); // Refresh to apply new context/permissions
                   } catch (err) {
-                    alert("Error al cambiar de organización");
+                    toast.error("Error al cambiar de organización");
                   }
                 }
               }}

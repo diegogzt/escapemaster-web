@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { widgets as dashboardService, WidgetDefinition } from "@/services/api";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
@@ -125,7 +126,7 @@ function WidgetRow({ definition, onSave }: { definition: WidgetDefinition, onSav
       if (onSave) onSave();
     } catch (e) {
       console.error(e);
-      alert("Failed to save changes");
+      toast.error("Failed to save changes");
     } finally {
       setIsSaving(false);
     }

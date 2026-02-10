@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
@@ -52,10 +53,10 @@ export default function EmailSettingsPage() {
         body: template.body,
         is_active: template.is_active
       });
-      alert("Plantilla guardada correctamente");
+      toast.success("Plantilla guardada correctamente");
     } catch (error) {
       console.error("Error saving template:", error);
-      alert("Error al guardar la plantilla");
+      toast.error("Error al guardar la plantilla");
     } finally {
       setSaving(false);
     }
@@ -77,7 +78,7 @@ export default function EmailSettingsPage() {
       setActiveTab(lang);
     } catch (error) {
       console.error("Error creating template:", error);
-      alert("Error al crear la plantilla");
+      toast.error("Error al crear la plantilla");
     } finally {
       setSaving(false);
     }

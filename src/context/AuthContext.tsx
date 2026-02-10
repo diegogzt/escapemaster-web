@@ -72,7 +72,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const expirationTime = payload.exp * 1000; // Convert to milliseconds
 
           if (Date.now() >= expirationTime) {
-            console.log("Token expired, logging out");
             logout();
             setLoading(false);
             return;

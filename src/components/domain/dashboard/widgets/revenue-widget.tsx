@@ -18,7 +18,6 @@ export function RevenueWidget({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("DEBUG: Se ha cargado el widget Ingresos");
     const fetchData = async () => {
       setLoading(true);
       try {

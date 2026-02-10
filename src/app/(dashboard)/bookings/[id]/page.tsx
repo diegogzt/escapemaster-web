@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/Card";
@@ -133,14 +134,14 @@ export default function BookingDetailsPage() {
   }, [bookingId]);
 
   const handleSendPaymentLink = (email: string) => {
-    alert(`Enlace de pago enviado a ${email}`);
+    toast.success(`Enlace de pago enviado a ${email}`);
   };
 
   const handleCopyLink = (id: string) => {
     if (!booking) return;
     const link = `${window.location.origin}/payment/${booking.id}/${id}`;
     navigator.clipboard.writeText(link);
-    alert("Enlace copiado al portapapeles: " + link);
+    toast.success("Enlace copiado al portapapeles: " + link);
   };
 
   const handleAddComment = (e: React.FormEvent) => {

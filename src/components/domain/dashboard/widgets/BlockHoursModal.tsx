@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { format } from "date-fns";
@@ -51,7 +52,7 @@ export default function BlockHoursModal({
       onClose();
     } catch (error) {
       console.error("Error blocking hours", error);
-      alert("Error al bloquear horas");
+      toast.error("Error al bloquear horas");
     } finally {
       setLoading(false);
     }

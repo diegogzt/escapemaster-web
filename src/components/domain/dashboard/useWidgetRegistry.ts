@@ -22,7 +22,6 @@ export function useWidgetRegistry() {
     const syncRegistry = async () => {
       try {
         const apiDefinitions = await dashboardService.getWidgetDefinitions();
-        console.log("DEBUG: API Widget Definitions received:", apiDefinitions);
         
         // Merge API definitions with local registry
         // API can override default_config, but components come from local registry

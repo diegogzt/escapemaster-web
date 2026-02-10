@@ -18,6 +18,7 @@ import {
   Moon,
   User,
   Building,
+  CreditCard,
 } from "lucide-react";
 import { cn } from "@/utils";
 
@@ -30,6 +31,7 @@ export default function Sidebar() {
     { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { href: "/dashboard/users", icon: Users, label: "Usuarios" },
     { href: "/dashboard/rooms", icon: Layers, label: "Salas" },
+    { href: "/payments", icon: CreditCard, label: "Pagos" },
     { href: "/dashboard/schedules", icon: Clock, label: "Horarios" },
     { href: "/dashboard/coupons", icon: Tag, label: "Cupones" },
     { href: "/settings", icon: Building, label: "Organización" },

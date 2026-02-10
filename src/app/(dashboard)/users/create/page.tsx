@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Input from "@/components/Input";
@@ -82,8 +83,6 @@ export default function CreateUserPage() {
       vacation_days_total:
         parseInt(formData.get("vacation_days_total") as string) || 0,
     };
-
-    console.log("Sending user data:", userData);
 
     try {
       await users.create(userData);
@@ -403,7 +402,7 @@ export default function CreateUserPage() {
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(invitationCode);
-                    alert("Código copiado al portapapeles!");
+                    toast.success("Código copiado al portapapeles!");
                   }}
                   className="p-3 bg-primary/10 hover:bg-primary/20 rounded-xl transition-colors"
                   title="Copiar código"
@@ -428,7 +427,7 @@ export default function CreateUserPage() {
                 onClick={() => {
                   const link = `https://manager.escapemaster.es/login?code=${invitationCode}`;
                   navigator.clipboard.writeText(link);
-                  alert("Enlace copiado al portapapeles!");
+                  toast.success("Enlace copiado al portapapeles!");
                 }}
               >
                 <Copy className="w-4 h-4 mr-2" />

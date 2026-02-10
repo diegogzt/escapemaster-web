@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
+import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Input from "@/components/Input";
@@ -133,7 +134,7 @@ function LoginContent() {
       setOnboardStep(1);
       setEmailVerified(false);
       setOnboardData({ email: "", verification_code: "", invitation_code: "", password: "" });
-      alert("¡Registro completado! Ahora puedes iniciar sesión con tu nueva contraseña.");
+      toast.success("¡Registro completado! Ahora puedes iniciar sesión con tu nueva contraseña.");
     } catch (err: any) {
       const detail = err.response?.data?.detail;
       if (typeof detail === 'string') {

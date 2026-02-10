@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import Button from "@/components/Button";
@@ -89,10 +90,10 @@ export default function OnboardingPage() {
       if (formData.inviteEmail && orgId) {
         await orgs.invite(orgId, formData.inviteEmail);
         setFormData(prev => ({ ...prev, inviteEmail: "" })); // Clear input
-        alert("Invitación enviada");
+        toast.success("Invitación enviada");
       }
     } catch (err: any) {
-      alert("Error al invitar");
+      toast.error("Error al invitar");
     } finally {
       setLoading(false);
     }

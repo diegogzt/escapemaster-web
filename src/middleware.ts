@@ -29,17 +29,13 @@ export function middleware(request: NextRequest) {
   const isRoot = pathname === "/";
   const isValidToken = token && !isTokenExpired(token);
 
-  console.log(`MIDDLEWARE: path=${pathname} hasToken=${!!token} isValid=${isValidToken}`);
-
   // 1. If user is logged in, they shouldn't see Login/Register or the Landing Page
   if ((isRoot || isPublicRoute) && isValidToken) {
-    console.log(`MIDDLEWARE: Redirecting auth user from public ${pathname} to /dashboard`);
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   // 2. Protect all other routes (except public and root)
   if (!isRoot && !isPublicRoute && !isValidToken) {
-    console.log(`MIDDLEWARE: Redirecting unauth user from protected ${pathname} to /login`);
     const response = NextResponse.redirect(new URL("/login", request.url));
     if (token) {
       response.cookies.delete("token");

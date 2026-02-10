@@ -168,10 +168,10 @@ export default function BookingForm({
 
       if (isEdit) {
         // await bookings.update(initialData.id, payload);
-        console.log("Mock Update Payload:", payload);
+        // TODO: Implement bookings.update(initialData.id, payload)
       } else {
         // await bookings.create(payload);
-        console.log("Mock Create Payload:", payload);
+        // TODO: Implement bookings.create(payload)
       }
 
       // Simulate API delay

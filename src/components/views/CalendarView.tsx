@@ -77,8 +77,6 @@ export function CalendarView() {
         const firstDayStr = format(startOfMonth(currentDate), "yyyy-MM-dd");
         const lastDayStr = format(endOfMonth(currentDate), "yyyy-MM-dd");
 
-        console.log(`[Calendar] Fetching month: ${firstDayStr} to ${lastDayStr}`);
-
         // Individual try-catch for rooms to avoid blocking the whole fetch if rooms fail
         let roomsMap: Record<string, any> = {};
         try {

@@ -26,7 +26,6 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
   }, []);
 
   useEffect(() => {
-    console.log("DEBUG: Se ha cargado el widget Facturación Fiscal");
     const fetchData = async () => {
       try {
         const now = new Date();

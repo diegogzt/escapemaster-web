@@ -15,8 +15,6 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { activeView } = useUIStore();
 
-  console.log(`VIEW_RENDERER: pathname=${pathname}`);
-
   // Track which persistent views have been visited to enable lazy mounting
   const [visited, setVisited] = React.useState<Record<string, boolean>>({});
 

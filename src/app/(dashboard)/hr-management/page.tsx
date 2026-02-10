@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import { timeclock, vacations } from "@/services/api";
@@ -76,7 +77,7 @@ export default function HRManagementPage() {
       await vacations.updateStatus(id, { status, admin_notes: notes || "" });
       await fetchData();
     } catch (err) {
-      alert("Error al actualizar estado de vacaciones");
+      toast.error("Error al actualizar estado de vacaciones");
     } finally {
       setActionLoading(null);
     }

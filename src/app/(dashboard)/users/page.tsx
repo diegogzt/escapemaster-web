@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
@@ -50,7 +51,7 @@ export default function UsersPage() {
         await users.delete(id);
         fetchUsers();
       } catch (err) {
-        alert("Error al desactivar usuario");
+        toast.error("Error al desactivar usuario");
       }
     }
   };

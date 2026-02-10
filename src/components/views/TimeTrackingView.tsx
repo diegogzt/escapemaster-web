@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import { timeclock, vacations } from "@/services/api";
@@ -73,7 +74,7 @@ export function TimeTrackingView() {
       setTimeTrackingState({ lastFetched: 0 }); // Invalidate cache
       await fetchData();
     } catch (err) {
-      alert("Error al iniciar turno");
+      toast.error("Error al iniciar turno");
     } finally {
       setActionLoading(false);
     }
@@ -87,7 +88,7 @@ export function TimeTrackingView() {
       setTimeTrackingState({ lastFetched: 0 }); // Invalidate cache
       await fetchData();
     } catch (err) {
-      alert("Error al finalizar turno");
+      toast.error("Error al finalizar turno");
     } finally {
       setActionLoading(false);
     }
@@ -107,7 +108,7 @@ export function TimeTrackingView() {
       setTimeTrackingState({ lastFetched: 0 }); // Invalidate cache
       await fetchData();
     } catch (err) {
-      alert("Error al solicitar vacaciones");
+      toast.error("Error al solicitar vacaciones");
     } finally {
       setActionLoading(false);
     }

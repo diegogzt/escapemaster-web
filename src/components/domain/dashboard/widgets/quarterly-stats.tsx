@@ -21,7 +21,6 @@ export function QuarterlyStatsWidget({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("DEBUG: Se ha cargado el widget Resumen Trimestral");
     const fetchData = async () => {
       setLoading(true);
       try {

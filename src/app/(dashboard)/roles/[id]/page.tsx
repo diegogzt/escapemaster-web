@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { useRouter, useParams } from "next/navigation";
 import { Card } from "@/components/Card";
 import Input from "@/components/Input";
@@ -64,7 +65,7 @@ export default function EditRolePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (selectedPermissions.length === 0) {
-      alert("Debes seleccionar al menos un permiso");
+      toast.warning("Debes seleccionar al menos un permiso");
       return;
     }
 
@@ -77,7 +78,7 @@ export default function EditRolePage() {
       router.push("/roles");
     } catch (error) {
       console.error("Error updating role:", error);
-      alert("Error al actualizar el rol");
+      toast.error("Error al actualizar el rol");
     } finally {
       setSaving(false);
     }

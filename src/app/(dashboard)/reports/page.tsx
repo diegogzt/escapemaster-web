@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
@@ -76,14 +77,23 @@ interface ExpenseData {
   value: number;
 }
 
-// Default expenses (no API endpoint yet - can be extended later)
-const DEFAULT_EXPENSES: ExpenseData[] = [
-  { name: "Alquiler", value: 2000 },
-  { name: "Nóminas", value: 4500 },
-  { name: "Marketing", value: 1200 },
-  { name: "Mantenimiento", value: 800 },
-  { name: "Otros", value: 500 },
-];
+// Default expenses - loaded from localStorage or defaults.
+// Can be overridden per-organization via settings.
+const INITIAL_EXPENSES: ExpenseData[] = (() => {
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem("org_expenses_config");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+  }
+  return [
+    { name: "Alquiler", value: 2000 },
+    { name: "Nóminas", value: 4500 },
+    { name: "Marketing", value: 1200 },
+    { name: "Mantenimiento", value: 800 },
+    { name: "Otros", value: 500 },
+  ];
+})();
 
 export default function ReportsPage() {
   const [dateRange, setDateRange] = useState("week");
@@ -97,7 +107,9 @@ export default function ReportsPage() {
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
   const [roomPopularity, setRoomPopularity] = useState<RoomPopularity[]>([]);
   const [hourlyDistribution, setHourlyDistribution] = useState<HourlyData[]>([]);
-  const [expensesData] = useState<ExpenseData[]>(DEFAULT_EXPENSES); // TODO: Connect to expenses API
+  const [expensesData, setExpensesData] = useState<ExpenseData[]>(INITIAL_EXPENSES);
+  const [editingExpenses, setEditingExpenses] = useState(false);
+  const [expensesDraft, setExpensesDraft] = useState<ExpenseData[]>(INITIAL_EXPENSES);
   const [stats, setStats] = useState({ totalRevenue: 0, totalBookings: 0, profit: 0 });
   const [recentBookings, setRecentBookings] = useState<any[]>([]);
 
@@ -231,7 +243,7 @@ export default function ReportsPage() {
       link.click();
       document.body.removeChild(link);
     } else {
-      alert(
+      toast.info(
         "La exportación a Excel requiere una librería adicional. Descargando CSV por defecto."
       );
       handleExport("csv");
@@ -520,27 +532,91 @@ export default function ReportsPage() {
 
           {/* Expenses Breakdown */}
           <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
-            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6">Distribución de Gastos</h3>
-            <div className="space-y-6">
-              {expensesData.map((expense, i) => {
-                const total = expensesData.reduce((acc, curr) => acc + curr.value, 0);
-                const percentage = (expense.value / total) * 100;
-                return (
-                  <div key={i} className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="font-medium text-[var(--color-muted-foreground)]">{expense.name}</span>
-                      <span className="font-bold text-[var(--color-foreground)]">{expense.value}€</span>
-                    </div>
-                    <div className="w-full bg-[var(--color-light)] h-2 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-primary rounded-full" 
-                        style={{ width: `${percentage}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-[var(--color-foreground)]">Distribución de Gastos</h3>
+              <button
+                onClick={() => {
+                  if (editingExpenses) {
+                    setExpensesDraft([...expensesData]);
+                  }
+                  setEditingExpenses(!editingExpenses);
+                }}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                {editingExpenses ? "Cancelar" : "Editar"}
+              </button>
             </div>
+            {editingExpenses ? (
+              <div className="space-y-3">
+                {expensesDraft.map((expense, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <input
+                      type="text"
+                      className="flex-1 bg-[var(--color-light)] border border-[var(--color-beige)] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      value={expense.name}
+                      onChange={(e) => {
+                        const updated = [...expensesDraft];
+                        updated[i] = { ...updated[i], name: e.target.value };
+                        setExpensesDraft(updated);
+                      }}
+                    />
+                    <input
+                      type="number"
+                      className="w-24 bg-[var(--color-light)] border border-[var(--color-beige)] rounded-lg px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      value={expense.value}
+                      onChange={(e) => {
+                        const updated = [...expensesDraft];
+                        updated[i] = { ...updated[i], value: Number(e.target.value) || 0 };
+                        setExpensesDraft(updated);
+                      }}
+                    />
+                    <button
+                      onClick={() => setExpensesDraft(expensesDraft.filter((_, idx) => idx !== i))}
+                      className="text-red-400 hover:text-red-600 p-1"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  onClick={() => setExpensesDraft([...expensesDraft, { name: "Nuevo gasto", value: 0 }])}
+                  className="w-full py-1.5 text-xs font-medium text-primary border border-dashed border-[var(--color-beige)] rounded-lg hover:bg-[var(--color-light)]"
+                >
+                  + Añadir categoría
+                </button>
+                <button
+                  onClick={() => {
+                    setExpensesData([...expensesDraft]);
+                    localStorage.setItem("org_expenses_config", JSON.stringify(expensesDraft));
+                    setEditingExpenses(false);
+                  }}
+                  className="w-full py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Guardar cambios
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {expensesData.map((expense, i) => {
+                  const total = expensesData.reduce((acc, curr) => acc + curr.value, 0);
+                  const percentage = total > 0 ? (expense.value / total) * 100 : 0;
+                  return (
+                    <div key={i} className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="font-medium text-[var(--color-muted-foreground)]">{expense.name}</span>
+                        <span className="font-bold text-[var(--color-foreground)]">{expense.value.toLocaleString()}€</span>
+                      </div>
+                      <div className="w-full bg-[var(--color-light)] h-2 rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-primary rounded-full" 
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </Card>
         </div>
       </div>
