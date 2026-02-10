@@ -51,7 +51,7 @@ export function SaveCollectionModal({
     setError(null);
     try {
       const data = await dashboardService.getCollections();
-      setCollections(data);
+      setCollections(Array.isArray(data) ? data : data?.collections || []);
     } catch (err) {
       console.error("Failed to load collections", err);
       const msg = getErrorMessage(err);

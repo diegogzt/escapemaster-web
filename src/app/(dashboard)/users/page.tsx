@@ -28,7 +28,7 @@ export default function UsersPage() {
     setLoading(true);
     users
       .list({ search: searchTerm, role_id: filterRole || undefined })
-      .then((data) => setUsersList(data.users || data))
+      .then((data) => setUsersList(Array.isArray(data?.users) ? data.users : Array.isArray(data) ? data : []))
       .catch((err) => {
         console.error("Failed to load users:", err);
         setUsersList([]);

@@ -60,7 +60,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (savedDark) setIsDarkMode(savedDark);
     if (savedCustom) {
       try {
-        setCustomThemes(JSON.parse(savedCustom));
+        const parsed = JSON.parse(savedCustom);
+        setCustomThemes(Array.isArray(parsed) ? parsed : []);
       } catch (e) {
         console.error("Failed to parse custom themes", e);
       }
@@ -79,7 +80,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         setIsDarkMode(user.preferences.isDarkMode);
       }
       if (user?.preferences?.customThemes) {
-        setCustomThemes(user.preferences.customThemes);
+        const ct = user.preferences.customThemes;
+        setCustomThemes(Array.isArray(ct) ? ct : []);
       }
     }
   }, [isAuthenticated, user?.preferences, isInitialized]);

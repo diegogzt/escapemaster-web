@@ -329,7 +329,7 @@ export default function BookingDetailsPage() {
               Información Adicional
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {booking.custom_fields.map((field, index) => (
+              {(booking.custom_fields || []).map((field, index) => (
                 <div
                   key={index}
                   className="bg-[var(--color-light)]/30 p-3 rounded-lg border border-beige"

@@ -27,7 +27,7 @@ export default function RoomsPage() {
   useEffect(() => {
     rooms
       .list()
-      .then((data) => setRoomsList(data.rooms || data))
+      .then((data) => setRoomsList(Array.isArray(data?.rooms) ? data.rooms : Array.isArray(data) ? data : []))
       .catch((err) => {
         console.error("Failed to load rooms:", err);
         setRoomsList([]);

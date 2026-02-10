@@ -34,7 +34,7 @@ export const useDashboardLayoutStore = create<DashboardLayoutState>()(
         setWidgets: (widgets) => set({ widgets }),
         updateWidgetConfig: (id, config) =>
           set((state) => ({
-            widgets: state.widgets.map((w) =>
+            widgets: (state.widgets || []).map((w) =>
               w.id === id ? { ...w, config: { ...w.config, ...config } } : w
             ),
           })),
