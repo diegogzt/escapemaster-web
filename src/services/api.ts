@@ -165,7 +165,15 @@ export const dashboard = {
       console.error("Error fetching bookings chart:", error);
       throw error;
     }
-  }
+  },
+  blockHours: async (data: { start_time: string; end_time: string; date: string; room_id?: string; reason?: string; recurrence?: string; end_recurrence?: string }) => {
+    const response = await api.post("/dashboard/block-hours", data);
+    return response.data;
+  },
+  getCalendarStatus: async (month: number, year: number) => {
+    const response = await api.get("/dashboard/calendar-status", { params: { month, year } });
+    return response.data;
+  },
 };
 
 export const bookings = {
@@ -194,6 +202,42 @@ export const bookings = {
   },
   update: async (id: string, data: any) => {
     const response = await api.put(`/bookings/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/bookings/${id}`);
+    return response.data;
+  },
+  updateStatus: async (id: string, data: { booking_status: string; block_reason?: string }) => {
+    const response = await api.put(`/bookings/${id}/status`, data);
+    return response.data;
+  },
+  assignMembers: async (id: string, userIds: string[]) => {
+    const response = await api.post(`/bookings/${id}/assign-members`, { user_ids: userIds });
+    return response.data;
+  },
+  claim: async (id: string) => {
+    const response = await api.post(`/bookings/${id}/claim`);
+    return response.data;
+  },
+  confirm: async (id: string) => {
+    const response = await api.post(`/bookings/${id}/confirm`);
+    return response.data;
+  },
+  finalize: async (id: string, data: { notes?: string; rating?: number; send_email?: boolean }) => {
+    const response = await api.post(`/bookings/${id}/finalize`, data);
+    return response.data;
+  },
+  signGDPR: async (id: string, data: { customer_email: string; signature_data: string; ip_address?: string; guest_id: string }) => {
+    const response = await api.post(`/bookings/${id}/gdpr`, data);
+    return response.data;
+  },
+  getInvoice: async (id: string) => {
+    const response = await api.get(`/bookings/${id}/invoice`);
+    return response.data;
+  },
+  registerPayment: async (id: string, data: { amount: number; payment_method: string; notes?: string }) => {
+    const response = await api.post(`/bookings/${id}/payment`, data);
     return response.data;
   },
 };
@@ -286,6 +330,20 @@ export const rooms = {
     const response = await api.delete(`/rooms/${id}`);
     return response.data;
   },
+  getAvailability: async (id: string, checkDate: string, numPeople: number) => {
+    const response = await api.get(`/rooms/${id}/availability`, { params: { check_date: checkDate, num_people: numPeople } });
+    return response.data;
+  },
+  createSchedule: async (id: string, data: any) => {
+    const response = await api.post(`/rooms/${id}/schedules`, data);
+    return response.data;
+  },
+  uploadImage: async (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await api.post(`/rooms/${id}/image`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+    return response.data;
+  },
 };
 
 export const users = {
@@ -312,6 +370,10 @@ export const users = {
   },
   delete: async (id: string) => {
     const response = await api.delete(`/users/${id}`);
+    return response.data;
+  },
+  changePassword: async (data: { current_password: string; new_password: string }) => {
+    const response = await api.put("/users/me/password", data);
     return response.data;
   },
 };
@@ -454,6 +516,10 @@ export const reports = {
     const response = await api.get("/reports/bookings", { params });
     return response.data;
   },
+  exportBookings: async (format: "csv" | "pdf" | "excel", startDate?: string, endDate?: string) => {
+    const response = await api.get("/reports/bookings/export", { params: { format, start_date: startDate, end_date: endDate }, responseType: "blob" });
+    return response.data;
+  },
 };
 
 export const roles = {
@@ -503,6 +569,265 @@ export const admin = {
   },
   getOrgUsers: async (orgId: string) => {
     const response = await api.get(`/admin/organizations/${orgId}/users`);
+    return response.data;
+  },
+};
+
+// === GAME MASTER ===
+export const gamemaster = {
+  getToday: async (roomId?: string) => {
+    const response = await api.get("/gamemaster/today", { params: roomId ? { room_id: roomId } : {} });
+    return response.data;
+  },
+  checkIn: async (bookingId: string) => {
+    const response = await api.post(`/gamemaster/check-in/${bookingId}`);
+    return response.data;
+  },
+  getBooking: async (bookingId: string) => {
+    const response = await api.get(`/gamemaster/booking/${bookingId}`);
+    return response.data;
+  },
+  recordResult: async (bookingId: string, data: { escaped: boolean; escape_time_seconds?: number; hints_used: number; notes?: string }) => {
+    const response = await api.post(`/gamemaster/booking/${bookingId}/result`, data);
+    return response.data;
+  },
+  getChecklist: async (roomId: string) => {
+    const response = await api.get(`/gamemaster/rooms/${roomId}/checklist`);
+    return response.data;
+  },
+  completeChecklistItem: async (bookingId: string, itemId: string) => {
+    const response = await api.post(`/gamemaster/bookings/${bookingId}/checklist/${itemId}/complete`);
+    return response.data;
+  },
+};
+
+// === COUPONS ===
+export const coupons = {
+  list: async (params?: { page?: number; page_size?: number; search?: string; is_active?: boolean }) => {
+    const response = await api.get("/coupons", { params });
+    return response.data;
+  },
+  create: async (data: any) => {
+    const response = await api.post("/coupons", data);
+    return response.data;
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/coupons/${id}`);
+    return response.data;
+  },
+  update: async (id: string, data: any) => {
+    const response = await api.put(`/coupons/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/coupons/${id}`);
+    return response.data;
+  },
+  validate: async (data: { code: string; room_id?: string; booking_amount: number }) => {
+    const response = await api.post("/coupons/validate", data);
+    return response.data;
+  },
+};
+
+// === ROOM EXTRAS ===
+export const roomExtras = {
+  list: async (roomId: string) => {
+    const response = await api.get(`/rooms/${roomId}/extras`);
+    return response.data;
+  },
+  create: async (roomId: string, data: any) => {
+    const response = await api.post(`/rooms/${roomId}/extras`, data);
+    return response.data;
+  },
+  update: async (extraId: string, params: any) => {
+    const response = await api.put(`/extras/${extraId}`, null, { params });
+    return response.data;
+  },
+  delete: async (extraId: string) => {
+    const response = await api.delete(`/extras/${extraId}`);
+    return response.data;
+  },
+  getPricing: async (roomId: string) => {
+    const response = await api.get(`/rooms/${roomId}/pricing`);
+    return response.data;
+  },
+  createPricing: async (roomId: string, data: any) => {
+    const response = await api.post(`/rooms/${roomId}/pricing`, data);
+    return response.data;
+  },
+  deletePricing: async (pricingId: string) => {
+    const response = await api.delete(`/pricing/${pricingId}`);
+    return response.data;
+  },
+  getCancellationPolicy: async (roomId: string) => {
+    const response = await api.get(`/rooms/${roomId}/cancellation-policy`);
+    return response.data;
+  },
+  updateCancellationPolicy: async (roomId: string, data: any) => {
+    const response = await api.put(`/rooms/${roomId}/cancellation-policy`, data);
+    return response.data;
+  },
+  addBookingExtra: async (bookingId: string, extraId: string, details?: string) => {
+    const response = await api.post(`/bookings/${bookingId}/extras`, null, { params: { extra_id: extraId, details } });
+    return response.data;
+  },
+  getBookingExtras: async (bookingId: string) => {
+    const response = await api.get(`/bookings/${bookingId}/extras`);
+    return response.data;
+  },
+};
+
+// === SPLIT PAYMENT ===
+export const splitPayment = {
+  create: async (data: { booking_id: string; participant_emails: string[]; split_type: string }) => {
+    const response = await api.post("/split-payment", data);
+    return response.data;
+  },
+  join: async (shareCode: string) => {
+    const response = await api.get(`/split-payment/join/${shareCode}`);
+    return response.data;
+  },
+  get: async (lobbyId: string) => {
+    const response = await api.get(`/split-payment/${lobbyId}`);
+    return response.data;
+  },
+  pay: async (lobbyId: string, amount: number, paymentIntentId?: string) => {
+    const response = await api.post(`/split-payment/${lobbyId}/pay`, null, { params: { amount, payment_intent_id: paymentIntentId } });
+    return response.data;
+  },
+  updateAmounts: async (lobbyId: string, contributions: { email: string; amount: number }[]) => {
+    const response = await api.put(`/split-payment/${lobbyId}/amounts`, { contributions });
+    return response.data;
+  },
+  remind: async (lobbyId: string) => {
+    const response = await api.post(`/split-payment/${lobbyId}/remind`);
+    return response.data;
+  },
+  cancel: async (lobbyId: string) => {
+    const response = await api.delete(`/split-payment/${lobbyId}`);
+    return response.data;
+  },
+};
+
+// === KYB ===
+export const kyb = {
+  getDocuments: async () => {
+    const response = await api.get("/kyb/documents");
+    return response.data;
+  },
+  uploadDocument: async (documentType: string, file: File) => {
+    const formData = new FormData();
+    formData.append("document_type", documentType);
+    formData.append("file", file);
+    const response = await api.post("/kyb/documents", formData, { headers: { "Content-Type": "multipart/form-data" } });
+    return response.data;
+  },
+  getStatus: async () => {
+    const response = await api.get("/kyb/status");
+    return response.data;
+  },
+  getBankAccount: async () => {
+    const response = await api.get("/kyb/bank-account");
+    return response.data;
+  },
+  updateBankAccount: async (data: { iban: string; bic_swift?: string; bank_name: string; account_holder_name: string }) => {
+    const response = await api.post("/kyb/bank-account", data);
+    return response.data;
+  },
+};
+
+// === PAYOUTS ===
+export const payouts = {
+  list: async (params?: { status?: string; limit?: number; offset?: number }) => {
+    const response = await api.get("/payouts", { params });
+    return response.data;
+  },
+  getSummary: async () => {
+    const response = await api.get("/payouts/summary");
+    return response.data;
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/payouts/${id}`);
+    return response.data;
+  },
+  getInvoice: async (id: string) => {
+    const response = await api.get(`/payouts/${id}/invoice`);
+    return response.data;
+  },
+};
+
+// === API KEYS ===
+export const apiKeys = {
+  list: async () => {
+    const response = await api.get("/api-keys");
+    return response.data;
+  },
+  create: async (data: { name: string; expires_at?: string }) => {
+    const response = await api.post("/api-keys", data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/api-keys/${id}`);
+    return response.data;
+  },
+};
+
+// === NOTIFICATIONS ===
+export const notifications = {
+  list: async () => {
+    const response = await api.get("/notifications/me");
+    return response.data;
+  },
+  markRead: async (id: string) => {
+    const response = await api.put(`/notifications/me/${id}/read`);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/notifications/me/${id}`);
+    return response.data;
+  },
+};
+
+// === REVIEWS ===
+export const reviews = {
+  getForRoom: async (roomId: string) => {
+    const response = await api.get(`/reviews/rooms/${roomId}`);
+    return response.data;
+  },
+  getSummary: async (roomId: string) => {
+    const response = await api.get(`/reviews/rooms/${roomId}/summary`);
+    return response.data;
+  },
+  getPending: async () => {
+    const response = await api.get("/reviews/admin/pending");
+    return response.data;
+  },
+  moderate: async (reviewId: string, data: { action: string; reason?: string }) => {
+    const response = await api.put(`/reviews/admin/${reviewId}/moderate`, data);
+    return response.data;
+  },
+  delete: async (reviewId: string) => {
+    const response = await api.delete(`/reviews/${reviewId}`);
+    return response.data;
+  },
+};
+
+// === MARKETPLACE ===
+export const marketplace = {
+  getStats: async () => {
+    const response = await api.get("/marketplace/stats");
+    return response.data;
+  },
+  getFeatured: async () => {
+    const response = await api.get("/marketplace/featured");
+    return response.data;
+  },
+};
+
+// === ACHIEVEMENTS ===
+export const achievements = {
+  list: async () => {
+    const response = await api.get("/achievements");
     return response.data;
   },
 };

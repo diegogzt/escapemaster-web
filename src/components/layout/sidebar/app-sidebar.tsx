@@ -18,6 +18,14 @@ import {
   LogOut,
   Clock,
   ShieldCheck,
+  Gamepad2,
+  Tags,
+  CreditCard,
+  Wallet,
+  FileCheck,
+  Bell,
+  Key,
+  Star,
 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/services/api";
@@ -179,22 +187,64 @@ export function AppSidebar() {
           label="Reservas"
           isCollapsed={isCollapsed}
         />
+
+        {hasPermission("view_schedule") && (
+          <NavItem
+            href="/gamemaster"
+            icon={Gamepad2}
+            label="Game Master"
+            isCollapsed={isCollapsed}
+          />
+        )}
+
         <NavItem
           href="/rooms"
           icon={DoorOpen}
           label="Salas"
           isCollapsed={isCollapsed}
         />
+
+        {hasPermission("manage_bookings") && (
+          <NavItem
+            href="/coupons"
+            icon={Tags}
+            label="Cupones"
+            isCollapsed={isCollapsed}
+          />
+        )}
+
         <NavItem
           href="/users"
           icon={Users}
           label="Usuarios"
           isCollapsed={isCollapsed}
         />
+
+        {hasPermission("view_reports") && (
+          <NavItem
+            href="/payouts"
+            icon={Wallet}
+            label="Liquidaciones"
+            isCollapsed={isCollapsed}
+          />
+        )}
+
         <NavItem
           href="/roles"
           icon={ShieldCheck}
           label="Roles"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          href="/notifications"
+          icon={Bell}
+          label="Notificaciones"
+          isCollapsed={isCollapsed}
+        />
+        <NavItem
+          href="/reviews"
+          icon={Star}
+          label="Reseñas"
           isCollapsed={isCollapsed}
         />
         <NavItem

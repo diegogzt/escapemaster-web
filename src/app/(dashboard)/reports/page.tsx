@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
-import { bookings as bookingsApi, rooms as roomsApi, dashboard } from "@/services/api";
+import { bookings as bookingsApi, rooms as roomsApi, dashboard, reports } from "@/services/api";
 import {
   BarChart,
   Bar,
@@ -298,7 +298,24 @@ export default function ReportsPage() {
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => handleExport("csv")} className="bg-[var(--color-background)]">
               <Download size={18} className="mr-2" />
-              Exportar
+              Exportar Gráficos
+            </Button>
+            <Button variant="outline" onClick={async () => {
+              try {
+                const blob = await reports.exportBookings("csv", dateRange === "custom" ? customDateStart : undefined, dateRange === "custom" ? customDateEnd : undefined);
+                const url = URL.createObjectURL(new Blob([blob]));
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `reservas_${new Date().toISOString().split("T")[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success("Reservas exportadas");
+              } catch {
+                toast.error("Error al exportar reservas");
+              }
+            }} className="bg-[var(--color-background)]">
+              <Download size={18} className="mr-2" />
+              Exportar Reservas
             </Button>
             <Button variant="primary" onClick={() => setShowExpenseForm(true)} className="shadow-lg shadow-primary/20">
               <Plus size={18} className="mr-2" />

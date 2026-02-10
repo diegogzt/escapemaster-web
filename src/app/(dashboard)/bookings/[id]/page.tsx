@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Card } from "@/components/Card";
 import Button from "@/components/Button";
-import { bookings as bookingsApi } from "@/services/api";
+import { bookings as bookingsApi, splitPayment, roomExtras } from "@/services/api";
 import {
   Calendar,
   Clock,
@@ -24,6 +24,11 @@ import {
   FileText,
   Copy,
   Loader2,
+  Download,
+  Ban,
+  RotateCcw,
+  Split,
+  Package,
 } from "lucide-react";
 
 // Types for booking details
@@ -74,6 +79,15 @@ export default function BookingDetailsPage() {
   const [error, setError] = useState<string | null>(null);
   const [newComment, setNewComment] = useState("");
   const [assignedGM, setAssignedGM] = useState("");
+
+  // Split Payment
+  const [showSplitModal, setShowSplitModal] = useState(false);
+  const [splitEmails, setSplitEmails] = useState("");
+  const [splitType, setSplitType] = useState("equal");
+  const [creatingSplit, setCreatingSplit] = useState(false);
+
+  // Booking Extras
+  const [bookingExtras, setBookingExtras] = useState<any[]>([]);
 
   // Mock current user ID
   const currentUserId = "gm1";
@@ -130,6 +144,10 @@ export default function BookingDetailsPage() {
     
     if (bookingId) {
       fetchBooking();
+      // Load booking extras
+      roomExtras.getBookingExtras(bookingId).then(data => {
+        setBookingExtras(Array.isArray(data) ? data : data.extras || []);
+      }).catch(() => {});
     }
   }, [bookingId]);
 
@@ -169,6 +187,65 @@ export default function BookingDetailsPage() {
     } else {
       setAssignedGM(currentUserId);
     }
+  };
+
+  const handleDownloadInvoice = async () => {
+    try {
+      const blob = await bookingsApi.getInvoice(bookingId);
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `factura-${bookingId}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+      toast.success("Factura descargada");
+    } catch {
+      toast.error("Error al descargar la factura");
+    }
+  };
+
+  const handleUpdateStatus = async (status: string) => {
+    try {
+      await bookingsApi.updateStatus(bookingId, { booking_status: status });
+      setBooking(prev => prev ? { ...prev, status } : prev);
+      toast.success(`Estado actualizado a: ${status}`);
+    } catch {
+      toast.error("Error al actualizar el estado");
+    }
+  };
+
+  const handleCancelBooking = async () => {
+    if (!confirm("¿Estás seguro de cancelar esta reserva?")) return;
+    try {
+      await bookingsApi.delete(bookingId);
+      toast.success("Reserva cancelada");
+    } catch {
+      toast.error("Error al cancelar la reserva");
+    }
+  };
+
+  const handleCreateSplit = async () => {
+    const emails = splitEmails.split(",").map(e => e.trim()).filter(Boolean);
+    if (emails.length < 2) { toast.error("Introduce al menos 2 emails separados por comas"); return; }
+    setCreatingSplit(true);
+    try {
+      const result = await splitPayment.create({ booking_id: bookingId, participant_emails: emails, split_type: splitType });
+      const shareUrl = `${window.location.origin}/split-payment/${result.share_code}`;
+      navigator.clipboard.writeText(shareUrl);
+      toast.success("¡Pago compartido creado! Enlace copiado al portapapeles.");
+      setShowSplitModal(false);
+      setSplitEmails("");
+    } catch {
+      toast.error("Error al crear pago compartido");
+    } finally {
+      setCreatingSplit(false);
+    }
+  };
+
+  const handleSendGDPR = (email: string) => {
+    const gdprLink = `${window.location.origin}/gdpr/${bookingId}`;
+    navigator.clipboard.writeText(gdprLink);
+    toast.success(`Enlace RGPD copiado. Envíalo a ${email}`);
   };
 
   // Loading state
@@ -225,8 +302,18 @@ export default function BookingDetailsPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="secondary">Editar Reserva</Button>
-          <Button variant="danger">Cancelar</Button>
+          <Button variant="secondary" onClick={handleDownloadInvoice}>
+            <Download size={16} className="mr-1" />
+            Factura
+          </Button>
+          <Button variant="secondary" onClick={() => handleUpdateStatus("confirmed")}>
+            <CheckCircle size={16} className="mr-1" />
+            Confirmar
+          </Button>
+          <Button variant="danger" onClick={handleCancelBooking}>
+            <Ban size={16} className="mr-1" />
+            Cancelar
+          </Button>
         </div>
       </div>
 
@@ -275,9 +362,13 @@ export default function BookingDetailsPage() {
                             <CheckCircle size={18} className="mx-auto" />
                           </span>
                         ) : (
-                          <span className="text-gray-300" title="Pendiente">
+                          <button
+                            onClick={() => handleSendGDPR(player.email)}
+                            className="text-yellow-500 hover:text-yellow-600 transition-colors"
+                            title="Enviar enlace RGPD"
+                          >
                             <AlertCircle size={18} className="mx-auto" />
-                          </span>
+                          </button>
                         )}
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -366,7 +457,28 @@ export default function BookingDetailsPage() {
                 <span>{booking.total_price - booking.paid_amount}€</span>
               </div>
             </div>
-            <Button block>Registrar Pago Manual</Button>
+            <div className="flex gap-2">
+              <Button block>Registrar Pago Manual</Button>
+              <Button block variant="secondary" onClick={() => setShowSplitModal(true)}>
+                <Split size={16} className="mr-1" />
+                Dividir
+              </Button>
+            </div>
+
+            {/* Booking Extras */}
+            {bookingExtras.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-beige">
+                <h4 className="text-sm font-semibold mb-2 flex items-center gap-1">
+                  <Package size={14} className="text-primary" /> Extras
+                </h4>
+                {bookingExtras.map((ex: any, i: number) => (
+                  <div key={i} className="flex justify-between text-sm text-[var(--color-muted-foreground)]">
+                    <span>{ex.name}</span>
+                    <span>{ex.price}€</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
 
           {/* Game Master Assignment */}
@@ -453,6 +565,50 @@ export default function BookingDetailsPage() {
           </Card>
         </div>
       </div>
+
+      {/* Split Payment Modal */}
+      {showSplitModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowSplitModal(false)}>
+          <div className="bg-[var(--color-background)] rounded-xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-1 flex items-center gap-2">
+              <Split size={20} className="text-primary" />
+              Dividir Pago
+            </h3>
+            <p className="text-sm text-[var(--color-muted-foreground)] mb-4">
+              Total: <strong>{booking.total_price}€</strong> — Cada participante recibirá un enlace para pagar su parte.
+            </p>
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Emails de los participantes</label>
+                <textarea
+                  rows={3}
+                  value={splitEmails}
+                  onChange={e => setSplitEmails(e.target.value)}
+                  placeholder="email1@ejemplo.com, email2@ejemplo.com"
+                  className="w-full px-3 py-2 border border-beige rounded-lg text-sm"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Tipo de división</label>
+                <select
+                  value={splitType}
+                  onChange={e => setSplitType(e.target.value)}
+                  className="w-full px-3 py-2 border border-beige rounded-lg text-sm bg-[var(--color-background)]"
+                >
+                  <option value="equal">Partes iguales</option>
+                  <option value="custom">Cantidades personalizadas</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <Button variant="secondary" className="flex-1" onClick={() => setShowSplitModal(false)}>Cancelar</Button>
+              <Button className="flex-1" loading={creatingSplit} onClick={handleCreateSplit}>
+                Crear Pago Compartido
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

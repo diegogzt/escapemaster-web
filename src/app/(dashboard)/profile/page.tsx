@@ -6,6 +6,8 @@ import Input from "@/components/Input";
 import Button from "@/components/Button";
 import { useTheme } from "@/context/ThemeContext";
 import { useAuth } from "@/context/AuthContext";
+import { users } from "@/services/api";
+import { toast } from "sonner";
 import {
   Check,
   Mail,
@@ -14,6 +16,8 @@ import {
   Layout,
   Moon,
   Sun,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 const THEMES = [
@@ -47,6 +51,10 @@ export default function ProfilePage() {
     email: "",
   });
   const [isSaving, setIsSaving] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwords, setPasswords] = useState({ current: "", new_password: "", confirm: "" });
+  const [showPass, setShowPass] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -141,7 +149,7 @@ export default function ProfilePage() {
                         <p className="text-sm text-[var(--color-foreground)] opacity-60">Gestiona tu contraseña y sesiones activas.</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" onClick={() => setShowPasswordModal(true)}>
                       Cambiar Contraseña
                     </Button>
                   </div>
@@ -229,6 +237,87 @@ export default function ProfilePage() {
           </Card>
         </section>
       </div>
+
+      {/* Password Change Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50" onClick={() => setShowPasswordModal(false)}>
+          <div className="bg-[var(--color-background)] rounded-xl p-6 w-full max-w-md shadow-2xl" onClick={e => e.stopPropagation()}>
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-4 flex items-center gap-2">
+              <Lock size={20} className="text-primary" />
+              Cambiar Contraseña
+            </h3>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (passwords.new_password !== passwords.confirm) {
+                toast.error("Las contraseñas no coinciden");
+                return;
+              }
+              if (passwords.new_password.length < 8) {
+                toast.error("La contraseña debe tener al menos 8 caracteres");
+                return;
+              }
+              setChangingPassword(true);
+              try {
+                await users.changePassword({ current_password: passwords.current, new_password: passwords.new_password });
+                toast.success("Contraseña actualizada correctamente");
+                setShowPasswordModal(false);
+                setPasswords({ current: "", new_password: "", confirm: "" });
+              } catch {
+                toast.error("Error al cambiar la contraseña. Verifica tu contraseña actual.");
+              } finally {
+                setChangingPassword(false);
+              }
+            }}>
+              <div className="space-y-4">
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-[var(--color-foreground)]">Contraseña Actual</label>
+                  <div className="relative">
+                    <input
+                      type={showPass ? "text" : "password"}
+                      required
+                      value={passwords.current}
+                      onChange={e => setPasswords(p => ({ ...p, current: e.target.value }))}
+                      className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                    <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-2.5 text-[var(--color-muted-foreground)]">
+                      {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-[var(--color-foreground)]">Nueva Contraseña</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={8}
+                    value={passwords.new_password}
+                    onChange={e => setPasswords(p => ({ ...p, new_password: e.target.value }))}
+                    className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-[var(--color-foreground)]">Confirmar Contraseña</label>
+                  <input
+                    type="password"
+                    required
+                    value={passwords.confirm}
+                    onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
+                    className="w-full px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <Button type="button" variant="secondary" className="flex-1" onClick={() => setShowPasswordModal(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" className="flex-1" loading={changingPassword}>
+                  Cambiar Contraseña
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -6,10 +6,11 @@ import { DashboardView } from "@/components/views/DashboardView";
 import { CalendarView } from "@/components/views/CalendarView";
 import { BookingsView } from "@/components/views/BookingsView";
 import { TimeTrackingView } from "@/components/views/TimeTrackingView";
+import { GameMasterView } from "@/components/views/GameMasterView";
 import { usePathname } from "next/navigation";
 
 // Views that we want to keep alive
-const PERSISTENT_PATHS = ["/dashboard", "/calendar", "/bookings", "/time-tracking"];
+const PERSISTENT_PATHS = ["/dashboard", "/calendar", "/bookings", "/time-tracking", "/gamemaster"];
 
 export function ViewRenderer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -49,6 +50,11 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
         {visited["/time-tracking"] && (
           <div className={pathname === "/time-tracking" ? "block" : "hidden"}>
             <TimeTrackingView />
+          </div>
+        )}
+        {visited["/gamemaster"] && (
+          <div className={pathname === "/gamemaster" ? "block" : "hidden"}>
+            <GameMasterView />
           </div>
         )}
       </div>
