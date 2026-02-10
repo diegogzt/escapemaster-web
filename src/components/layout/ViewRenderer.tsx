@@ -33,7 +33,7 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
       {/* Persistent Views Shell - Lazy loaded and then kept alive */}
       <div className={isPersistent ? "block" : "hidden"}>
         {visited["/dashboard"] && (
-          <div className={pathname === "/dashboard" ? "block" : "hidden"}>
+          <div style={pathname === "/dashboard" ? undefined : { position: "absolute", left: "-9999px", width: "100%", visibility: "hidden" }}>
             <DashboardView />
           </div>
         )}

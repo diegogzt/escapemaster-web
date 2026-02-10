@@ -87,9 +87,12 @@ export function GameMasterView() {
     try {
       const data = await gamemaster.getToday(filterRoom || undefined);
       setSessions(Array.isArray(data?.bookings) ? data.bookings : []);
-    } catch (err) {
-      console.error("Failed to load schedule:", err);
-      toast.error("Error al cargar las sesiones");
+    } catch (err: any) {
+      // Silently handle 404 (endpoint not yet deployed)
+      if (err?.response?.status !== 404) {
+        console.error("Failed to load schedule:", err);
+        toast.error("Error al cargar las sesiones");
+      }
     } finally {
       setLoading(false);
     }
