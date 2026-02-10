@@ -113,7 +113,7 @@ export default function BookingDetailsPage() {
             paid: paidAmount >= Number(data.total_price),
             amount: paidAmount,
           }] : [],
-          custom_fields: data.custom_fields ? JSON.parse(data.custom_fields) : [],
+          custom_fields: (() => { try { const cf = data.custom_fields ? JSON.parse(data.custom_fields) : []; return Array.isArray(cf) ? cf : []; } catch { return []; } })(),
           comments: [], // TODO: Add comments endpoint to API
         };
         
@@ -238,7 +238,7 @@ export default function BookingDetailsPage() {
             <div className="p-4 border-b border-beige bg-[var(--color-light)]/30 flex justify-between items-center">
               <h3 className="font-bold text-lg text-[var(--color-foreground)] flex items-center">
                 <Users size={20} className="mr-2 text-primary" />
-                Integrantes ({booking.players.length})
+                Integrantes ({(booking.players || []).length})
               </h3>
               <Button size="sm" variant="secondary">
                 Añadir Jugador
@@ -256,7 +256,7 @@ export default function BookingDetailsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {booking.players.map((player) => (
+                  {(booking.players || []).map((player) => (
                     <tr key={player.id} className="hover:bg-[var(--color-light)]">
                       <td className="px-4 py-3 font-medium text-[var(--color-foreground)]">
                         {player.name}
@@ -415,7 +415,7 @@ export default function BookingDetailsPage() {
             </h3>
 
             <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2">
-              {booking.comments.map((comment) => (
+              {(booking.comments || []).map((comment) => (
                 <div
                   key={comment.id}
                   className="bg-[var(--color-light)] p-3 rounded-lg text-sm"

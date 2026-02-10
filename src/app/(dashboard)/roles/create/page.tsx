@@ -35,7 +35,7 @@ export default function CreateRolePage() {
   const loadPermissions = async () => {
     try {
       const data = await rolesApi.listPermissions();
-      setPermissions(data);
+      setPermissions(Array.isArray(data) ? data : data?.permissions || []);
     } catch (error) {
       console.error("Error loading permissions:", error);
     }

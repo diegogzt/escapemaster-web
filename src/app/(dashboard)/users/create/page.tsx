@@ -95,7 +95,7 @@ export default function CreateUserPage() {
         const detail = err.response.data.detail;
         if (Array.isArray(detail)) {
           const errorMessages = detail
-            .map((e: any) => `${e.loc.join(".")}: ${e.msg}`)
+            .map((e: any) => `${(e.loc || []).join(".")}: ${e.msg}`)
             .join(", ");
           setError(errorMessages);
         } else {

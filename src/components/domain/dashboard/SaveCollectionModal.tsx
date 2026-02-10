@@ -128,7 +128,7 @@ export function SaveCollectionModal({
   };
 
   const handleLoadCollection = (collection: UserWidgetCollection) => {
-    const layout = collection.layout.map((item: any) => ({
+    const layout = (collection.layout || []).map((item: any) => ({
       id: item.id,
       type: item.type as WidgetType,
       colSpan: item.colSpan,

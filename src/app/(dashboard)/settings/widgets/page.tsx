@@ -16,7 +16,7 @@ export default function WidgetSettingsPage() {
     try {
       if (!silent) setIsLoading(true);
       const data = await dashboardService.getWidgetDefinitions();
-      setDefinitions(data);
+      setDefinitions(Array.isArray(data) ? data : data?.definitions || []);
       setError(null);
     } catch (e) {
       console.error(e);

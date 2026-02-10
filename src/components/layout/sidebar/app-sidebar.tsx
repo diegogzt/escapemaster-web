@@ -32,7 +32,7 @@ export function AppSidebar() {
     if (isAuthenticated) {
       const { auth } = require("@/services/api");
       auth.getMemberships()
-        .then((data: any) => setMemberships(data))
+        .then((data: any) => setMemberships(Array.isArray(data) ? data : data?.memberships || data?.organizations || []))
         .catch(console.error);
     }
   }, [isAuthenticated]);

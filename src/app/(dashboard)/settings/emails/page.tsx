@@ -33,7 +33,7 @@ export default function EmailSettingsPage() {
     try {
       setLoading(true);
       const data = await emailTemplates.list();
-      setTemplates(data);
+      setTemplates(Array.isArray(data) ? data : data?.templates || []);
     } catch (error) {
       console.error("Error fetching templates:", error);
     } finally {

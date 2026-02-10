@@ -53,8 +53,9 @@ export default function EditRolePage() {
         description: roleData.description || "",
         is_custom: roleData.is_custom
       });
-      setSelectedPermissions(roleData.permissions.map((p: any) => p.id));
-      setPermissions(allPermissions);
+      setSelectedPermissions((roleData.permissions || []).map((p: any) => p.id));
+      const permList = Array.isArray(allPermissions) ? allPermissions : allPermissions?.permissions || [];
+      setPermissions(permList);
     } catch (error) {
       console.error("Error loading role data:", error);
     } finally {

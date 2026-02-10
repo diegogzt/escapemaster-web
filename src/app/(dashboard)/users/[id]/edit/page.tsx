@@ -27,7 +27,7 @@ export default function EditUserPage() {
           roles.list(),
           users.get(userId),
         ]);
-        setRolesList(rolesData.roles || rolesData);
+        setRolesList(rolesData?.roles || (Array.isArray(rolesData) ? rolesData : []));
         setUserData(userDetails);
       } catch (err) {
         console.error("Error loading data:", err);

@@ -332,7 +332,7 @@ export function DashboardView() {
   };
 
   const applyTemplate = (template: DashboardTemplate) => {
-    const newLayout: WidgetConfig[] = template.layout.map((item: any) => ({
+    const newLayout: WidgetConfig[] = (template.layout || []).map((item: any) => ({
       id: item.id,
       type: item.type as WidgetType,
       colSpan: item.colSpan,
@@ -351,7 +351,8 @@ export function DashboardView() {
       try {
         // We already display widgets from local store.
         // We fetch from server to check for updates or initial load if local is empty (handled by default in store).
-        const collections = await dashboardService.getCollections();
+        const collectionsRaw = await dashboardService.getCollections();
+        const collections = Array.isArray(collectionsRaw) ? collectionsRaw : collectionsRaw?.collections || [];
         const activeCollection = collections.find((c: any) => c.is_active);
 
         if (activeCollection) {
@@ -362,7 +363,7 @@ export function DashboardView() {
           // User request: "guardes en cache... y si no han habido cambios...".
           // Strategy: Use local cache immediately. Fetch server. If server is different, update? 
           // For now, let's update store, it will trigger re-render efficiently.
-          setWidgets(activeCollection.layout as WidgetConfig[]);
+          setWidgets((activeCollection.layout || []) as WidgetConfig[]);
           setActiveCollectionId(activeCollection.id);
         } else {
             // No active collection on server.
@@ -380,7 +381,7 @@ export function DashboardView() {
       setIsLoadingTemplates(true);
       try {
         const data = await dashboardService.getTemplates();
-        setTemplates(data);
+        setTemplates(Array.isArray(data) ? data : data?.templates || []);
       } catch (error) {
         console.error("Failed to fetch templates:", error);
       } finally {
@@ -557,7 +558,7 @@ export function DashboardView() {
                             <TemplatePreviewCompact layout={template.layout} className="flex-shrink-0" />
                             <div className="flex-1 min-w-0">
                               <span className="font-medium text-[var(--color-foreground)] truncate">{template.name}</span>
-                              <p className="text-xs text-secondary mt-1">{template.layout.length} widgets</p>
+                              <p className="text-xs text-secondary mt-1">{(template.layout || []).length} widgets</p>
                             </div>
                           </div>
                         </button>

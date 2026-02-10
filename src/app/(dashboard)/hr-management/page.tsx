@@ -33,10 +33,12 @@ export default function HRManagementPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [entriesData, vacationsData] = await Promise.all([
+      const [entriesRaw, vacationsRaw] = await Promise.all([
         timeclock.getAll(),
         vacations.getAll()
       ]);
+      const entriesData = Array.isArray(entriesRaw) ? entriesRaw : entriesRaw?.entries || [];
+      const vacationsData = Array.isArray(vacationsRaw) ? vacationsRaw : vacationsRaw?.vacations || [];
       setAllEntries(entriesData);
       setPendingVacations(vacationsData.filter((v: any) => v.status === "pending"));
       
