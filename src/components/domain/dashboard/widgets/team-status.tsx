@@ -33,7 +33,7 @@ export function TeamStatus({}: WidgetConfigOptions) {
         const mapped: TeamMember[] = usersList.map((u: any) => ({
           id: u.id,
           name: u.full_name || u.name || u.email || "Usuario",
-          role: u.role_name || u.role || "Staff",
+          role: u.role_name || (typeof u.role === "object" ? u.role?.name : u.role) || "Staff",
           status: u.is_active === false ? "offline" : "online",
           avatar: getInitials(u.full_name || u.name || u.email || "U"),
         }));

@@ -51,13 +51,17 @@ export function CalendarWidget({
     async function fetchData() {
       try {
         setLoading(true);
-        const [roomsData, bookingsData] = await Promise.all([
+        const [roomsRes, bookingsRes] = await Promise.all([
           roomsApi.list(),
           bookingsApi.list(),
         ]);
         
+        // Extract arrays from paginated responses
+        const roomsData = Array.isArray(roomsRes) ? roomsRes : roomsRes?.rooms || [];
+        const bookingsData = Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.bookings || [];
+        
         // Transform rooms with colors
-        const transformedRooms: Room[] = (roomsData || []).map((r: any, index: number) => ({
+        const transformedRooms: Room[] = roomsData.map((r: any, index: number) => ({
           id: r.id,
           name: r.name,
           color: ROOM_COLORS[index % ROOM_COLORS.length],
@@ -66,7 +70,7 @@ export function CalendarWidget({
         
         // Transform bookings
         // API returns: id, start_time, room_name, room_id
-        const transformedBookings: Booking[] = (bookingsData || []).map((b: any) => {
+        const transformedBookings: Booking[] = bookingsData.map((b: any) => {
           const startTime = b.start_time ? new Date(b.start_time) : null;
           return {
             id: b.id,

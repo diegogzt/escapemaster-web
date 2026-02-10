@@ -25,11 +25,14 @@ export function RevenueTableWidget() {
     async function fetchTransactions() {
       try {
         setLoading(true);
-        const bookingsData = await bookingsApi.list();
+        const bookingsRes = await bookingsApi.list();
+        
+        // Extract array from paginated response
+        const bookingsData = Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.bookings || [];
         
         // Transform bookings to transactions
         // API returns: id, start_time, booking_status, payment_status, total_price, remaining_balance, room_name, payment_method
-        const transformedTransactions: Transaction[] = (bookingsData || []).map((b: any) => {
+        const transformedTransactions: Transaction[] = bookingsData.map((b: any) => {
           const paidAmount = Number(b.total_price) - Number(b.remaining_balance) || 0;
           const status: "completed" | "pending" | "refunded" = 
             b.booking_status === "cancelled" ? "refunded" : 
