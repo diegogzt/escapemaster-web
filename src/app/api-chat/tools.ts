@@ -46,12 +46,16 @@ export function getTools(token: string) {
     getRevenueStats: tool({
         description: 'Get revenue and income stats for a given period (week, month, or year).',
         parameters: z.object({
-            period: z.enum(['week', 'month', 'year']).describe('Time period to query.')
+            period: z.string().describe('Time period to query. Suggestion: "week", "month", "year".')
         }),
         // @ts-ignore
-        execute: async ({ period }: { period: 'week' | 'month' | 'year' }) => {
+        execute: async ({ period }: { period: string }) => {
             console.log('[tools] getRevenueStats called with period:', period);
-            return await fetchBackend(`/dashboard/stats?period=${period}`, token);
+            let normalized = "month";
+            const p = period.toLowerCase();
+            if (p.includes("week") || p.includes("semana")) normalized = "week";
+            if (p.includes("year") || p.includes("año") || p.includes("ano")) normalized = "year";
+            return await fetchBackend(`/dashboard/stats?period=${normalized}`, token);
         },
     }),
     getBookingsList: tool({
