@@ -29,6 +29,8 @@ interface Session {
   room: string;
   status: "confirmed" | "pending" | "cancelled";
   color: string;
+  players_count: number;
+  game_master: string;
 }
 
 const getContrastColor = (hexcolor: string) => {
@@ -111,7 +113,18 @@ export function CalendarView() {
             let color = b.room_color || "#3B82F6";
             if (b.room_id && roomsMap[b.room_id]?.status_colors?.[status]) color = roomsMap[b.room_id].status_colors[status];
             
-            return { id: b.id, title: roomName, customer: b.guest?.full_name || "Sin cliente", start, end, room: roomName, status, color };
+            return { 
+              id: b.id, 
+              title: roomName, 
+              customer: b.guest?.full_name || "Sin cliente", 
+              start, 
+              end, 
+              room: roomName, 
+              status, 
+              color,
+              players_count: b.num_people || 0,
+              game_master: b.assigned_users?.[0]?.full_name || "Sin asignar"
+            };
           });
         
         setSessions(transformedSessions);
@@ -296,13 +309,25 @@ export function CalendarView() {
                             key={session.id}
                             onClick={(e) => { e.stopPropagation(); router.push(`/bookings/${session.id}`); }}
                             style={{ backgroundColor: `${session.color}15`, borderLeft: `3px solid ${session.color}` }}
-                            className="p-1 px-2 rounded-lg text-[10px] font-bold truncate group/session hover:scale-[1.02] transition-transform shadow-sm"
+                            className="relative p-1 px-2 rounded-lg text-[10px] font-bold truncate group/session hover:scale-[1.02] transition-transform shadow-sm"
                           >
                             <div className="flex justify-between items-center gap-1">
                               <span className="truncate" style={{ color: session.color }}>{session.title}</span>
                               <span className="opacity-60 shrink-0">{session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')}</span>
                             </div>
                             <div className="text-[9px] opacity-60 truncate font-medium">{session.customer}</div>
+
+                            {/* Hover Tooltip */}
+                            <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 hidden group-hover/session:block z-50 w-56 bg-gray-900 text-white p-3 rounded-xl shadow-xl border border-gray-700 pointer-events-none whitespace-normal">
+                               <p className="font-bold text-sm mb-1">{session.title}</p>
+                               <div className="space-y-1 text-xs text-gray-300 font-normal">
+                                  <p><span className="font-bold text-white opacity-80">Cliente:</span> {session.customer}</p>
+                                  <p><span className="font-bold text-white opacity-80">Hora:</span> {session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')} - {session.end.getHours()}:{String(session.end.getMinutes()).padStart(2, '0')}</p>
+                                  <p><span className="font-bold text-white opacity-80">Jugadores:</span> {session.players_count} pers.</p>
+                                  <p><span className="font-bold text-white opacity-80">GM:</span> {session.game_master}</p>
+                               </div>
+                               <div className="absolute left-1/2 -translate-x-1/2 -bottom-1 w-2 h-2 bg-gray-900 rotate-45 border-r border-b border-gray-700"></div>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -377,13 +402,24 @@ export function CalendarView() {
                                 backgroundColor: session.color,
                                 boxShadow: `0 4px 12px ${session.color}30`
                               }}
-                              className="absolute left-1 right-1 rounded-xl p-2 text-white text-[10px] font-bold overflow-hidden cursor-pointer hover:scale-[1.02] transition-all z-10 border border-white/20"
+                              className="absolute left-1 right-1 rounded-xl p-2 text-white text-[10px] font-bold overflow-visible cursor-pointer hover:scale-[1.02] transition-all z-10 border border-white/20 group/session"
                             >
-                              <div className="flex justify-between items-start gap-1">
+                              <div className="flex justify-between items-start gap-1 overflow-hidden">
                                 <span className="truncate">{session.title}</span>
                                 <span className="opacity-80 shrink-0">{session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')}</span>
                               </div>
-                              <div className="opacity-90 truncate font-medium mt-0.5">{session.customer}</div>
+                              <div className="opacity-90 truncate font-medium mt-0.5 overflow-hidden">{session.customer}</div>
+
+                              {/* Hover Tooltip */}
+                              <div className="absolute left-full ml-2 top-0 hidden group-hover/session:block z-50 w-56 bg-gray-900 text-white p-3 rounded-xl shadow-xl border border-gray-700 pointer-events-none whitespace-normal text-left">
+                                 <p className="font-bold text-sm mb-1 text-white">{session.title}</p>
+                                 <div className="space-y-1 text-xs text-gray-300 font-normal">
+                                    <p><span className="font-bold text-white opacity-80">Cliente:</span> {session.customer}</p>
+                                    <p><span className="font-bold text-white opacity-80">Hora:</span> {session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')} - {session.end.getHours()}:{String(session.end.getMinutes()).padStart(2, '0')}</p>
+                                    <p><span className="font-bold text-white opacity-80">Jugadores:</span> {session.players_count} pers.</p>
+                                    <p><span className="font-bold text-white opacity-80">GM:</span> {session.game_master}</p>
+                                 </div>
+                              </div>
                             </div>
                           );
                         })}
@@ -463,14 +499,26 @@ export function CalendarView() {
                           }}
                           className="absolute rounded-[1.25rem] p-4 text-white shadow-lg cursor-pointer hover:scale-[1.01] transition-all border border-white/20 group/session"
                         >
-                           <div className="flex justify-between items-start mb-2">
+                           <div className="flex justify-between items-start mb-2 hidden md:flex">
                             <span className="text-xs font-black uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded-lg">{session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')}</span>
                             <div className="p-1.5 bg-white/20 rounded-lg group-hover/session:rotate-45 transition-transform"><Plus size={12} className="rotate-45" /></div>
                           </div>
                           <h4 className="text-base font-black truncate mb-1">{session.title}</h4>
-                          <div className="flex items-center gap-2 text-xs font-bold opacity-90">
+                          <div className="flex items-center gap-2 text-xs font-bold opacity-90 hidden sm:flex">
                             <Users size={12} />
                             <span className="truncate">{session.customer}</span>
+                          </div>
+
+                           {/* Hover Tooltip */}
+                          <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 hidden group-hover/session:block z-50 w-64 bg-gray-900 text-white p-4 rounded-xl shadow-2xl border border-gray-700 pointer-events-none whitespace-normal text-left">
+                             <p className="font-bold text-base mb-2 text-white">{session.title}</p>
+                             <div className="space-y-1.5 text-sm text-gray-300 font-normal">
+                                <p><span className="font-bold text-white opacity-80">Cliente:</span> {session.customer}</p>
+                                <p><span className="font-bold text-white opacity-80">Estado:</span> <span className="capitalize">{session.status}</span></p>
+                                <p><span className="font-bold text-white opacity-80">Hora:</span> {session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')} - {session.end.getHours()}:{String(session.end.getMinutes()).padStart(2, '0')}</p>
+                                <p><span className="font-bold text-white opacity-80">Jugadores:</span> {session.players_count} pers.</p>
+                                <p><span className="font-bold text-white opacity-80">GM:</span> {session.game_master}</p>
+                             </div>
                           </div>
                         </div>
                       );

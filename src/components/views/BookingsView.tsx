@@ -61,8 +61,8 @@ export function BookingsView() {
     });
   };
 
-  async function fetchData(currentPage: number) {
-    const isFresh = bookingsState.lastFetched && (Date.now() - bookingsState.lastFetched < 60000);
+  async function fetchData(currentPage: number, force = false) {
+    const isFresh = !force && bookingsState.lastFetched && (Date.now() - bookingsState.lastFetched < 60000);
     if (isFresh && bookings.length > 0 && currentPage === page) {
       setLoading(false);
       return;
@@ -125,7 +125,7 @@ export function BookingsView() {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
-  useEffect(() => { fetchData(1); }, [statusFilter, roomFilter, dateFilterType, customStartDate, customEndDate, pageSize]);
+  useEffect(() => { fetchData(1, true); }, [statusFilter, roomFilter, dateFilterType, customStartDate, customEndDate, pageSize]);
   useEffect(() => { fetchData(page); }, [page]);
   useEffect(() => { fetchRooms(); }, [fetchRooms]);
 
