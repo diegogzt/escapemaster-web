@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { 
   ChevronDown, ChevronRight, ChevronLeft, LayoutDashboard, CalendarDays, ClipboardList, 
   DoorOpen, BarChart3, Settings, Users, LogOut, Clock, ShieldCheck, Gamepad2, Tags, 
-  Wallet, Bell, Star 
+  Wallet, Bell, Star, Bot 
 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/services/api";
