@@ -248,6 +248,7 @@ export default function ChatbotPage() {
             >
               <option value="mistral">Mistral Large (Recomendado)</option>
               <option value="gemini">Gemini 2.0 Flash</option>
+              <option value="glm">GLM-4.7 (Zhipu AI)</option>
             </select>
           </div>
         </div>

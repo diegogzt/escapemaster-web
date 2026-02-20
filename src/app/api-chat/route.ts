@@ -1,6 +1,7 @@
 import { streamText, convertToModelMessages, stepCountIs } from 'ai';
 import { mistral } from '@ai-sdk/mistral';
 import { google } from '@ai-sdk/google';
+import { createOpenAI } from '@ai-sdk/openai';
 import { NextRequest } from 'next/server';
 import { getTools } from './tools';
 
@@ -17,11 +18,21 @@ export async function POST(req: NextRequest) {
     
     // Default to Mistral if no model specified or invalid
     let aiModel: any = mistral('mistral-large-latest');
+    let modelNameLog = 'mistral-large-latest';
+    
     if (model === 'gemini') {
         // As of AI SDK mapping, using latest 2.0-flash which fulfills the user's latest and cheapest lightning model request
         aiModel = google('gemini-2.0-flash');
+        modelNameLog = 'gemini-2.0-flash';
+    } else if (model === 'glm') {
+        const zai = createOpenAI({
+          baseURL: 'https://api.z.ai/api/paas/v4/',
+          apiKey: '4d1cb021b81a4551a93e5388dbf7facf.DxB9Zna5GvnuGJvb', // Key provided via User instructions
+        });
+        aiModel = zai('glm-4.7');
+        modelNameLog = 'glm-4.7';
     }
-    console.log('[api-chat] Using model:', model === 'gemini' ? 'gemini-2.0-flash' : 'mistral-large-latest');
+    console.log('[api-chat] Using model:', modelNameLog);
 
     // Use token from request body (sent by DefaultChatTransport body option)
     // Fallback to Authorization header for backwards compatibility
