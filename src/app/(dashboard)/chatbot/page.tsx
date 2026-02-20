@@ -3,6 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Send, Bot, User, Loader2, Settings2, Wrench, Menu, Plus, MessageSquare, Trash2 } from "lucide-react";
 import { cn } from "@/utils";
@@ -108,6 +109,7 @@ export default function ChatbotPage() {
             setMessages(initialMessages as any);
         }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSessionId, initialMessages, setMessages]); // removed messages to prevent infinite loop
 
   // Sync messages back to the active session in local storage
@@ -295,7 +297,7 @@ export default function ChatbotPage() {
                           prose-th:bg-blue-50 prose-th:p-3 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-blue-100 prose-th:text-blue-900
                           prose-td:p-3 prose-td:border prose-td:border-gray-200
                           [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                          <ReactMarkdown>{textPart.text}</ReactMarkdown>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{textPart.text}</ReactMarkdown>
                         </div>
                       )}
                     </div>
