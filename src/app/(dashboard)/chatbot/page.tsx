@@ -17,7 +17,7 @@ export default function ChatbotPage() {
   }, []);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: "/api/chat",
+    api: "/api-chat",
     body: { model },
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
     initialMessages: [
