@@ -86,92 +86,6 @@ export default function ChatbotPage() {
     }
   };
 
-  const transport = useMemo(() => new DefaultChatTransport({
-    api: "/api-chat",
-    body: { model, token },
-  }), [token, model]);
-
-  // Current session data
-  const initialMessages = useMemo(() => {
-    return sessions.find(s => s.id === currentSessionId)?.messages || [];
-  }, [currentSessionId, sessions]);
-
-  const { messages, sendMessage, status, setMessages } = useChat({
-    id: currentSessionId, // Tie hook to current session
-    transport,
-  });
-
-  // Inject history when session changes
-  useEffect(() => {
-    if (currentSessionId && initialMessages.length > 0) {
-        // Only set if messages is currently empty OR if we switched sessions and the current hook state doesn't match
-        if (messages.length === 0 || messages[0]?.id !== initialMessages[0]?.id) {
-            setMessages(initialMessages as any);
-        }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentSessionId, initialMessages, setMessages]); // removed messages to prevent infinite loop
-
-  // Sync messages back to the active session in local storage
-  useEffect(() => {
-    if (!currentSessionId || messages.length === 0) return;
-    
-    setSessions(prev => {
-      const updated = prev.map(s => {
-        if (s.id === currentSessionId) {
-          // Auto-generate title from first user message if it's "Nueva Conversación"
-          let title = s.title;
-          if (title === "Nueva Conversación") {
-            const firstUserMessage = messages.find((m: any) => m.role === "user");
-            if (firstUserMessage) {
-              const textPart = (firstUserMessage.parts as any)?.find((p: any) => p.type === "text")?.text;
-              if (textPart) {
-                title = textPart.slice(0, 30) + (textPart.length > 30 ? "..." : "");
-              }
-            }
-          }
-          return { ...s, messages, title, updatedAt: Date.now() };
-        }
-        return s;
-      });
-      
-      // Save to LS
-      localStorage.setItem("escapemaster_chat_history", JSON.stringify(updated));
-      return updated;
-    });
-  }, [messages, currentSessionId]);
-
-
-  // Blocked whenever the AI is thinking, calling tools, or streaming
-  const isBlocked = status === "streaming" || status === "submitted";
-
-  // Detect if a tool is currently being invoked (find active tool part)
-  const activeTool = useMemo(() => {
-    if (!isBlocked) return null;
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const msg = messages[i] as any;
-      if (msg.role === "assistant") {
-        const toolPart = msg.parts?.find(
-          (p: any) => p.type?.startsWith("tool-") && (p.state === "input-streaming" || p.state === "input-available")
-        );
-        if (toolPart?.toolName) return toolPart.toolName;
-      }
-    }
-    return null;
-  }, [messages, isBlocked]);
-
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isBlocked]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || isBlocked) return;
-    sendMessage({ text: input });
-    setInput("");
-  };
-
   return (
     <div className="flex h-[calc(100vh-80px)] w-full max-w-7xl mx-auto bg-[var(--color-background)] rounded-2xl border border-[var(--color-beige)] overflow-hidden shadow-sm relative">
       
@@ -220,8 +134,100 @@ export default function ChatbotPage() {
         </div>
       </div>
 
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-white/50">
+      {/* Main Chat Area: Map all sessions so streams don't die on switch */}
+      <div className="flex-1 flex flex-col min-w-0 bg-white/50 relative">
+        {sessions.map(session => (
+          <ChatWindow 
+            key={session.id}
+            session={session}
+            isActive={session.id === currentSessionId}
+            model={model}
+            setModel={setModel}
+            token={token}
+            setSessions={setSessions}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Sub-component to hold individual streams
+function ChatWindow({ session, isActive, model, setModel, token, setSessions, sidebarOpen, setSidebarOpen }: any) {
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const transport = useMemo(() => new DefaultChatTransport({
+    api: "/api-chat",
+    body: { model, token },
+  }), [token, model]);
+
+  const { messages, sendMessage, status, setMessages } = useChat({
+    id: session.id,
+    transport,
+  });
+
+  // Inject initial from parent only ONCE upon mount if the session has history but hook doesn't
+  useEffect(() => {
+    if (session.messages && session.messages.length > 0 && messages.length === 0) {
+      setMessages(session.messages as any);
+    }
+  }, []);
+
+  // Sync messages back to parent state for LocalStorage
+  useEffect(() => {
+    if (messages.length === 0) return;
+    setSessions((prev: any[]) => prev.map(s => {
+      if (s.id === session.id) {
+        let title = s.title;
+        if (title === "Nueva Conversación") {
+          const firstUserMessage = messages.find((m: any) => m.role === "user");
+          if (firstUserMessage) {
+            const textPart = (firstUserMessage.parts as any)?.find((p: any) => p.type === "text")?.text;
+            if (textPart) {
+              title = textPart.slice(0, 30) + (textPart.length > 30 ? "..." : "");
+            }
+          }
+        }
+        return { ...s, messages, title, updatedAt: Date.now() };
+      }
+      return s;
+    }));
+  }, [messages, session.id, setSessions]);
+
+  const isBlocked = status === "streaming" || status === "submitted";
+
+  const activeTool = useMemo(() => {
+    if (!isBlocked) return null;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      const msg = messages[i] as any;
+      if (msg.role === "assistant") {
+        const toolPart = msg.parts?.find(
+          (p: any) => p.type?.startsWith("tool-") && (p.state === "input-streaming" || p.state === "input-available")
+        );
+        if (toolPart?.toolName) return toolPart.toolName;
+      }
+    }
+    return null;
+  }, [messages, isBlocked]);
+
+  useEffect(() => {
+    if (isActive) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, isBlocked, isActive]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isBlocked) return;
+    sendMessage({ text: input });
+    setInput("");
+  };
+
+  return (
+    <div className={cn("absolute inset-0 flex flex-col h-full bg-white/50", isActive ? "z-10" : "opacity-0 pointer-events-none z-0")}>
         {/* Header */}
         <div className="bg-[var(--color-light)] p-4 border-b border-[var(--color-beige)] flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -324,23 +330,64 @@ export default function ChatbotPage() {
                                       URL.revokeObjectURL(url);
                                     };
                                     
+                                    const parsedRows = content.split('\n').filter(r => r.trim().length > 0).map(row => {
+                                      const result = [];
+                                      let inQuotes = false;
+                                      let currentVal = '';
+                                      for (let i = 0; i < row.length; i++) {
+                                        const char = row[i];
+                                        if (char === '"') inQuotes = !inQuotes;
+                                        else if (char === ',' && !inQuotes) { result.push(currentVal.trim()); currentVal = ''; }
+                                        else currentVal += char;
+                                      }
+                                      result.push(currentVal.trim());
+                                      return result;
+                                    });
+                                    const headers = parsedRows[0] || [];
+                                    const bodyRows = parsedRows.slice(1);
+
                                     return (
-                                      <div className="relative my-4 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm">
-                                        <div className="flex items-center justify-between px-4 py-2.5 bg-gray-100/80 border-b border-gray-200">
+                                      <div className="relative my-4 rounded-xl overflow-hidden border border-[var(--color-bg-dark)] bg-[var(--color-bg)] shadow-sm">
+                                        <div className="p-0 overflow-x-auto bg-[var(--color-bg)]">
+                                          <table className="w-full text-[13px] text-left border-collapse">
+                                            <thead className="text-[11px] text-[var(--color-text-secondary)] bg-[var(--color-bg-dark)] border-b border-[var(--color-beige)] uppercase tracking-wider">
+                                              <tr>
+                                                {headers.map((h, i) => (
+                                                  <th key={i} className="px-4 py-3 font-semibold whitespace-nowrap">{h}</th>
+                                                ))}
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              {bodyRows.length > 0 ? bodyRows.map((row, rowIndex) => (
+                                                <tr key={rowIndex} className="border-b border-[var(--color-beige)] hover:bg-[var(--color-bg-dark)] transition-colors">
+                                                  {row.map((cell, cellIndex) => (
+                                                    <td key={cellIndex} className="px-4 py-3 whitespace-nowrap text-[var(--color-foreground)]">
+                                                      {cell}
+                                                    </td>
+                                                  ))}
+                                                </tr>
+                                              )) : (
+                                                <tr>
+                                                  <td colSpan={headers.length || 1} className="px-4 py-8 text-center text-[var(--color-text-secondary)]">
+                                                    No hay datos registrados en este periodo.
+                                                  </td>
+                                                </tr>
+                                              )}
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                        <div className="flex items-center justify-between px-4 py-3 bg-[var(--color-bg-dark)] border-t border-[var(--color-beige)]">
                                           <div className="flex items-center gap-2">
                                             <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                                            <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">Datos Estructurados (CSV)</span>
+                                            <span className="text-xs font-bold text-[var(--color-text-secondary)] tracking-wider">DATOS EXPORTABLES (CSV)</span>
                                           </div>
                                           <button 
                                             onClick={handleDownload}
-                                            className="flex items-center gap-1.5 text-xs bg-white border border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-200 text-gray-700 px-3 py-1.5 rounded-lg shadow-sm font-semibold transition-all active:scale-95"
+                                            className="flex items-center gap-1.5 text-xs bg-white/5 hover:bg-white/10 text-[var(--color-foreground)] border border-[var(--color-beige)] px-3 py-1.5 rounded-lg font-medium transition-all active:scale-95"
                                           >
                                             <Download size={14} />
-                                            Descargar CSV
+                                            Exportar a Hojas de cálculo
                                           </button>
-                                        </div>
-                                        <div className="p-4 overflow-x-auto text-[13px] font-mono text-gray-800 leading-relaxed whitespace-pre bg-white">
-                                          {children}
                                         </div>
                                       </div>
                                     );
@@ -436,7 +483,5 @@ export default function ChatbotPage() {
           </p>
         </div>
       </div>
-
-    </div>
   );
 }
