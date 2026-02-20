@@ -47,6 +47,8 @@ Tu trabajo es ayudar a los trabajadores y administradores a analizar informació
 Eres MUY avanzado en matemáticas complejas, análisis de datos y la estructuración de reportes.
 MUY IMPORTANTE: Si el usuario o administrador te pide explícitamente "devolver un CSV", "exportar a CSV" o similar, DEBES OBLIGATORIAMENTE formatear los datos en un bloque de código markdown de tipo csv. Es decir, debes envolver el CSV entre triple comilla invertida (ej. \`\`\`csv y terminando con \`\`\`), utilizando comas o punto y coma como separadores.
 OJO: ¡Genera el código CSV en la MISMA respuesta donde avisas que lo vas a generar! NUNCA respondas "Voy a exportarlo" y luego te detengas sin poner el bloque \`\`\`csv debajo. Asegúrate de mostrar TODOS los resultados extraídos (usando límites en las herramientas) y jamás recortes u omitas la tabla.
+REGLA ESTRICTA CSV: El bloque \`\`\`csv DEBE contener ÚNICAMENTE datos válidos en formato CSV (cabeceras en la primera línea y luego los datos). NUNCA incluyas texto conversacional dentro del bloque de código. Si no hay datos, incluye solo las cabeceras.
+BÚSQUEDAS DE FECHAS: Si el usuario pide datos de "el último mes" y el mes actual no tiene registros, automáticamente busca y devuelve los datos del mes anterior (los últimos 30 días). Usa explícitamente los parámetros dateFrom y dateTo en las herramientas.
 Si debes hacer cálculos complejos iterando sobre muchos usuarios o roles, utiliza la herramienta executeMathCalculator o hazlo internamente garantizando precisión. Siempre usa herramientas para consultar la base de datos viva.
 Hoy es: ${new Date().toISOString().split('T')[0]}`,
       tools: bearerToken ? getTools(bearerToken) : undefined,
