@@ -5,7 +5,7 @@ import { DefaultChatTransport, UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Send, Bot, User, Loader2, Settings2, Wrench, Menu, Plus, MessageSquare, Trash2 } from "lucide-react";
+import { Send, Bot, User, Loader2, Settings2, Wrench, Menu, Plus, MessageSquare, Trash2, Download } from "lucide-react";
 import { cn } from "@/utils";
 
 // Tool name → Spanish label
@@ -302,7 +302,54 @@ export default function ChatbotPage() {
                             prose-th:bg-blue-50 prose-th:p-3 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-blue-100 prose-th:text-blue-900
                             prose-td:p-3 prose-td:border prose-td:border-gray-200
                             [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{textPart.text}</ReactMarkdown>
+                            <ReactMarkdown 
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                code({ node, inline, className, children, ...props }: any) {
+                                  const match = /language-(\w+)/.exec(className || '');
+                                  const isCsv = match && match[1] === 'csv';
+                                  
+                                  if (!inline && isCsv) {
+                                    const content = String(children).replace(/\n$/, '');
+                                    const handleDownload = () => {
+                                      const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+                                      const url = URL.createObjectURL(blob);
+                                      const link = document.createElement('a');
+                                      link.href = url;
+                                      link.download = `escapemaster_report_${new Date().toISOString().split('T')[0]}.csv`;
+                                      document.body.appendChild(link);
+                                      link.click();
+                                      document.body.removeChild(link);
+                                      URL.revokeObjectURL(url);
+                                    };
+                                    
+                                    return (
+                                      <div className="relative my-4 rounded-xl overflow-hidden border border-gray-200 bg-gray-50 shadow-sm">
+                                        <div className="flex items-center justify-between px-4 py-2.5 bg-gray-100/80 border-b border-gray-200">
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                                            <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">Datos Estructurados (CSV)</span>
+                                          </div>
+                                          <button 
+                                            onClick={handleDownload}
+                                            className="flex items-center gap-1.5 text-xs bg-white border border-gray-200 hover:bg-green-50 hover:text-green-700 hover:border-green-200 text-gray-700 px-3 py-1.5 rounded-lg shadow-sm font-semibold transition-all active:scale-95"
+                                          >
+                                            <Download size={14} />
+                                            Descargar CSV
+                                          </button>
+                                        </div>
+                                        <div className="p-4 overflow-x-auto text-[13px] font-mono text-gray-800 leading-relaxed whitespace-pre bg-white">
+                                          {children}
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                  return <code className={className} {...props}>{children}</code>;
+                                }
+                              }}
+                            >
+                              {textPart.text}
+                            </ReactMarkdown>
                           </div>
                         </div>
                       )}
