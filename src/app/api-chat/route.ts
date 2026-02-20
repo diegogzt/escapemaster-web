@@ -1,4 +1,4 @@
-import { streamText, convertToModelMessages } from 'ai';
+import { streamText, convertToModelMessages, stepCountIs } from 'ai';
 import { mistral } from '@ai-sdk/mistral';
 import { google } from '@ai-sdk/google';
 import { NextRequest } from 'next/server';
@@ -47,6 +47,7 @@ export async function POST(req: NextRequest) {
       Tienes acceso a herramientas para buscar reservaciones, salas, e información financiera. Siempre debes llamar a estas herramientas para responder a preguntas relativas a datos reales del escape room en lugar de inventarlas. Si el usuario te indica fechas abstractas (Ej. "hoy", "este mes", "mañana"), calcula las fechas correctas antes de usar la herramienta correspondiente.
       Hoy es: ${new Date().toISOString().split('T')[0]}`,
       tools: bearerToken ? getTools(bearerToken) : undefined,
+      stopWhen: stepCountIs(5), // Allow up to 5 steps: tool calls + final response
       onFinish: ({ text, finishReason }) => {
         console.log('[api-chat] Stream finished:', { finishReason, textLength: text.length, textPreview: text.substring(0, 100) });
       },
