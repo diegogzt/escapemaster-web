@@ -96,7 +96,7 @@ export function OccupancyPieChartWidget({
         ) : data.length === 0 ? (
              <div className="h-full w-full flex items-center justify-center text-[var(--color-muted-foreground)] text-sm p-4 text-center">No hay reservas registradas en este periodo.</div>
         ) : dimensions.width > 0 && dimensions.height > 0 ? (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
           <PieChart>
             <Pie
               data={data}
