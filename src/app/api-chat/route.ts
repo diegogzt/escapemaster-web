@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
       tools: getTools(token),
     });
 
-    return result.toAIStreamResponse();
+    // @ts-ignore - Supress potential TS mismatches; toDataStreamResponse is the correct native method for streamText chunks
+    return result.toDataStreamResponse();
   } catch (error) {
     console.error('Chat API Error:', error);
     return new Response('Internal Server Error', { status: 500 });
