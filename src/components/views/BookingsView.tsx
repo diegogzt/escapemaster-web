@@ -189,7 +189,7 @@ export function BookingsView() {
 
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {loading ? Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />) : bookings.map(b => (
+          {loading ? Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />) : (bookings || []).map(b => (
             <Card key={b.id} className="p-4" style={{ borderLeft: `4px solid ${b.room_color}` }}>
               <div className="flex justify-between mb-2"><strong>{b.date} {b.time}</strong> {getStatusBadge(b.status)}</div>
               <h3 className="font-bold">{b.room_name}</h3>
@@ -210,7 +210,7 @@ export function BookingsView() {
               </tr>
             </thead>
             <tbody>
-              {bookings.map(b => (
+              {(bookings || []).map(b => (
                 <tr key={b.id} className="border-t border-beige">
                   <td className="p-4">{b.date} {b.time}</td>
                   <td className="p-4">{b.room_name}</td>
