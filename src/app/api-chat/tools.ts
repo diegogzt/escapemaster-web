@@ -89,14 +89,19 @@ export function getTools(token: string) {
         }
     }),
     getPaymentsLedger: tool({
-        description: 'List financial transactions (charges, payments, deposits).',
+        description: 'List financial transactions (charges, payments, deposits). Use this for raw data CSV exports.',
         parameters: z.object({
-            limit: z.number().optional().describe('Number of payments to fetch'),
+            limit: z.number().optional().describe('Number of payments to fetch. Defaults to 100.'),
+            dateFrom: z.string().optional().describe('Start date YYYY-MM-DD'),
+            dateTo: z.string().optional().describe('End date YYYY-MM-DD')
         }),
         // @ts-ignore
-        execute: async ({ limit }: { limit?: number }) => {
-            console.log('[tools] getPaymentsLedger called with limit:', limit);
-            return await fetchBackend(`/payments?limit=${limit || 10}`, token);
+        execute: async ({ limit, dateFrom, dateTo }: { limit?: number; dateFrom?: string; dateTo?: string }) => {
+            let url = `/payments?limit=${limit || 100}`;
+            if (dateFrom) url += `&date_from=${dateFrom}`;
+            if (dateTo) url += `&date_to=${dateTo}`;
+            console.log('[tools] getPaymentsLedger called with:', { limit, dateFrom, dateTo });
+            return await fetchBackend(url, token);
         }
     }),
     getUsers: tool({

@@ -45,11 +45,12 @@ export async function POST(req: NextRequest) {
       system: `Eres el AI Assistant oficial de Escapemaster (Gestor).
 Tu trabajo es ayudar a los trabajadores y administradores a analizar información y realizar operaciones del día a día usando herramientas.
 Eres MUY avanzado en matemáticas complejas, análisis de datos y la estructuración de reportes.
-MUY IMPORTANTE: Si el usuario o administrador te pide explícitamente "devolver un CSV", "exportar a CSV" o similar, DEBES OBLIGATORIAMENTE formatear los datos en un bloque de código markdown de tipo csv. Es decir, debes envolver el CSV entre triple comilla invertida (ej. \`\`\`csv y terminando con \`\`\`), utilizando comas o punto y coma como separadores. NUNCA devuelvas CSV en texto plano, SIEMPRE repito SIEMPRE debe ir envuelto en el bloque de código \`\`\`csv.
+MUY IMPORTANTE: Si el usuario o administrador te pide explícitamente "devolver un CSV", "exportar a CSV" o similar, DEBES OBLIGATORIAMENTE formatear los datos en un bloque de código markdown de tipo csv. Es decir, debes envolver el CSV entre triple comilla invertida (ej. \`\`\`csv y terminando con \`\`\`), utilizando comas o punto y coma como separadores.
+OJO: ¡Genera el código CSV en la MISMA respuesta donde avisas que lo vas a generar! NUNCA respondas "Voy a exportarlo" y luego te detengas sin poner el bloque \`\`\`csv debajo. Asegúrate de mostrar TODOS los resultados extraídos (usando límites en las herramientas) y jamás recortes u omitas la tabla.
 Si debes hacer cálculos complejos iterando sobre muchos usuarios o roles, utiliza la herramienta executeMathCalculator o hazlo internamente garantizando precisión. Siempre usa herramientas para consultar la base de datos viva.
 Hoy es: ${new Date().toISOString().split('T')[0]}`,
       tools: bearerToken ? getTools(bearerToken) : undefined,
-      stopWhen: stepCountIs(5), // Allow up to 5 steps: tool calls + final response
+      stopWhen: stepCountIs(10), // Allow up to 10 steps: tool calls + final response
       onFinish: ({ text, finishReason }) => {
         console.log('[api-chat] Stream finished:', { finishReason, textLength: text.length, textPreview: text.substring(0, 100) });
       },
