@@ -173,12 +173,12 @@ export default function ChatbotPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-80px)] w-full bg-[var(--color-background)] rounded-2xl border border-[var(--color-beige)] overflow-hidden shadow-sm">
+    <div className="flex h-[calc(100vh-80px)] w-full max-w-7xl mx-auto bg-[var(--color-background)] rounded-2xl border border-[var(--color-beige)] overflow-hidden shadow-sm relative">
       
       {/* Sidebar History */}
       <div className={cn(
-        "bg-white border-r border-[var(--color-beige)] flex flex-col transition-all duration-300 ease-in-out shrink-0",
-        sidebarOpen ? "w-64" : "w-0 hidden"
+        "bg-white border-r border-[var(--color-beige)] flex flex-col transition-all duration-300 ease-in-out shrink-0 absolute md:relative z-20 h-full shadow-lg md:shadow-none",
+        sidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full md:w-0 md:translate-x-0 hidden"
       )}>
         <div className="p-4 border-b border-[var(--color-beige)]">
           <button 
@@ -193,7 +193,11 @@ export default function ChatbotPage() {
           {sessions.map(session => (
             <div 
               key={session.id}
-              onClick={() => setCurrentSessionId(session.id)}
+              onClick={() => {
+                setCurrentSessionId(session.id);
+                // Auto close sidebar on mobile when a conversation is selected
+                if (window.innerWidth < 768) setSidebarOpen(false);
+              }}
               className={cn(
                 "group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-colors",
                 currentSessionId === session.id 
@@ -203,7 +207,7 @@ export default function ChatbotPage() {
             >
               <div className="flex items-center gap-3 overflow-hidden">
                 <MessageSquare size={16} className="flex-shrink-0" />
-                <span className="text-sm truncate">{session.title}</span>
+                <span className="text-sm truncate pr-2">{session.title}</span>
               </div>
               <button 
                 onClick={(e) => deleteSession(e, session.id)}
@@ -232,7 +236,7 @@ export default function ChatbotPage() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-[var(--color-foreground)] leading-tight">AI Assistant</h1>
-              <p className="text-xs text-[var(--color-muted-foreground)] hidden sm:block">Analítica Operativa en Tiempo Real</p>
+              <p className="text-xs text-[var(--color-muted-foreground)] hidden sm:block">Analítica y Herramientas Avanzadas</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -275,7 +279,7 @@ export default function ChatbotPage() {
 
                 {/* Bubble */}
                 <div className={cn(
-                  "space-y-2 max-w-[95%] md:max-w-[85%] lg:max-w-[75%]",
+                  "space-y-2 max-w-[95%] md:max-w-[85%] lg:max-w-[75%] min-w-0 overflow-hidden",
                 )}>
                   {textPart?.text && (
                     <div className={cn(
@@ -285,19 +289,21 @@ export default function ChatbotPage() {
                         : "bg-white border border-[var(--color-beige)] text-gray-800 rounded-tl-sm shadow-sm"
                     )}>
                       {message.role === "user" ? (
-                        <span>{textPart.text}</span>
+                        <div className="break-words whitespace-pre-wrap">{textPart.text}</div>
                       ) : (
-                        <div className="prose prose-sm md:prose-base prose-slate max-w-none 
-                          prose-p:my-2 prose-p:leading-relaxed
-                          prose-headings:font-bold prose-headings:text-gray-900 prose-headings:mb-3 prose-headings:mt-4
-                          prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                          prose-strong:font-semibold prose-strong:text-gray-900
-                          prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5
-                          prose-table:w-full prose-table:my-4 prose-table:text-sm prose-table:border-collapse
-                          prose-th:bg-blue-50 prose-th:p-3 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-blue-100 prose-th:text-blue-900
-                          prose-td:p-3 prose-td:border prose-td:border-gray-200
-                          [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>{textPart.text}</ReactMarkdown>
+                        <div className="overflow-x-auto w-full custom-scrollbar">
+                          <div className="prose prose-sm md:prose-base prose-slate max-w-none 
+                            prose-p:my-2 prose-p:leading-relaxed
+                            prose-headings:font-bold prose-headings:text-gray-900 prose-headings:mb-3 prose-headings:mt-4
+                            prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                            prose-strong:font-semibold prose-strong:text-gray-900
+                            prose-ul:my-2 prose-ol:my-2 prose-li:my-0.5
+                            prose-table:w-full prose-table:my-4 prose-table:text-sm prose-table:border-collapse
+                            prose-th:bg-blue-50 prose-th:p-3 prose-th:text-left prose-th:font-bold prose-th:border prose-th:border-blue-100 prose-th:text-blue-900
+                            prose-td:p-3 prose-td:border prose-td:border-gray-200
+                            [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{textPart.text}</ReactMarkdown>
+                          </div>
                         </div>
                       )}
                     </div>

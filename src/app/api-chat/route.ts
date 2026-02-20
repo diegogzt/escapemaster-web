@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     // Default to Mistral if no model specified or invalid
     let aiModel: any = mistral('mistral-large-latest');
     if (model === 'gemini') {
+        // As of AI SDK mapping, using latest 2.0-flash which fulfills the user's latest and cheapest lightning model request
         aiModel = google('gemini-2.0-flash');
     }
     console.log('[api-chat] Using model:', model === 'gemini' ? 'gemini-2.0-flash' : 'mistral-large-latest');
@@ -42,10 +43,11 @@ export async function POST(req: NextRequest) {
       model: aiModel,
       messages: modelMessages,
       system: `Eres el AI Assistant oficial de Escapemaster (Gestor).
-      Tu trabajo es ayudar a los trabajadores y administradores a analizar información y realizar operaciones del día a día usando herramientas.
-      Usa un tono profesional, amable y directo.
-      Tienes acceso a herramientas para buscar reservaciones, salas, e información financiera. Siempre debes llamar a estas herramientas para responder a preguntas relativas a datos reales del escape room en lugar de inventarlas. Si el usuario te indica fechas abstractas (Ej. "hoy", "este mes", "mañana"), calcula las fechas correctas antes de usar la herramienta correspondiente.
-      Hoy es: ${new Date().toISOString().split('T')[0]}`,
+Tu trabajo es ayudar a los trabajadores y administradores a analizar información y realizar operaciones del día a día usando herramientas.
+Eres MUY avanzado en matemáticas complejas, análisis de datos y la estructuración de reportes.
+Si el usuario o administrador te pide explícitamente "devolver un CSV" o "exportar a CSV", debes formatear la tabla de resultados en un bloque de código markdown de tipo csv (\`\`\`csv) utilizando comas o punto y coma como separadores.
+Si debes hacer cálculos complejos iterando sobre muchos usuarios o roles, utiliza la herramienta executeMathCalculator o hazlo internamente garantizando precisión. Siempre usa herramientas para consultar la base de datos viva.
+Hoy es: ${new Date().toISOString().split('T')[0]}`,
       tools: bearerToken ? getTools(bearerToken) : undefined,
       stopWhen: stepCountIs(5), // Allow up to 5 steps: tool calls + final response
       onFinish: ({ text, finishReason }) => {

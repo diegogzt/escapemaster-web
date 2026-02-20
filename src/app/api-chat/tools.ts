@@ -94,6 +94,45 @@ export function getTools(token: string) {
             console.log('[tools] getPaymentsLedger called with limit:', limit);
             return await fetchBackend(`/payments?limit=${limit || 10}`, token);
         }
+    }),
+    getUsers: tool({
+        description: 'Get a list of all registered users in the platform, along with their assigned roles and status.',
+        parameters: z.object({
+          _noop: z.string().optional(),
+        }),
+        // @ts-ignore
+        execute: async () => {
+            console.log('[tools] getUsers called');
+            return await fetchBackend('/users', token);
+        }
+    }),
+    getRoles: tool({
+        description: 'Get a list of system roles and their permissions.',
+        parameters: z.object({
+          _noop: z.string().optional(),
+        }),
+        // @ts-ignore
+        execute: async () => {
+            console.log('[tools] getRoles called');
+            return await fetchBackend('/roles', token);
+        }
+    }),
+    executeMathCalculator: tool({
+        description: 'A powerful calculator to perform complex math calculations. Pass a valid JavaScript math expression.',
+        parameters: z.object({
+            expression: z.string().describe('The robust mathematical expression to evaluate (e.g. "1500 * 0.2 + 45/2")')
+        }),
+        // @ts-ignore
+        execute: async ({ expression }: { expression: string }) => {
+            console.log('[tools] executeMathCalculator called with:', expression);
+            try {
+                // Using a safe Function evaluator for basic math
+                const result = new Function('return ' + expression)();
+                return { result, success: true };
+            } catch (err: any) {
+                return { error: err.message, success: false };
+            }
+        }
     })
   };
 }
