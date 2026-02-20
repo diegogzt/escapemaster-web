@@ -45,7 +45,8 @@ export function CalendarView() {
   const { calendarState, setCalendarState, fetchRooms } = useDataStore();
   
   const view = calendarState.view;
-  const currentDate = new Date(calendarState.currentDate);
+  const rawDate = new Date(calendarState.currentDate);
+  const currentDate = isNaN(rawDate.getTime()) ? new Date() : rawDate;
   const sessions = (calendarState.sessions || []).map(s => ({ ...s, start: new Date(s.start), end: new Date(s.end) }));
   
   const [loading, setLoading] = useState(false);
@@ -235,6 +236,25 @@ export function CalendarView() {
             <AlertCircle className="text-red-500 mb-4" size={48} />
             <p className="text-red-800 font-bold">{error}</p>
             <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">Reintentar</Button>
+        </div>
+      ) : loading && sessions.length === 0 ? (
+        <div className="bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden p-6 space-y-6">
+          <div className="flex items-center gap-4 animate-pulse">
+            <div className="w-8 h-8 rounded-full bg-beige/50"></div>
+            <div className="w-32 h-6 rounded-md bg-beige/50"></div>
+            <span className="text-sm font-medium text-muted-foreground ml-auto flex items-center gap-2">
+              <Loader2 className="animate-spin w-4 h-4" /> Cargando reservas...
+            </span>
+          </div>
+          <div className="grid grid-cols-7 gap-4">
+            {Array.from({ length: 35 }).map((_, i) => (
+              <div key={i} className="min-h-[140px] bg-beige/20 rounded-xl animate-pulse p-3">
+                 <div className="w-8 h-8 rounded-lg bg-beige/40 mb-3"></div>
+                 <div className="w-full h-12 rounded-lg bg-beige/40 mb-2"></div>
+                 <div className="w-2/3 h-12 rounded-lg bg-beige/40"></div>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <>

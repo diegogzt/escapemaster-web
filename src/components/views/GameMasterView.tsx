@@ -214,7 +214,7 @@ export function GameMasterView() {
           {(b.extras || []).length > 0 && (
             <div className="mt-3">
               <p className="text-sm font-semibold mb-1">Extras contratados:</p>
-              {b.extras.map((e, i) => (
+              {(b.extras || []).map((e, i) => (
                 <span key={i} className="inline-block mr-2 mb-1 px-2 py-1 bg-primary/10 text-primary rounded text-xs font-medium">
                   {e.type} — {e.price}€
                 </span>

@@ -192,7 +192,7 @@ export function SaveCollectionModal({
                       <p className="text-xs text-secondary mt-1">{collection.description}</p>
                     )}
                     <p className="text-xs text-[var(--color-muted-foreground)] mt-1">
-                      {collection.layout.length} widgets
+                      {(collection.layout || []).length} widgets
                     </p>
                   </div>
                   <div className="flex gap-1">

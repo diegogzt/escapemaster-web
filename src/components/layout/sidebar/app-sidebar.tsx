@@ -5,27 +5,10 @@ import { toast } from "sonner";
 import { NavItem } from "./nav-item";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
-import {
-  LayoutDashboard,
-  CalendarDays,
-  ClipboardList,
-  DoorOpen,
-  BarChart3,
-  Settings,
-  ChevronLeft,
-  ChevronRight,
-  Users,
-  LogOut,
-  Clock,
-  ShieldCheck,
-  Gamepad2,
-  Tags,
-  CreditCard,
-  Wallet,
-  FileCheck,
-  Bell,
-  Key,
-  Star,
+import { 
+  ChevronDown, ChevronRight, ChevronLeft, LayoutDashboard, CalendarDays, ClipboardList, 
+  DoorOpen, BarChart3, Settings, Users, LogOut, Clock, ShieldCheck, Gamepad2, Tags, 
+  Wallet, Bell, Star 
 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/services/api";
@@ -52,11 +35,23 @@ export function AppSidebar() {
     return user.permissions?.includes(permission);
   };
 
+  const [sidebarWidth, setSidebarWidth] = useState(256); // 256px = w-64
+  const [isResizing, setIsResizing] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    operations: true,
+    admin: true,
+    finance: true,
+  });
+
   useEffect(() => {
     // 1. Load from localStorage first
     const saved = localStorage.getItem("sidebar-collapsed");
+    const savedWidth = localStorage.getItem("sidebar-width");
     if (saved !== null) {
       setIsCollapsed(saved === "true");
+    }
+    if (savedWidth !== null) {
+      setSidebarWidth(Number(savedWidth));
     }
     setIsInitialized(true);
   }, []);
@@ -87,13 +82,59 @@ export function AppSidebar() {
     }
   };
 
+  const toggleGroup = (key: string) => {
+    if (isCollapsed) {
+      setIsCollapsed(false);
+      localStorage.setItem("sidebar-collapsed", "false");
+    }
+    setOpenGroups(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      // Define boundaries (min ~ 200px, max 256px)
+      const newWidth = Math.min(Math.max(e.clientX, 200), 256);
+      setSidebarWidth(newWidth);
+      if (newWidth < 200) setIsCollapsed(true);
+    };
+
+    const handleMouseUp = () => {
+      if (isResizing) {
+        setIsResizing(false);
+        localStorage.setItem("sidebar-width", String(sidebarWidth));
+      }
+    };
+
+    if (isResizing) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+      document.body.style.cursor = "col-resize";
+      document.body.style.userSelect = "none";
+    } else {
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+    }
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, sidebarWidth]);
+
   return (
     <aside
+      style={{ width: isCollapsed ? 64 : sidebarWidth }}
       className={cn(
-        "hidden md:flex flex-col border-r border-[var(--color-beige)]  bg-[var(--color-background)] h-screen sticky top-0 transition-all duration-300",
-        isCollapsed ? "w-16" : "w-64"
+        "hidden md:flex flex-col border-r border-[var(--color-beige)] bg-[var(--color-background)] h-screen sticky top-0 transition-all duration-300 relative",
+        isResizing ? "transition-none" : "transition-all duration-300"
       )}
     >
+      <div
+        onMouseDown={() => { if (!isCollapsed) setIsResizing(true); }}
+        className="absolute right-0 top-0 w-1 h-full cursor-col-resize hover:bg-primary/20 hover:w-2 active:bg-primary/40 -mr-0.5 z-20 transition-colors"
+      />
+
       <div
         className={cn(
           "h-16 flex items-center relative border-b border-[var(--color-beige)] ",
@@ -149,116 +190,70 @@ export function AppSidebar() {
         </div>
       )}
 
-      <nav className="flex-1 px-2 space-y-2 py-4 overflow-y-auto">
-        <NavItem
-          href="/dashboard"
-          icon={LayoutDashboard}
-          label="Dashboard"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/calendar"
-          icon={CalendarDays}
-          label="Calendario"
-          isCollapsed={isCollapsed}
-        />
-        
-        {hasPermission("time_tracking") && (
-          <NavItem
-            href="/time-tracking"
-            icon={Clock}
-            label="Registro de Horas"
-            isCollapsed={isCollapsed}
-          />
-        )}
+      <nav className="flex-1 px-2 space-y-4 py-4 overflow-y-auto overflow-x-hidden custom-scrollbar">
+        {/* Core items (no group) */}
+        <div className="space-y-1">
+          <NavItem href="/dashboard" icon={LayoutDashboard} label="Dashboard" isCollapsed={isCollapsed} />
+          <NavItem href="/calendar" icon={CalendarDays} label="Calendario" isCollapsed={isCollapsed} />
+        </div>
 
-        {hasPermission("manage_timeclock") && (
-          <NavItem
-            href="/hr-management"
-            icon={ShieldCheck}
-            label="Gestión RRHH"
-            isCollapsed={isCollapsed}
-          />
-        )}
+        {/* Group 1: Operaciones */}
+        <div className="space-y-1">
+          {!isCollapsed && (
+            <button onClick={() => toggleGroup("operations")} className="flex items-center justify-between w-full px-4 py-2 text-xs font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground">
+              <span>Operaciones</span>
+              <ChevronDown size={14} className={cn("transition-transform", openGroups.operations ? "" : "-rotate-90")} />
+            </button>
+          )}
+          {(openGroups.operations || isCollapsed) && (
+            <div className="space-y-1" title={isCollapsed ? "Operaciones" : ""}>
+               {isCollapsed && <div className="h-4 border-b border-beige/30 mb-2"></div>}
+               <NavItem href="/bookings" icon={ClipboardList} label="Reservas" isCollapsed={isCollapsed} />
+               <NavItem href="/rooms" icon={DoorOpen} label="Salas" isCollapsed={isCollapsed} />
+               {hasPermission("view_schedule") && <NavItem href="/gamemaster" icon={Gamepad2} label="Game Master" isCollapsed={isCollapsed} />}
+               <NavItem href="/reviews" icon={Star} label="Reseñas" isCollapsed={isCollapsed} />
+            </div>
+          )}
+        </div>
 
-        <NavItem
-          href="/bookings"
-          icon={ClipboardList}
-          label="Reservas"
-          isCollapsed={isCollapsed}
-        />
+        {/* Group 2: RRHH y Admin */}
+        <div className="space-y-1">
+          {!isCollapsed && (
+            <button onClick={() => toggleGroup("admin")} className="flex items-center justify-between w-full px-4 py-2 text-xs font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground">
+              <span>Personal y Usuarios</span>
+              <ChevronDown size={14} className={cn("transition-transform", openGroups.admin ? "" : "-rotate-90")} />
+            </button>
+          )}
+          {(openGroups.admin || isCollapsed) && (
+            <div className="space-y-1" title={isCollapsed ? "Personal" : ""}>
+              {isCollapsed && <div className="h-4 border-b border-beige/30 mb-2"></div>}
+              {hasPermission("time_tracking") && <NavItem href="/time-tracking" icon={Clock} label="Registro de Horas" isCollapsed={isCollapsed} />}
+              {hasPermission("manage_timeclock") && <NavItem href="/hr-management" icon={ShieldCheck} label="Gestión RRHH" isCollapsed={isCollapsed} />}
+              <NavItem href="/users" icon={Users} label="Usuarios" isCollapsed={isCollapsed} />
+              <NavItem href="/roles" icon={ShieldCheck} label="Roles" isCollapsed={isCollapsed} />
+            </div>
+          )}
+        </div>
 
-        {hasPermission("view_schedule") && (
-          <NavItem
-            href="/gamemaster"
-            icon={Gamepad2}
-            label="Game Master"
-            isCollapsed={isCollapsed}
-          />
-        )}
-
-        <NavItem
-          href="/rooms"
-          icon={DoorOpen}
-          label="Salas"
-          isCollapsed={isCollapsed}
-        />
-
-        {hasPermission("manage_bookings") && (
-          <NavItem
-            href="/coupons"
-            icon={Tags}
-            label="Cupones"
-            isCollapsed={isCollapsed}
-          />
-        )}
-
-        <NavItem
-          href="/users"
-          icon={Users}
-          label="Usuarios"
-          isCollapsed={isCollapsed}
-        />
-
-        {hasPermission("view_reports") && (
-          <NavItem
-            href="/payouts"
-            icon={Wallet}
-            label="Liquidaciones"
-            isCollapsed={isCollapsed}
-          />
-        )}
-
-        <NavItem
-          href="/roles"
-          icon={ShieldCheck}
-          label="Roles"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/notifications"
-          icon={Bell}
-          label="Notificaciones"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/reviews"
-          icon={Star}
-          label="Reseñas"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/reports"
-          icon={BarChart3}
-          label="Reportes"
-          isCollapsed={isCollapsed}
-        />
-        <NavItem
-          href="/settings"
-          icon={Settings}
-          label="Configuración"
-          isCollapsed={isCollapsed}
-        />
+        {/* Group 3: Finanzas y Sistema */}
+        <div className="space-y-1">
+          {!isCollapsed && (
+            <button onClick={() => toggleGroup("finance")} className="flex items-center justify-between w-full px-4 py-2 text-xs font-bold text-muted-foreground uppercase tracking-wider hover:text-foreground">
+              <span>Gestión</span>
+              <ChevronDown size={14} className={cn("transition-transform", openGroups.finance ? "" : "-rotate-90")} />
+            </button>
+          )}
+          {(openGroups.finance || isCollapsed) && (
+            <div className="space-y-1" title={isCollapsed ? "Gestión" : ""}>
+               {isCollapsed && <div className="h-4 border-b border-beige/30 mb-2"></div>}
+              {hasPermission("manage_bookings") && <NavItem href="/coupons" icon={Tags} label="Cupones" isCollapsed={isCollapsed} />}
+              {hasPermission("view_reports") && <NavItem href="/payouts" icon={Wallet} label="Liquidaciones" isCollapsed={isCollapsed} />}
+              <NavItem href="/reports" icon={BarChart3} label="Reportes" isCollapsed={isCollapsed} />
+              <NavItem href="/notifications" icon={Bell} label="Notificaciones" isCollapsed={isCollapsed} />
+              <NavItem href="/settings" icon={Settings} label="Configuración" isCollapsed={isCollapsed} />
+            </div>
+          )}
+        </div>
       </nav>
 
       <div className="border-t p-3 space-y-1">

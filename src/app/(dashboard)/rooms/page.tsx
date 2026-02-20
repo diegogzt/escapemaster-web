@@ -117,7 +117,7 @@ export default function RoomsPage() {
                 </div>
 
                 <div className="flex-1 space-y-3 overflow-y-auto">
-                  {room.next_bookings && room.next_bookings.length > 0 ? (
+                  {room.next_bookings?.length > 0 ? (
                     room.next_bookings.map((booking: any) => (
                       <div
                         key={booking.id}

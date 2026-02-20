@@ -156,6 +156,12 @@ export const useDataStore = create<DataState>()(
       partialize: (state) => ({
         // Only persist these parts
         bookingsState: { filters: state.bookingsState.filters },
+        calendarState: {
+          view: state.calendarState.view,
+          currentDate: state.calendarState.currentDate,
+          sessions: state.calendarState.sessions,
+          lastFetched: state.calendarState.lastFetched,
+        },
         rooms: state.rooms,
         roles: state.roles,
         isLoaded: state.isLoaded
