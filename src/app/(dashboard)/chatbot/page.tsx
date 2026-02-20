@@ -20,8 +20,7 @@ export default function ChatbotPage() {
   // Memoize transport so it doesn't recreate on every render
   const transport = useMemo(() => new DefaultChatTransport({
     api: "/api-chat",
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-    body: { model },
+    body: { model, token },
   }), [token, model]);
 
   const { messages, sendMessage, status } = useChat({

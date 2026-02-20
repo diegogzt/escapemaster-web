@@ -9,7 +9,7 @@ export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
-    const { messages, model } = await req.json();
+    const { messages, model, token } = await req.json();
     
     // Default to Mistral if no model specified or invalid
     let aiModel: any = mistral('mistral-large-latest');
@@ -18,13 +18,11 @@ export async function POST(req: NextRequest) {
         aiModel = google('gemini-2.0-flash');
     }
 
-    // Capture the Bearer token from the incoming client request
-    const authHeader = req.headers.get('authorization');
-    const token = authHeader ? authHeader.replace('Bearer ', '') : null;
+    // Use token from request body (sent by DefaultChatTransport body option)
+    // Fallback to Authorization header for backwards compatibility
+    const bearerToken = token || req.headers.get('authorization')?.replace('Bearer ', '') || null;
 
-    if (!token) {
-        return new Response('Unauthorized', { status: 401 });
-    }
+    // If no token at all, we still attempt the request (the AI will respond without tool access)
 
     const result = streamText({
       model: aiModel,
@@ -34,7 +32,7 @@ export async function POST(req: NextRequest) {
       Usa un tono profesional, amable y directo.
       Tienes acceso a herramientas para buscar reservaciones, salas, e información financiera. Siempre debes llamar a estas herramientas para responder a preguntas relativas a datos reales del escape room en lugar de inventarlas. Si el usuario te indica fechas abstractas (Ej. "hoy", "este mes", "mañana"), calcula las fechas correctas antes de usar la herramienta correspondiente.
       Hoy es: ${new Date().toISOString().split('T')[0]}`,
-      tools: getTools(token),
+      tools: bearerToken ? getTools(bearerToken) : undefined,
     });
 
     // ai@6.x: toUIMessageStreamResponse() is the correct method
