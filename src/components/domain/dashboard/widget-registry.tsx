@@ -10,6 +10,16 @@ import { QuarterlyStatsWidget } from "./widgets/quarterly-stats";
 import { RevenueTableWidget } from "./widgets/revenue-table";
 import { FiscalWidget } from "./widgets/FiscalWidget";
 import { ProjectedEarningsWidget } from "./widgets/ProjectedEarningsWidget";
+import { RecentBookingsWidget } from "./widgets/recent-bookings";
+import { PendingPaymentsWidget } from "./widgets/pending-payments";
+import { StaffClockWidget } from "./widgets/staff-clock";
+import { PendingVacationsWidget } from "./widgets/pending-vacations";
+import { ActiveCouponsWidget } from "./widgets/active-coupons";
+import { RecentPaymentsWidget } from "./widgets/recent-payments";
+import { RoomsStatusWidget } from "./widgets/rooms-status";
+import { QuickLinksWidget } from "./widgets/quick-links";
+import { DigitalClockWidget } from "./widgets/digital-clock";
+import { UnreadNotificationsWidget } from "./widgets/unread-notifications";
 import { WidgetDefinition } from "./types";
 
 export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
@@ -142,6 +152,126 @@ export const WIDGET_REGISTRY: Record<string, WidgetDefinition> = {
     component: ProjectedEarningsWidget,
     defaultColSpan: 12,
     defaultRowSpan: 12,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "recent-bookings": {
+    type: "recent-bookings",
+    title: "Últimas Reservas",
+    description: "Listado de las reservas recibidas más recientemente",
+    component: RecentBookingsWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 14,
+    minColSpan: 8,
+    minRowSpan: 10,
+    configurableOptions: ["limit"],
+    defaultConfig: { limit: 5 },
+  },
+  "pending-payments": {
+    type: "pending-payments",
+    title: "Pagos Pendientes",
+    description: "Reservas activas con saldos deudores",
+    component: PendingPaymentsWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 14,
+    minColSpan: 8,
+    minRowSpan: 10,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "staff-clock": {
+    type: "staff-clock",
+    title: "Fichajes (Asistencia)",
+    description: "Últimos registros de entrada y salida del personal",
+    component: StaffClockWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 12,
+    minColSpan: 8,
+    minRowSpan: 10,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "pending-vacations": {
+    type: "pending-vacations",
+    title: "Vacaciones Pendientes",
+    description: "Solicitudes de tiempo libre pendientes de revisión",
+    component: PendingVacationsWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 12,
+    minColSpan: 8,
+    minRowSpan: 10,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "active-coupons": {
+    type: "active-coupons",
+    title: "Cupones Activos",
+    description: "Monitor de campañas vigentes",
+    component: ActiveCouponsWidget,
+    defaultColSpan: 12,
+    defaultRowSpan: 12,
+    minColSpan: 6,
+    minRowSpan: 8,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "recent-payments": {
+    type: "recent-payments",
+    title: "Pagos Recientes",
+    description: "Últimas transacciones económicas exitosas",
+    component: RecentPaymentsWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 14,
+    minColSpan: 8,
+    minRowSpan: 10,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "rooms-status": {
+    type: "rooms-status",
+    title: "Estado de Salas",
+    description: "Resumen de capacidades y tarifas activas",
+    component: RoomsStatusWidget,
+    defaultColSpan: 24,
+    defaultRowSpan: 12,
+    minColSpan: 12,
+    minRowSpan: 10,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "quick-links": {
+    type: "quick-links",
+    title: "Accesos Rápidos",
+    description: "Botones para ir directamente a la vista deseada",
+    component: QuickLinksWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 12,
+    minColSpan: 12,
+    minRowSpan: 8,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "digital-clock": {
+    type: "digital-clock",
+    title: "Reloj Digital",
+    description: "Hora local para modo de recepción",
+    component: DigitalClockWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 12,
+    minColSpan: 10,
+    minRowSpan: 10,
+    configurableOptions: [],
+    defaultConfig: {},
+  },
+  "unread-notifications": {
+    type: "notifications",
+    title: "Notificaciones del Sistema",
+    description: "Mensajes y alertas sin leer",
+    component: UnreadNotificationsWidget,
+    defaultColSpan: 16,
+    defaultRowSpan: 12,
+    minColSpan: 8,
+    minRowSpan: 10,
     configurableOptions: [],
     defaultConfig: {},
   },

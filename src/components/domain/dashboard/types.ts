@@ -12,7 +12,17 @@ export type WidgetType =
   | "quarterly-stats"
   | "revenue-table"
   | "fiscal"
-  | "projected";
+  | "projected"
+  | "recent-bookings"
+  | "pending-payments"
+  | "staff-clock"
+  | "pending-vacations"
+  | "active-coupons"
+  | "recent-payments"
+  | "rooms-status"
+  | "quick-links"
+  | "digital-clock"
+  | "notifications";
 
 // Widget-specific configuration options
 export interface WidgetConfigOptions {
