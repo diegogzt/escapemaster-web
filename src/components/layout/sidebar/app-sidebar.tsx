@@ -209,6 +209,7 @@ export function AppSidebar() {
             <div className="space-y-1" title={isCollapsed ? "Operaciones" : ""}>
                {isCollapsed && <div className="h-4 border-b border-beige/30 mb-2"></div>}
                <NavItem href="/bookings" icon={ClipboardList} label="Reservas" isCollapsed={isCollapsed} />
+               <NavItem href="/chatbot" icon={Bot} label="AI Assistant" isCollapsed={isCollapsed} />
                <NavItem href="/rooms" icon={DoorOpen} label="Salas" isCollapsed={isCollapsed} />
                {hasPermission("view_schedule") && <NavItem href="/gamemaster" icon={Gamepad2} label="Game Master" isCollapsed={isCollapsed} />}
                <NavItem href="/reviews" icon={Star} label="Reseñas" isCollapsed={isCollapsed} />
