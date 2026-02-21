@@ -13,7 +13,7 @@ export default function DashboardLayout({
       <AppSidebar />
       <div className="flex-1 flex flex-col pb-16 md:pb-0">
         <MobileNav />
-        <main className="flex-1 p-4 md:p-6 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-6">
           <ViewRenderer>{children}</ViewRenderer>
         </main>
         <BottomNav />

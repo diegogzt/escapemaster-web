@@ -126,7 +126,7 @@ export function AppSidebar() {
     <aside
       style={{ width: isCollapsed ? 64 : sidebarWidth }}
       className={cn(
-        "hidden md:flex flex-col border-r border-[var(--color-beige)] bg-[var(--color-background)] h-screen sticky top-0 transition-all duration-300 relative",
+        "hidden md:flex flex-col border-r border-[var(--color-beige)] bg-[var(--color-background)] h-screen sticky top-0 transition-all duration-300 z-30",
         isResizing ? "transition-none" : "transition-all duration-300"
       )}
     >
