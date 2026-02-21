@@ -464,12 +464,53 @@ export function DashboardView() {
 
   const addWidget = (type: WidgetType) => {
     const def = WIDGET_REGISTRY[type];
+    
+    // Auto-layout logic for incoming widgets 
+    const maxCols = 48; // Total grid columns constraint
+    let nextColSpan = def.defaultColSpan;
+    
+    // Ensure the new widget doesn't inherently exceed max grid size
+    if (nextColSpan > maxCols) {
+        nextColSpan = maxCols;
+    }
+    
+    // Calculate occupied space in the last row to avoid breaking layouts
+    let currentOccupiedInRow = 0;
+    if (widgets.length > 0) {
+      // Very basic heuristic: sum colSpans until we hit 48, then reset. Find what's left in the final theoretical row.
+      let runningSum = 0;
+      widgets.forEach(w => {
+         runningSum += (w.colSpan || 48);
+         if (runningSum >= maxCols) {
+            // It either filled the row perfectly or overflowed to a new one. 
+            // We just keep the remainder.
+            runningSum = runningSum % maxCols;
+         }
+      });
+      currentOccupiedInRow = runningSum;
+    }
+    
+    // If adding this widget exceeds the row, and it's not a full-width widget, try to shrink it to fit the gap,
+    // OR if the gap is too small (< minColSpan), let it wrap to a new row at its preferred size.
+    const spaceLeftInRow = maxCols - currentOccupiedInRow;
+    const minCols = def.minColSpan || 4;
+    
+    if (currentOccupiedInRow > 0 && spaceLeftInRow < nextColSpan) {
+       // It doesn't fit with its default size.
+       if (spaceLeftInRow >= minCols) {
+          // But it CAN fit if we shrink it.
+          nextColSpan = spaceLeftInRow;
+       } 
+       // If spaceLeftInRow < minCols, it will naturally wrap to the next row at its def.defaultColSpan
+    }
+    
     const newWidget: WidgetConfig = {
       id: `${type}-${Date.now()}`,
       type: type,
-      colSpan: def.defaultColSpan,
+      colSpan: nextColSpan,
       rowSpan: def.defaultRowSpan || 8,
     };
+    
     setWidgets([...widgets, newWidget]);
   };
 
