@@ -531,8 +531,57 @@ export function DashboardView() {
     }));
   };
 
-  const resetLayout = () => {
-      resetStoreLayout(DEFAULT_LAYOUT);
+  const autoLayoutWidgets = () => {
+    const maxCols = 48;
+    let currentRow: WidgetConfig[] = [];
+    let currentOccupied = 0;
+    let newLayout: WidgetConfig[] = [];
+
+    widgets.forEach((w) => {
+      const def = WIDGET_REGISTRY[w.type] || { defaultColSpan: 12, minColSpan: 4 };
+      let preferred = def.defaultColSpan > maxCols ? maxCols : def.defaultColSpan;
+      const minSpace = def.minColSpan || 4;
+      
+      const spaceLeft = maxCols - currentOccupied;
+
+      if (currentOccupied > 0 && spaceLeft < preferred) {
+        if (spaceLeft >= minSpace) {
+          // Shrink to fit the remaining gap
+          const flexedWidget = { ...w, colSpan: spaceLeft };
+          newLayout.push(flexedWidget);
+          currentOccupied = 0;
+          currentRow = [];
+        } else {
+          // Cannot fit, must wrap.
+          // Distribute the remaining dead space to the LAST widget of the current row so it flushes right cleanly
+          if (currentRow.length > 0 && spaceLeft > 0) {
+             const lastWidget = newLayout[newLayout.length - 1];
+             lastWidget.colSpan = (lastWidget.colSpan || 12) + spaceLeft;
+          }
+          // Now place current widget on new row
+          const wrappedWidget = { ...w, colSpan: preferred };
+          newLayout.push(wrappedWidget);
+          currentOccupied = preferred % maxCols;
+          if (currentOccupied === 0) {
+            currentRow = [];
+          } else {
+            currentRow = [wrappedWidget];
+          }
+        }
+      } else {
+        // Fits normally without constraints
+        const normalWidget = { ...w, colSpan: preferred };
+        newLayout.push(normalWidget);
+        currentOccupied = (currentOccupied + preferred) % maxCols;
+        if (currentOccupied === 0) {
+          currentRow = [];
+        } else {
+          currentRow.push(normalWidget);
+        }
+      }
+    });
+
+    setWidgets(newLayout);
   };
 
   const activeWidget = activeId ? widgets.find((w) => w.id === activeId) : null;
@@ -607,7 +656,7 @@ export function DashboardView() {
                   </div>
                 )}
               </div>
-              <Button onClick={resetLayout} variant="outline" size="sm" className="text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]">
+              <Button onClick={autoLayoutWidgets} variant="outline" size="sm" className="text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]">
                 <LayoutTemplate className="mr-1.5 h-3.5 w-3.5" />
                 Ordenar
               </Button>
