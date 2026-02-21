@@ -471,7 +471,6 @@ export function DashboardView() {
       rowSpan: def.defaultRowSpan || 8,
     };
     setWidgets([...widgets, newWidget]);
-    setShowAddWidget(false);
   };
 
   const removeWidget = (id: string) => setWidgets(widgets.filter((w) => w.id !== id));
