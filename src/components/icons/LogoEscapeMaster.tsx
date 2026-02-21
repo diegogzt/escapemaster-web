@@ -28,9 +28,9 @@ export function LogoEscapeMaster({ className, ...props }: React.SVGProps<SVGSVGE
         scape
       </text>
 
-      {/* M estilizada, shifted left by 110px to remove gap */}
+      {/* M estilizada, shifted left slightly to remove gap but avoid overlap */}
       <path 
-        d="M 360 127 L 360 76 C 360 54, 394 54, 394 76 L 394 127 M 394 76 C 394 54, 428 54, 428 76 L 428 127" 
+        d="M 425 127 L 425 76 C 425 54, 459 54, 459 76 L 459 127 M 459 76 C 459 54, 493 54, 493 76 L 493 127" 
         fill="none" 
         stroke="currentColor" 
         strokeWidth="16" 
@@ -38,7 +38,7 @@ export function LogoEscapeMaster({ className, ...props }: React.SVGProps<SVGSVGE
       />
       
       <text 
-        x="440" 
+        x="505" 
         y="135" 
         fontFamily="Arial, Helvetica, sans-serif" 
         fontSize="115" 
