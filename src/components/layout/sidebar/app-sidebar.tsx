@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/services/api";
+import { LogoEscapeMaster } from "@/components/icons/LogoEscapeMaster";
 
 export function AppSidebar() {
   const { user, updateUser, isAuthenticated } = useAuth();
@@ -142,7 +143,9 @@ export function AppSidebar() {
         )}
       >
         {!isCollapsed ? (
-          <h1 className="text-xl font-bold text-primary">EscapeMaster</h1>
+          <Link href="/dashboard" className="flex items-center">
+             <LogoEscapeMaster className="h-7 w-auto text-primary" />
+          </Link>
         ) : (
           <h1 className="text-xl font-bold text-primary">EM</h1>
         )}
