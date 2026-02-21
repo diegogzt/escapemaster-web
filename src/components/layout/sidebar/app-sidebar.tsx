@@ -159,7 +159,7 @@ export function AppSidebar() {
       </div>
 
       {/* Organization Switcher */}
-      {!isCollapsed && isAuthenticated && (
+      {!isCollapsed && isAuthenticated && memberships.length > 1 && (
         <div className="px-4 py-3 border-b border-[var(--color-beige)]">
           <label className="text-[10px] font-bold text-primary uppercase tracking-widest mb-2 block px-2">
             Organización
