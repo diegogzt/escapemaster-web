@@ -14,7 +14,7 @@ export function UnreadNotificationsWidget({}: UnreadNotificationsProps) {
       try {
         const response = await notifications.list();
         const list = Array.isArray(response) ? response : (response?.data || []);
-        const unread = list.filter((n: any) => !n.is_read);
+        const unread = list.filter((n: any) => !n.read);
         setItems(unread.slice(0, 5));
       } catch (error) {
         console.error("Failed to fetch notifications", error);
