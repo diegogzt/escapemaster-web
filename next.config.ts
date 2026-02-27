@@ -51,16 +51,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return {
-      beforeFiles: [
-        {
-          source: "/api/:path*",
-          destination: "https://api.escapemaster.es/:path*",
-        },
-      ],
-    };
-  },
 };
 
 export default nextConfig;
