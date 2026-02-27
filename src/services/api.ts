@@ -404,6 +404,14 @@ export const rooms = {
     });
     return response.data;
   },
+  getNotificationSettings: async (id: string) => {
+    const response = await api.get(`/rooms/${id}/notification-settings`);
+    return response.data;
+  },
+  updateNotificationSettings: async (id: string, data: any) => {
+    const response = await api.put(`/rooms/${id}/notification-settings`, data);
+    return response.data;
+  },
 };
 
 export const users = {
