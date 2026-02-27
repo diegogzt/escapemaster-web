@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/components/Card";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
-import { rooms, dashboard, roomExtras } from "@/services/api";
+import { rooms, dashboard, roomExtras, users } from "@/services/api";
 import {
   Settings,
   Users,
@@ -23,6 +23,7 @@ import {
   Tag,
   Package,
   ShieldCheck,
+  Bell,
 } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -37,7 +38,7 @@ const DAYS = [
   { key: "sunday", label: "Domingo" },
 ];
 
-type TabKey = "general" | "horarios" | "disponibilidad" | "precios" | "extras" | "cancelacion";
+type TabKey = "general" | "horarios" | "disponibilidad" | "precios" | "extras" | "cancelacion" | "notificaciones";
 
 export default function RoomConfigPage() {
   const router = useRouter();
@@ -89,6 +90,12 @@ export default function RoomConfigPage() {
   const [cancellationPolicy, setCancellationPolicy] = useState({ hours_before: 24, refund_percentage: 100, no_show_fee: 0 });
   const [savingPolicy, setSavingPolicy] = useState(false);
 
+  // Notifications State
+  const [notificationSettings, setNotificationSettings] = useState<{ last_minute_threshold_hours: number | null, recipients: any[] }>({ last_minute_threshold_hours: null, recipients: [] });
+  const [orgUsers, setOrgUsers] = useState<any[]>([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [savingNotifications, setSavingNotifications] = useState(false);
+
   useEffect(() => {
     rooms
       .list()
@@ -132,6 +139,16 @@ export default function RoomConfigPage() {
     // Cancellation
     roomExtras.getCancellationPolicy(roomId).then(data => {
       if (data) setCancellationPolicy(data);
+    }).catch(() => {});
+    
+    // Notifications
+    rooms.getNotificationSettings(roomId).then(data => {
+      if (data) setNotificationSettings(data);
+    }).catch(() => {});
+    
+    // Org Users
+    users.list().then(data => {
+      setOrgUsers(Array.isArray(data) ? data : data.users || []);
     }).catch(() => {});
   }, [roomId]);
 
@@ -230,6 +247,7 @@ export default function RoomConfigPage() {
           { key: "precios" as TabKey, label: "Precios", icon: <Tag size={16} /> },
           { key: "extras" as TabKey, label: "Extras", icon: <Package size={16} /> },
           { key: "cancelacion" as TabKey, label: "Cancelación", icon: <ShieldCheck size={16} /> },
+          { key: "notificaciones" as TabKey, label: "Notificaciones", icon: <Bell size={16} /> },
         ]).map(tab => (
           <button
             key={tab.key}
@@ -799,14 +817,119 @@ export default function RoomConfigPage() {
                       const created = await roomExtras.createPricing(roomId, newPricing);
                       setPricingRules(prev => [...prev, created]);
                       setNewPricing({ name: "", day_of_week: "", price_modifier: 1.0, start_date: "", end_date: "" });
-                      toast.success("Regla de precio creada");
-                    } catch { toast.error("Error al crear la regla"); }
+                      toast.success("Regla añadida");
+                    } catch { toast.error("Error al añadir la regla"); }
                     finally { setLoadingPricing(false); }
                   }}
                 >
                   <Plus size={16} className="mr-2" />
                   Añadir Regla
                 </Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+      
+      {/* Tab: Notificaciones */}
+      {activeTab === "notificaciones" && (
+        <div className="space-y-6">
+          <Card className="border-beige">
+            <CardHeader>
+              <CardTitle>Notificaciones de Última Hora</CardTitle>
+            </CardHeader>
+            <div className="p-6">
+              <p className="text-sm text-[var(--color-muted-foreground)] mb-6">
+                Recibe alertas automáticas por correo electrónico cuando se realice una reserva con poca antelación.
+              </p>
+              
+              <div className="space-y-4 max-w-2xl">
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-[var(--color-foreground)]">
+                    Avisar si entra una reserva para dentro de menos de (horas):
+                  </label>
+                  <select
+                    value={notificationSettings.last_minute_threshold_hours || ""}
+                    onChange={e => setNotificationSettings(prev => ({ ...prev, last_minute_threshold_hours: e.target.value ? parseInt(e.target.value) : null }))}
+                    className="w-full max-w-xs px-4 py-2 border border-beige rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 bg-[var(--color-background)]"
+                  >
+                    <option value="">Desactivado</option>
+                    <option value="6">6 horas</option>
+                    <option value="12">12 horas</option>
+                    <option value="24">24 horas</option>
+                    <option value="48">48 horas</option>
+                    <option value="72">72 horas</option>
+                  </select>
+                </div>
+                
+                {notificationSettings.last_minute_threshold_hours !== null && (
+                  <div className="space-y-3 pt-4 border-t border-beige">
+                    <label className="block text-sm font-medium text-[var(--color-foreground)]">
+                      ¿Quién debe recibir estos avisos por correo?
+                    </label>
+                    {orgUsers.length === 0 ? (
+                      <p className="text-sm text-[var(--color-muted-foreground)] italic">
+                        Cargando usuarios...
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        {orgUsers.map(u => {
+                          const isSelected = notificationSettings.recipients.some(r => r.user_id === u.id);
+                          return (
+                            <label key={u.id} className="flex items-center gap-3 p-3 rounded-lg border border-beige bg-[var(--color-light)]/20 cursor-pointer hover:bg-[var(--color-light)]/40 transition-colors">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={e => {
+                                  if (e.target.checked) {
+                                    setNotificationSettings(prev => ({
+                                      ...prev,
+                                      recipients: [...prev.recipients, { user_id: u.id, email: u.email, first_name: u.full_name }]
+                                    }));
+                                  } else {
+                                    setNotificationSettings(prev => ({
+                                      ...prev,
+                                      recipients: prev.recipients.filter(r => r.user_id !== u.id)
+                                    }));
+                                  }
+                                }}
+                                className="w-4 h-4 rounded border-beige text-primary focus:ring-primary/20"
+                              />
+                              <div>
+                                <p className="text-sm font-medium text-[var(--color-foreground)]">{u.full_name}</p>
+                                <p className="text-xs text-[var(--color-muted-foreground)]">{u.email} ({u.role?.name || 'Usuario'})</p>
+                              </div>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <div className="pt-6">
+                  <Button
+                    loading={savingNotifications}
+                    onClick={async () => {
+                      setSavingNotifications(true);
+                      try {
+                        const recipientIds = notificationSettings.recipients.map(r => r.user_id);
+                        await rooms.updateNotificationSettings(roomId, {
+                          last_minute_threshold_hours: notificationSettings.last_minute_threshold_hours,
+                          recipient_ids: recipientIds
+                        });
+                        toast.success("Configuración de notificaciones guardada");
+                      } catch (err) {
+                        toast.error("Error al guardar la configuración");
+                      } finally {
+                        setSavingNotifications(false);
+                      }
+                    }}
+                  >
+                    <Save size={18} className="mr-2" />
+                    Guardar Preferencias
+                  </Button>
+                </div>
               </div>
             </div>
           </Card>

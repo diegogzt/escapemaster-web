@@ -20,6 +20,7 @@ import {
   Clipboard,
   Loader2,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SessionItem {
   id: string;
@@ -59,6 +60,9 @@ export function GameMasterView() {
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterRoom, setFilterRoom] = useState("");
+  const [filterStatus, setFilterStatus] = useState<string[]>([]);
+  const [filterSearch, setFilterSearch] = useState("");
+  const [filterDate, setFilterDate] = useState<string>(new Date().toISOString().split("T")[0]);
   const [allRooms, setAllRooms] = useState<any[]>([]);
   const [view, setView] = useState<View>("schedule");
   const [selectedBooking, setSelectedBooking] = useState<BookingDetail | null>(null);
@@ -85,10 +89,21 @@ export function GameMasterView() {
   const fetchSchedule = async () => {
     setLoading(true);
     try {
-      const data = await gamemaster.getToday(filterRoom || undefined);
+      const params: any = {};
+      if (filterRoom) params.room_id = filterRoom;
+      if (filterStatus.length > 0) params.status = filterStatus;
+      if (filterSearch) params.search = filterSearch;
+      
+      // If no date is selected, we could default to something or show all.
+      // For now, let's use the filterDate.
+      if (filterDate) {
+        params.date_from = `${filterDate}T00:00:00Z`;
+        params.date_to = `${filterDate}T23:59:59Z`;
+      }
+
+      const data = await gamemaster.getToday(params);
       setSessions(Array.isArray(data?.bookings) ? data.bookings : []);
     } catch (err: any) {
-      // Silently handle 404 (endpoint not yet deployed)
       if (err?.response?.status !== 404) {
         console.error("Failed to load schedule:", err);
         toast.error("Error al cargar las sesiones");
@@ -99,8 +114,11 @@ export function GameMasterView() {
   };
 
   useEffect(() => {
-    fetchSchedule();
-  }, [filterRoom]);
+    const timer = setTimeout(() => {
+      fetchSchedule();
+    }, 300); // Debounce search
+    return () => clearTimeout(timer);
+  }, [filterRoom, filterStatus, filterSearch, filterDate]);
 
   const openDetail = async (bookingId: string) => {
     try {
@@ -318,7 +336,7 @@ export function GameMasterView() {
 
   // === SCHEDULE VIEW ===
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-primary flex items-center gap-2">
@@ -326,12 +344,46 @@ export function GameMasterView() {
           </h1>
           <p className="text-[var(--color-muted-foreground)] capitalize">{todayDate}</p>
         </div>
-        <div className="flex items-center gap-3">
-          <select value={filterRoom} onChange={e => setFilterRoom(e.target.value)} className="p-2 border border-[var(--color-beige)] rounded-lg bg-[var(--color-background)] text-sm">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="relative flex-1 md:min-w-[200px]">
+            <input
+              type="text"
+              placeholder="Buscar cliente..."
+              value={filterSearch}
+              onChange={(e) => setFilterSearch(e.target.value)}
+              className="w-full p-2 pl-8 border border-[var(--color-beige)] rounded-lg bg-[var(--color-background)] text-sm"
+            />
+            <Users className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
+          </div>
+          <input
+            type="date"
+            value={filterDate}
+            onChange={(e) => setFilterDate(e.target.value)}
+            className="p-2 border border-[var(--color-beige)] rounded-lg bg-[var(--color-background)] text-sm"
+          />
+          <select 
+            value={filterRoom} 
+            onChange={e => setFilterRoom(e.target.value)} 
+            className="p-2 border border-[var(--color-beige)] rounded-lg bg-[var(--color-background)] text-sm"
+          >
             <option value="">Todas las salas</option>
             {allRooms.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
           </select>
-          <Button variant="outline" size="sm" onClick={fetchSchedule}>Actualizar</Button>
+          <div className="flex gap-1 bg-muted p-1 rounded-lg">
+             <button 
+               onClick={() => setFilterStatus(prev => prev.includes("checked_in") ? [] : ["checked_in"])}
+               className={cn(
+                 "px-3 py-1 text-xs font-semibold rounded-md transition-all",
+                 filterStatus.includes("checked_in") ? "bg-primary text-white" : "hover:bg-background"
+               )}
+             >
+               Activos ahora
+             </button>
+          </div>
+          <Button variant="outline" size="sm" onClick={fetchSchedule}>
+            <Loader2 className={cn("mr-2 h-4 w-4", loading && "animate-spin")} size={14} />
+            Actualizar
+          </Button>
         </div>
       </div>
 

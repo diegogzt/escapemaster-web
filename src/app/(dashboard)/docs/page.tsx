@@ -46,11 +46,11 @@ export default function DocsPage() {
             personalizadas.
           </p>
           <a
-            href="https://manager.escapemaster.es/api/docs"
+            href="https://api.escapemaster.es/docs"
             target="_blank"
             className="text-primary font-semibold hover:underline"
           >
-            Ver Swagger UI →
+            Ver API Docs →
           </a>
         </Card>
 

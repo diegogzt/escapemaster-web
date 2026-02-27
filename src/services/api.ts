@@ -788,6 +788,26 @@ export const notifications = {
   },
 };
 
+// === BILLING ===
+export const billing = {
+  getConfig: async () => {
+    const response = await api.get("/billing/config");
+    return response.data;
+  },
+  getConnectStatus: async () => {
+    const response = await api.get("/billing/connect/status");
+    return response.data;
+  },
+  createConnectOnboarding: async (data: { return_url: string; refresh_url: string }) => {
+    const response = await api.post("/billing/connect/onboarding", data);
+    return response.data;
+  },
+  createCheckoutSession: async (data: { price_id: string; success_url: string; cancel_url: string }) => {
+    const response = await api.post("/billing/checkout-session", data);
+    return response.data;
+  },
+};
+
 // === REVIEWS ===
 export const reviews = {
   getForRoom: async (roomId: string) => {

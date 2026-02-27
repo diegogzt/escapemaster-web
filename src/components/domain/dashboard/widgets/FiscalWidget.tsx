@@ -74,7 +74,7 @@ export function FiscalWidget({ className }: WidgetConfigOptions & { className?: 
 
       <div ref={containerRef} className="flex-1 h-[180px] w-full mt-2 relative">
         {dimensions.width > 0 && dimensions.height > 0 ? (
-        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
+        <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data.breakdown}>
             <XAxis 
               dataKey="label" 

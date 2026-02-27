@@ -5,8 +5,10 @@ import { DefaultChatTransport, UIMessage } from "ai";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState, useRef, useEffect, useMemo } from "react";
-import { Send, Bot, User, Loader2, Settings2, Wrench, Menu, Plus, MessageSquare, Trash2, Download } from "lucide-react";
+import { Send, Bot, User, Loader2, Settings2, Wrench, Menu, Plus, MessageSquare, Trash2, Download, Lock } from "lucide-react";
 import { cn } from "@/utils";
+import { auth } from "@/services/api";
+import Link from "next/link";
 
 // Tool name → Spanish label
 const TOOL_LABELS: Record<string, string> = {
@@ -34,6 +36,10 @@ export default function ChatbotPage() {
   const [currentSessionId, setCurrentSessionId] = useState<string>("");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
+  // Subscription State
+  const [hasAccess, setHasAccess] = useState<boolean>(true);
+  const [checkingAccess, setCheckingAccess] = useState(true);
+
   // Load from local storage on mount
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -55,6 +61,18 @@ export default function ChatbotPage() {
       } else {
         createNewSession();
       }
+      // Check subscription
+      auth.me().then(userData => {
+        const org = userData.organization || userData;
+        // For now, only Ultra tier has it enabled, or if they purchased the plugin (assumed true if not 'base' or 'none')
+        if (org?.subscription_tier === 'ultra') {
+          setHasAccess(true);
+        } else {
+          // If we had plugin data we would check it here. For now lock it for base and none.
+          setHasAccess(false);
+        }
+        setCheckingAccess(false);
+      }).catch(() => setCheckingAccess(false));
     }
   }, []);
 
@@ -86,8 +104,37 @@ export default function ChatbotPage() {
     }
   };
 
+  if (checkingAccess) {
+    return (
+      <div className="flex h-[calc(100vh-80px)] w-full max-w-7xl mx-auto rounded-2xl items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-80px)] w-full max-w-3xl mx-auto rounded-2xl items-center justify-center text-center px-4">
+        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
+          <Lock size={48} />
+        </div>
+        <h1 className="text-3xl font-bold text-[var(--color-foreground)] mb-4">Plugin AI Assistant Bloqueado</h1>
+        <p className="text-lg text-[var(--color-foreground)] opacity-70 mb-8 max-w-md">
+          Esta función requiere la suscripción <strong>Escapemaster Ultra</strong> o la compra del <strong>Plugin AI Assistant</strong>.
+        </p>
+        <Link 
+          href="/settings/billing" 
+          className="bg-primary hover:bg-primary/90 text-white font-semibold py-3 px-8 rounded-xl transition-colors"
+        >
+          Mejorar mi Plan
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-[calc(100vh-80px)] w-full max-w-7xl mx-auto bg-[var(--color-background)] rounded-2xl border border-[var(--color-beige)] overflow-hidden shadow-sm relative">
+
       
       {/* Sidebar History */}
       <div className={cn(
