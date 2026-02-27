@@ -909,6 +909,39 @@ export const apiKeys = {
   },
 };
 
+// === DEVELOPER (Projects & Keys) ===
+export const developer = {
+  getProjects: async () => {
+    const response = await api.get("/developer/projects");
+    return response.data;
+  },
+  createProject: async (data: { name: string; description?: string }) => {
+    const response = await api.post("/developer/projects", data);
+    return response.data;
+  },
+  deleteProject: async (id: string) => {
+    const response = await api.delete(`/developer/projects/${id}`);
+    return response.data;
+  },
+  getKeys: async (projectId: string) => {
+    const response = await api.get(`/developer/projects/${projectId}/keys`);
+    return response.data;
+  },
+  createKey: async (projectId: string, data: { name: string }) => {
+    const response = await api.post(
+      `/developer/projects/${projectId}/keys`,
+      data,
+    );
+    return response.data;
+  },
+  revokeKey: async (projectId: string, keyId: string) => {
+    const response = await api.delete(
+      `/developer/projects/${projectId}/keys/${keyId}`,
+    );
+    return response.data;
+  },
+};
+
 // === NOTIFICATIONS ===
 export const notifications = {
   list: async () => {
