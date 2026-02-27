@@ -19,7 +19,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Add a response interceptor to handle auth errors
@@ -44,7 +44,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export const auth = {
@@ -56,7 +56,7 @@ export const auth = {
     name: string,
     email: string,
     password: string,
-    organizationName: string
+    organizationName: string,
   ) => {
     const response = await api.post("/auth/register", {
       full_name: name,
@@ -94,12 +94,18 @@ export const auth = {
     const response = await api.post("/auth/verify-email-code", { email, code });
     return response.data;
   },
-  onboard: async (data: { email: string; invitation_code: string; password: string }) => {
+  onboard: async (data: {
+    email: string;
+    invitation_code: string;
+    password: string;
+  }) => {
     const response = await api.post("/auth/onboard", data);
     return response.data;
   },
   joinOrganization: async (invitationCode: string) => {
-    const response = await api.post("/auth/join-organization", { invitation_code: invitationCode });
+    const response = await api.post("/auth/join-organization", {
+      invitation_code: invitationCode,
+    });
     return response.data;
   },
   getMemberships: async () => {
@@ -107,7 +113,9 @@ export const auth = {
     return response.data;
   },
   switchOrganization: async (organizationId: string) => {
-    const response = await api.post("/auth/switch-organization", { organization_id: organizationId });
+    const response = await api.post("/auth/switch-organization", {
+      organization_id: organizationId,
+    });
     return response.data;
   },
 };
@@ -132,7 +140,9 @@ export const orgs = {
 export const dashboard = {
   getStats: async (period: string = "month") => {
     try {
-      const response = await api.get("/dashboard/stats", { params: { period } });
+      const response = await api.get("/dashboard/stats", {
+        params: { period },
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -144,13 +154,15 @@ export const dashboard = {
       const response = await api.get("/dashboard/summary");
       return response.data;
     } catch (error) {
-       console.error("Error fetching dashboard summary:", error);
-       throw error;
+      console.error("Error fetching dashboard summary:", error);
+      throw error;
     }
   },
   getRevenue: async (period: string = "month") => {
     try {
-      const response = await api.get("/dashboard/revenue", { params: { period } });
+      const response = await api.get("/dashboard/revenue", {
+        params: { period },
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching revenue data:", error);
@@ -158,20 +170,32 @@ export const dashboard = {
     }
   },
   getBookingsChart: async (period: string = "month") => {
-     try {
-      const response = await api.get("/dashboard/bookings-chart", { params: { period } });
+    try {
+      const response = await api.get("/dashboard/bookings-chart", {
+        params: { period },
+      });
       return response.data;
     } catch (error) {
       console.error("Error fetching bookings chart:", error);
       throw error;
     }
   },
-  blockHours: async (data: { start_time: string; end_time: string; date: string; room_id?: string; reason?: string; recurrence?: string; end_recurrence?: string }) => {
+  blockHours: async (data: {
+    start_time: string;
+    end_time: string;
+    date: string;
+    room_id?: string;
+    reason?: string;
+    recurrence?: string;
+    end_recurrence?: string;
+  }) => {
     const response = await api.post("/dashboard/block-hours", data);
     return response.data;
   },
   getCalendarStatus: async (month: number, year: number) => {
-    const response = await api.get("/dashboard/calendar-status", { params: { month, year } });
+    const response = await api.get("/dashboard/calendar-status", {
+      params: { month, year },
+    });
     return response.data;
   },
 };
@@ -208,12 +232,17 @@ export const bookings = {
     const response = await api.delete(`/bookings/${id}`);
     return response.data;
   },
-  updateStatus: async (id: string, data: { booking_status: string; block_reason?: string }) => {
+  updateStatus: async (
+    id: string,
+    data: { booking_status: string; block_reason?: string },
+  ) => {
     const response = await api.put(`/bookings/${id}/status`, data);
     return response.data;
   },
   assignMembers: async (id: string, userIds: string[]) => {
-    const response = await api.post(`/bookings/${id}/assign-members`, { user_ids: userIds });
+    const response = await api.post(`/bookings/${id}/assign-members`, {
+      user_ids: userIds,
+    });
     return response.data;
   },
   claim: async (id: string) => {
@@ -224,11 +253,22 @@ export const bookings = {
     const response = await api.post(`/bookings/${id}/confirm`);
     return response.data;
   },
-  finalize: async (id: string, data: { notes?: string; rating?: number; send_email?: boolean }) => {
+  finalize: async (
+    id: string,
+    data: { notes?: string; rating?: number; send_email?: boolean },
+  ) => {
     const response = await api.post(`/bookings/${id}/finalize`, data);
     return response.data;
   },
-  signGDPR: async (id: string, data: { customer_email: string; signature_data: string; ip_address?: string; guest_id: string }) => {
+  signGDPR: async (
+    id: string,
+    data: {
+      customer_email: string;
+      signature_data: string;
+      ip_address?: string;
+      guest_id: string;
+    },
+  ) => {
     const response = await api.post(`/bookings/${id}/gdpr`, data);
     return response.data;
   },
@@ -236,18 +276,27 @@ export const bookings = {
     const response = await api.get(`/bookings/${id}/invoice`);
     return response.data;
   },
-  registerPayment: async (id: string, data: { amount: number; payment_method: string; notes?: string }) => {
+  registerPayment: async (
+    id: string,
+    data: { amount: number; payment_method: string; notes?: string },
+  ) => {
     const response = await api.post(`/bookings/${id}/payment`, data);
     return response.data;
   },
 };
 
 export const timeclock = {
-  checkIn: async (data: { check_in_time?: string; task_description?: string }) => {
+  checkIn: async (data: {
+    check_in_time?: string;
+    task_description?: string;
+  }) => {
     const response = await api.post("/timeclock/check-in", data);
     return response.data;
   },
-  checkOut: async (data: { check_out_time?: string; task_description?: string }) => {
+  checkOut: async (data: {
+    check_out_time?: string;
+    task_description?: string;
+  }) => {
     const response = await api.post("/timeclock/check-out", data);
     return response.data;
   },
@@ -266,7 +315,11 @@ export const timeclock = {
 };
 
 export const vacations = {
-  request: async (data: { start_date: string; end_date: string; user_notes?: string }) => {
+  request: async (data: {
+    start_date: string;
+    end_date: string;
+    user_notes?: string;
+  }) => {
     const response = await api.post("/vacations", data);
     return response.data;
   },
@@ -278,7 +331,10 @@ export const vacations = {
     const response = await api.get("/vacations/admin/all", { params });
     return response.data;
   },
-  updateStatus: async (id: string, data: { status: string; admin_notes?: string }) => {
+  updateStatus: async (
+    id: string,
+    data: { status: string; admin_notes?: string },
+  ) => {
     const response = await api.put(`/vacations/${id}`, data);
     return response.data;
   },
@@ -331,7 +387,9 @@ export const rooms = {
     return response.data;
   },
   getAvailability: async (id: string, checkDate: string, numPeople: number) => {
-    const response = await api.get(`/rooms/${id}/availability`, { params: { check_date: checkDate, num_people: numPeople } });
+    const response = await api.get(`/rooms/${id}/availability`, {
+      params: { check_date: checkDate, num_people: numPeople },
+    });
     return response.data;
   },
   createSchedule: async (id: string, data: any) => {
@@ -341,7 +399,9 @@ export const rooms = {
   uploadImage: async (id: string, file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    const response = await api.post(`/rooms/${id}/image`, formData, { headers: { "Content-Type": "multipart/form-data" } });
+    const response = await api.post(`/rooms/${id}/image`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   },
 };
@@ -372,7 +432,10 @@ export const users = {
     const response = await api.delete(`/users/${id}`);
     return response.data;
   },
-  changePassword: async (data: { current_password: string; new_password: string }) => {
+  changePassword: async (data: {
+    current_password: string;
+    new_password: string;
+  }) => {
     const response = await api.put("/users/me/password", data);
     return response.data;
   },
@@ -470,7 +533,13 @@ export const widgets = {
 };
 
 export const payments = {
-  list: async (params?: { page?: number; limit?: number; status?: string; date_from?: string; date_to?: string }) => {
+  list: async (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    date_from?: string;
+    date_to?: string;
+  }) => {
     try {
       const response = await api.get("/payments", { params });
       return response.data;
@@ -501,8 +570,14 @@ export const payments = {
     const response = await api.post("/payments/checkout-session", data);
     return response.data;
   },
-  refund: async (paymentId: string, data?: { amount?: number; reason?: string }) => {
-    const response = await api.post(`/payments/${paymentId}/refund`, data || {});
+  refund: async (
+    paymentId: string,
+    data?: { amount?: number; reason?: string },
+  ) => {
+    const response = await api.post(
+      `/payments/${paymentId}/refund`,
+      data || {},
+    );
     return response.data;
   },
 };
@@ -516,8 +591,15 @@ export const reports = {
     const response = await api.get("/reports/bookings", { params });
     return response.data;
   },
-  exportBookings: async (format: "csv" | "pdf" | "excel", startDate?: string, endDate?: string) => {
-    const response = await api.get("/reports/bookings/export", { params: { format, start_date: startDate, end_date: endDate }, responseType: "blob" });
+  exportBookings: async (
+    format: "csv" | "pdf" | "excel",
+    startDate?: string,
+    endDate?: string,
+  ) => {
+    const response = await api.get("/reports/bookings/export", {
+      params: { format, start_date: startDate, end_date: endDate },
+      responseType: "blob",
+    });
     return response.data;
   },
 };
@@ -576,7 +658,9 @@ export const admin = {
 // === GAME MASTER ===
 export const gamemaster = {
   getToday: async (roomId?: string) => {
-    const response = await api.get("/gamemaster/today", { params: roomId ? { room_id: roomId } : {} });
+    const response = await api.get("/gamemaster/today", {
+      params: roomId ? { room_id: roomId } : {},
+    });
     return response.data;
   },
   checkIn: async (bookingId: string) => {
@@ -587,8 +671,19 @@ export const gamemaster = {
     const response = await api.get(`/gamemaster/booking/${bookingId}`);
     return response.data;
   },
-  recordResult: async (bookingId: string, data: { escaped: boolean; escape_time_seconds?: number; hints_used: number; notes?: string }) => {
-    const response = await api.post(`/gamemaster/booking/${bookingId}/result`, data);
+  recordResult: async (
+    bookingId: string,
+    data: {
+      escaped: boolean;
+      escape_time_seconds?: number;
+      hints_used: number;
+      notes?: string;
+    },
+  ) => {
+    const response = await api.post(
+      `/gamemaster/booking/${bookingId}/result`,
+      data,
+    );
     return response.data;
   },
   getChecklist: async (roomId: string) => {
@@ -596,14 +691,21 @@ export const gamemaster = {
     return response.data;
   },
   completeChecklistItem: async (bookingId: string, itemId: string) => {
-    const response = await api.post(`/gamemaster/bookings/${bookingId}/checklist/${itemId}/complete`);
+    const response = await api.post(
+      `/gamemaster/bookings/${bookingId}/checklist/${itemId}/complete`,
+    );
     return response.data;
   },
 };
 
 // === COUPONS ===
 export const coupons = {
-  list: async (params?: { page?: number; page_size?: number; search?: string; is_active?: boolean }) => {
+  list: async (params?: {
+    page?: number;
+    page_size?: number;
+    search?: string;
+    is_active?: boolean;
+  }) => {
     const response = await api.get("/coupons", { params });
     return response.data;
   },
@@ -623,7 +725,11 @@ export const coupons = {
     const response = await api.delete(`/coupons/${id}`);
     return response.data;
   },
-  validate: async (data: { code: string; room_id?: string; booking_amount: number }) => {
+  validate: async (data: {
+    code: string;
+    room_id?: string;
+    booking_amount: number;
+  }) => {
     const response = await api.post("/coupons/validate", data);
     return response.data;
   },
@@ -664,11 +770,20 @@ export const roomExtras = {
     return response.data;
   },
   updateCancellationPolicy: async (roomId: string, data: any) => {
-    const response = await api.put(`/rooms/${roomId}/cancellation-policy`, data);
+    const response = await api.put(
+      `/rooms/${roomId}/cancellation-policy`,
+      data,
+    );
     return response.data;
   },
-  addBookingExtra: async (bookingId: string, extraId: string, details?: string) => {
-    const response = await api.post(`/bookings/${bookingId}/extras`, null, { params: { extra_id: extraId, details } });
+  addBookingExtra: async (
+    bookingId: string,
+    extraId: string,
+    details?: string,
+  ) => {
+    const response = await api.post(`/bookings/${bookingId}/extras`, null, {
+      params: { extra_id: extraId, details },
+    });
     return response.data;
   },
   getBookingExtras: async (bookingId: string) => {
@@ -679,7 +794,11 @@ export const roomExtras = {
 
 // === SPLIT PAYMENT ===
 export const splitPayment = {
-  create: async (data: { booking_id: string; participant_emails: string[]; split_type: string }) => {
+  create: async (data: {
+    booking_id: string;
+    participant_emails: string[];
+    split_type: string;
+  }) => {
     const response = await api.post("/split-payment", data);
     return response.data;
   },
@@ -692,11 +811,18 @@ export const splitPayment = {
     return response.data;
   },
   pay: async (lobbyId: string, amount: number, paymentIntentId?: string) => {
-    const response = await api.post(`/split-payment/${lobbyId}/pay`, null, { params: { amount, payment_intent_id: paymentIntentId } });
+    const response = await api.post(`/split-payment/${lobbyId}/pay`, null, {
+      params: { amount, payment_intent_id: paymentIntentId },
+    });
     return response.data;
   },
-  updateAmounts: async (lobbyId: string, contributions: { email: string; amount: number }[]) => {
-    const response = await api.put(`/split-payment/${lobbyId}/amounts`, { contributions });
+  updateAmounts: async (
+    lobbyId: string,
+    contributions: { email: string; amount: number }[],
+  ) => {
+    const response = await api.put(`/split-payment/${lobbyId}/amounts`, {
+      contributions,
+    });
     return response.data;
   },
   remind: async (lobbyId: string) => {
@@ -719,7 +845,9 @@ export const kyb = {
     const formData = new FormData();
     formData.append("document_type", documentType);
     formData.append("file", file);
-    const response = await api.post("/kyb/documents", formData, { headers: { "Content-Type": "multipart/form-data" } });
+    const response = await api.post("/kyb/documents", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
     return response.data;
   },
   getStatus: async () => {
@@ -730,7 +858,12 @@ export const kyb = {
     const response = await api.get("/kyb/bank-account");
     return response.data;
   },
-  updateBankAccount: async (data: { iban: string; bic_swift?: string; bank_name: string; account_holder_name: string }) => {
+  updateBankAccount: async (data: {
+    iban: string;
+    bic_swift?: string;
+    bank_name: string;
+    account_holder_name: string;
+  }) => {
     const response = await api.post("/kyb/bank-account", data);
     return response.data;
   },
@@ -738,7 +871,11 @@ export const kyb = {
 
 // === PAYOUTS ===
 export const payouts = {
-  list: async (params?: { status?: string; limit?: number; offset?: number }) => {
+  list: async (params?: {
+    status?: string;
+    limit?: number;
+    offset?: number;
+  }) => {
     const response = await api.get("/payouts", { params });
     return response.data;
   },
@@ -798,11 +935,18 @@ export const billing = {
     const response = await api.get("/billing/connect/status");
     return response.data;
   },
-  createConnectOnboarding: async (data: { return_url: string; refresh_url: string }) => {
+  createConnectOnboarding: async (data: {
+    return_url: string;
+    refresh_url: string;
+  }) => {
     const response = await api.post("/billing/connect/onboarding", data);
     return response.data;
   },
-  createCheckoutSession: async (data: { price_id: string; success_url: string; cancel_url: string }) => {
+  createCheckoutSession: async (data: {
+    price_id: string;
+    success_url: string;
+    cancel_url: string;
+  }) => {
     const response = await api.post("/billing/checkout-session", data);
     return response.data;
   },
@@ -822,7 +966,10 @@ export const reviews = {
     const response = await api.get("/reviews/admin/pending");
     return response.data;
   },
-  moderate: async (reviewId: string, data: { action: string; reason?: string }) => {
+  moderate: async (
+    reviewId: string,
+    data: { action: string; reason?: string },
+  ) => {
     const response = await api.put(`/reviews/admin/${reviewId}/moderate`, data);
     return response.data;
   },

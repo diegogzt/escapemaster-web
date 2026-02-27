@@ -50,7 +50,8 @@ export default function BillingPage() {
       setLoadingConnect(true);
       const res = await billing.createConnectOnboarding({
         return_url: window.location.origin + "/settings/billing?connect=return",
-        refresh_url: window.location.origin + "/settings/billing?connect=refresh",
+        refresh_url:
+          window.location.origin + "/settings/billing?connect=refresh",
       });
       if (res.url) {
         window.location.href = res.url;
@@ -68,7 +69,7 @@ export default function BillingPage() {
       alert("El precio no está configurado por el superadmin.");
       return;
     }
-    
+
     try {
       setLoading(true);
       const res = await billing.createCheckoutSession({
@@ -103,7 +104,9 @@ export default function BillingPage() {
   return (
     <div className="w-full pb-20">
       <div className="mb-10">
-        <h1 className="text-4xl font-bold text-primary mb-2">Planes y Facturación</h1>
+        <h1 className="text-4xl font-bold text-primary mb-2">
+          Planes y Facturación
+        </h1>
         <p className="text-lg text-[var(--color-foreground)] opacity-60">
           Gestiona tu suscripción y plugins de EscapeMaster.
         </p>
@@ -116,57 +119,87 @@ export default function BillingPage() {
             <Crown size={32} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold">Plan Actual: <span className="capitalize text-primary">{currentPlan}</span></h2>
+            <h2 className="text-2xl font-bold">
+              Plan Actual:{" "}
+              <span className="capitalize text-primary">{currentPlan}</span>
+            </h2>
             <p className="text-[var(--color-foreground)] opacity-60">
-              Estado: <span className="font-semibold">{org?.subscription_status || "Inactivo"}</span>
+              Estado:{" "}
+              <span className="font-semibold">
+                {org?.subscription_status || "Inactivo"}
+              </span>
             </p>
           </div>
         </div>
       </Card>
 
       {/* PLANS */}
-      <h2 className="text-2xl font-bold text-primary mb-4 mt-12">Mejora tu cuenta</h2>
+      <h2 className="text-2xl font-bold text-primary mb-4 mt-12">
+        Mejora tu cuenta
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-        
         {/* Base Plan */}
-        <Card className={`p-8 flex flex-col justify-between ${currentPlan === 'base' ? 'border-primary ring-2 ring-primary/20' : ''}`}>
+        <Card
+          className={`p-8 flex flex-col justify-between ${currentPlan === "base" ? "border-primary ring-2 ring-primary/20" : ""}`}
+        >
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-700 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
               Popular
             </div>
-            <h3 className="text-3xl font-bold text-[var(--color-foreground)] mb-2">Base</h3>
+            <h3 className="text-3xl font-bold text-[var(--color-foreground)] mb-2">
+              Base
+            </h3>
             <p className="text-[var(--color-foreground)] opacity-90 mb-6">
-              Herramientas esenciales. Coste por conexión ({config.connection_cost}€).
+              Herramientas esenciales. Coste por conexión (
+              {config.connection_cost}€).
             </p>
             <div className="flex items-baseline gap-1 mb-8">
-              <span className="text-5xl font-extrabold text-[var(--color-foreground)]">{config.base_plan_price}€</span>
-              <span className="text-lg font-medium text-[var(--color-foreground)] opacity-80">/mes</span>
+              <span className="text-5xl font-extrabold text-[var(--color-foreground)]">
+                {config.base_plan_price}€
+              </span>
+              <span className="text-lg font-medium text-[var(--color-foreground)] opacity-80">
+                /mes
+              </span>
             </div>
           </div>
-          <Button 
-            className="w-full group" 
-            variant={currentPlan === 'base' ? 'outline' : 'primary'}
-            disabled={currentPlan === 'base'}
+          <Button
+            className="w-full group"
+            variant={currentPlan === "base" ? "outline" : "primary"}
+            disabled={currentPlan === "base"}
             onClick={() => handleSubscribe(config.base_plan_stripe_price_id)}
           >
-            {currentPlan === 'base' ? "Plan Actual" : "Suscribirse"}
-            {currentPlan !== 'base' && <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />}
+            {currentPlan === "base" ? "Plan Actual" : "Suscribirse"}
+            {currentPlan !== "base" && (
+              <ArrowRight
+                className="ml-2 group-hover:translate-x-1 transition-transform"
+                size={18}
+              />
+            )}
           </Button>
         </Card>
 
         {/* Ultra Plan */}
-        <Card className={`p-8 border-2 border-primary bg-primary/5 flex flex-col justify-between ${currentPlan === 'ultra' ? 'ring-4 ring-primary/30' : ''}`}>
+        <Card
+          className={`p-8 border-2 border-primary bg-primary/5 flex flex-col justify-between ${currentPlan === "ultra" ? "ring-4 ring-primary/30" : ""}`}
+        >
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
               Recomendado
             </div>
-            <h3 className="text-3xl font-bold text-[var(--color-foreground)] mb-2">Ultra</h3>
+            <h3 className="text-3xl font-bold text-[var(--color-foreground)] mb-2">
+              Ultra
+            </h3>
             <p className="text-[var(--color-foreground)] opacity-90 mb-6">
-              Todas las herramientas, sin costes por conexión. Incluye todos los plugins.
+              Todas las herramientas, sin costes por conexión. Incluye todos los
+              plugins.
             </p>
             <div className="flex items-baseline gap-1 mb-8">
-              <span className="text-5xl font-extrabold text-[var(--color-foreground)]">{config.ultra_plan_price}€</span>
-              <span className="text-lg font-medium text-[var(--color-foreground)] opacity-80">/mes</span>
+              <span className="text-5xl font-extrabold text-[var(--color-foreground)]">
+                {config.ultra_plan_price}€
+              </span>
+              <span className="text-lg font-medium text-[var(--color-foreground)] opacity-80">
+                /mes
+              </span>
             </div>
             <div className="space-y-3 mb-8">
               <div className="flex items-center gap-2 text-sm text-[var(--color-foreground)]">
@@ -179,50 +212,69 @@ export default function BillingPage() {
               </div>
             </div>
           </div>
-          <Button 
-            className="w-full group" 
-            disabled={currentPlan === 'ultra'}
+          <Button
+            className="w-full group"
+            disabled={currentPlan === "ultra"}
             onClick={() => handleSubscribe(config.ultra_plan_stripe_price_id)}
           >
-            {currentPlan === 'ultra' ? "Plan Actual" : "Suscribirse"}
-            {currentPlan !== 'ultra' && <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" size={18} />}
+            {currentPlan === "ultra" ? "Plan Actual" : "Suscribirse"}
+            {currentPlan !== "ultra" && (
+              <ArrowRight
+                className="ml-2 group-hover:translate-x-1 transition-transform"
+                size={18}
+              />
+            )}
           </Button>
         </Card>
       </div>
 
       {/* PLUGINS */}
-      <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2"><Plug size={24} /> Plugins</h2>
+      <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
+        <Plug size={24} /> Plugins
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="p-6">
           <h3 className="text-xl font-bold mb-2">AI Assistant</h3>
           <p className="text-gray-600 mb-4">
-            Responde preguntas frecuentes a tus clientes usando un bot de inteligencia artificial entrenado con la información de tus salas de escape.
+            Responde preguntas frecuentes a tus clientes usando un bot de
+            inteligencia artificial entrenado con la información de tus salas de
+            escape.
           </p>
           <div className="flex items-center justify-between mt-auto">
-            <div className="font-bold text-lg">{config.plugin_ai_assistant_price}€ / mes</div>
-            <Button 
-               variant="outline" 
-               disabled={currentPlan === 'ultra'}
-               onClick={() => handleSubscribe(config.plugin_ai_assistant_stripe_price_id)}
+            <div className="font-bold text-lg">
+              {config.plugin_ai_assistant_price}€ / mes
+            </div>
+            <Button
+              variant="outline"
+              disabled={currentPlan === "ultra"}
+              onClick={() =>
+                handleSubscribe(config.plugin_ai_assistant_stripe_price_id)
+              }
             >
-              {currentPlan === 'ultra' ? "Incluido en Ultra" : "Añadir Plugin"}
+              {currentPlan === "ultra" ? "Incluido en Ultra" : "Añadir Plugin"}
             </Button>
           </div>
         </Card>
       </div>
 
       {/* STRIPE CONNECT FOR RECEIVING PAYMENTS */}
-      <h2 className="text-2xl font-bold text-primary mb-4 mt-12 border-t border-gray-200 pt-8">Cobros a Clientes</h2>
+      <h2 className="text-2xl font-bold text-primary mb-4 mt-12 border-t border-gray-200 pt-8">
+        Cobros a Clientes
+      </h2>
       <p className="text-[var(--color-foreground)] opacity-70 mb-6">
-        Configura tu cuenta bancaria para recibir automáticamente el dinero de las reservas pagadas por tus clientes a través del motor de reservas.
+        Configura tu cuenta bancaria para recibir automáticamente el dinero de
+        las reservas pagadas por tus clientes a través del motor de reservas.
       </p>
-      
+
       <Card className="p-8 bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-sm">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Cuenta Conectada de Stripe</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">
+              Cuenta Conectada de Stripe
+            </h3>
             <p className="text-gray-600 mb-4">
-              Usamos Stripe para transferirte los pagos de forma segura. Activa los pagos introduciendo tus datos fiscales y tu IBAN.
+              Usamos Stripe para transferirte los pagos de forma segura. Activa
+              los pagos introduciendo tus datos fiscales y tu IBAN.
             </p>
             {connectStatus?.onboarding_complete ? (
               <div className="flex items-center gap-2 text-green-600 font-semibold bg-green-50 px-4 py-2 rounded-full w-fit">
@@ -236,25 +288,30 @@ export default function BillingPage() {
               </div>
             )}
           </div>
-          
+
           <div className="shrink-0 w-full md:w-auto">
             {!connectStatus?.onboarding_complete ? (
-               <Button 
-                onClick={handleConnectOnboarding} 
+              <Button
+                onClick={handleConnectOnboarding}
                 className="w-full md:w-auto hover:scale-105 transition-transform"
                 disabled={loadingConnect}
               >
-                {loadingConnect ? "Redirigiendo..." : "Configurar Cuenta Bancaria"}
+                {loadingConnect
+                  ? "Redirigiendo..."
+                  : "Configurar Cuenta Bancaria"}
               </Button>
             ) : (
-              <Button onClick={handleConnectOnboarding} variant="outline" className="w-full md:w-auto">
+              <Button
+                onClick={handleConnectOnboarding}
+                variant="outline"
+                className="w-full md:w-auto"
+              >
                 Actualizar Datos Bancarios
               </Button>
             )}
           </div>
         </div>
       </Card>
-
     </div>
   );
 }
