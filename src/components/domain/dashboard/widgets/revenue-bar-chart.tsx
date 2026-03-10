@@ -36,22 +36,7 @@ export function RevenueBarChartWidget({
   const [data, setData] = useState<RevenueDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
   const [isReady, setIsReady] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
-  useEffect(() => {
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const { width, height } = containerRef.current.getBoundingClientRect();
-        setDimensions({ width, height });
-      }
-    };
-
-    updateDimensions();
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    if (containerRef.current) resizeObserver.observe(containerRef.current);
-    return () => resizeObserver.disconnect();
-  }, []);
 
   // Sync with prop changes
   useEffect(() => {
@@ -63,7 +48,14 @@ export function RevenueBarChartWidget({
       setLoading(true);
       try {
         const response = await dashboard.getRevenue(localDateRange);
-        if (response && Array.isArray(response.labels)) {
+        if (response && Array.isArray(response.breakdown)) {
+          const chartData = response.breakdown.map((item: any) => ({
+            name: item.label,
+            ingresos: item.amount || 0,
+            gastos: item.expenses || 0,
+          }));
+          setData(chartData);
+        } else if (response && Array.isArray(response.labels)) {
           const chartData = response.labels.map((label: string, index: number) => ({
             name: label,
             ingresos: (response.data && response.data[index]) || 0,
@@ -249,12 +241,12 @@ export function RevenueBarChartWidget({
         </select>
       </div>
 
-      <div ref={containerRef} className="flex-1 min-h-[240px] relative">
+      <div className="flex-1 min-h-[240px] relative">
         {loading ? (
              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-[var(--color-background)] z-10">
                <Loader2 className="w-6 h-6 animate-spin text-primary/50" />
                <p className="text-xs font-medium text-[var(--color-muted-foreground)] animate-pulse">
-                 Cargando...
+                 Cargando…
                </p>
              </div>
         ) : data.length === 0 ? (
@@ -263,11 +255,11 @@ export function RevenueBarChartWidget({
                 No hay datos
               </p>
             </div>
-        ) : dimensions.width > 0 && dimensions.height > 0 ? (
-             <ResponsiveContainer width="100%" height="100%" minHeight={240} minWidth={0}>
+        ) : (
+             <ResponsiveContainer width="100%" height="100%" minHeight={240}>
                {renderChart()}
              </ResponsiveContainer>
-        ) : null}
+        )}
       </div>
     </div>
   );

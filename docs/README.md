@@ -82,34 +82,19 @@ manager-gestor/
 
 ## 🧪 Testing
 
-Usamos una estrategia dual de pruebas para asegurar confiabilidad:
+El proyecto incluye herramientas de prueba en `devDependencies`, pero la fuente
+de verdad actual (`package.json`) todavía no expone scripts de `test`.
+Consulta `docs/CONTRIB.md` para el flujo real de validación mientras se
+normalizan esos scripts.
 
-### Tests Unitarios e de Integración (Vitest)
+### Estado actual
 
-Tests rápidos a nivel de componente usando Vitest y React Testing Library.
+La configuración actual soporta estas validaciones:
 
-```bash
-# Ejecutar tests unitarios
-npm run test
-
-# Ejecutar en modo watch
-npm run test:watch
-
-# Ejecutar con cobertura
-npm run test:coverage
-```
-
-### Tests End-to-End (Playwright)
-
-Automatización completa del navegador para verificar flujos críticos de usuario.
-
-```bash
-# Ejecutar tests E2E
-npm run test:e2e
-
-# Abrir UI de Playwright
-npm run test:e2e:ui
-```
+- `npm run lint`
+- `npm run build`
+- Ejecuciones manuales con `npx vitest` o `npx playwright test` si el equipo
+  necesita pruebas ad hoc
 
 ## 🛠️ Setup e Instalación
 
@@ -132,8 +117,9 @@ Crear `.env.local` y agregar:
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_SUPABASE_URL=https://project.supabase.co
-NEXT_PUBLIC_SUPABASE_KEY=anon_key
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
 ```
 
 ### 4. Iniciar Servidor de Desarrollo
@@ -142,7 +128,7 @@ NEXT_PUBLIC_SUPABASE_KEY=anon_key
 npm run dev
 ```
 
-La aplicación estará disponible en: `http://localhost:3000`
+La aplicación estará disponible en: `http://localhost:3001`
 
 ## 📚 Documentación Adicional
 
@@ -151,6 +137,20 @@ Para documentación completa del sistema, ver:
 - [Contexto para IA](../../docs/03-contexto-ia/) - Guía para desarrolladores
 - [Backend API](../../manager/api/docs/) - Documentación de la API
 - [Guías de Usuario](../../docs/02-guias-usuario/) - Documentación para usuarios finales
+- [Contribución y desarrollo](./CONTRIB.md) - Scripts, entorno y flujo de trabajo actual
+- [Runbook operativo](./RUNBOOK.md) - Despliegue, incidencias y rollback
+
+## Integración con marketplace
+
+El gestor depende de `manager/api` como backend canónico para la integración con
+`marketplace`. Usa estos documentos cuando trabajes en onboarding, publicación
+de salas, calendario o reservas originadas en el canal B2C.
+
+- [ADR canónico](../../api/docs/adr-manager-api-canonico.md)
+- [Onboarding bidireccional](../../api/docs/onboarding-bidireccional-marketplace.md)
+- [API v1 de reservas marketplace](../../api/docs/api-reservas-marketplace-v1.md)
+- [Publicación de salas](../../api/docs/publicacion-marketplace.md)
+- [Pagos y liquidación](../../api/docs/pagos-liquidacion-marketplace.md)
 
 ## 🎨 Sistema de Temas
 
@@ -309,25 +309,13 @@ src/app/
 
 ## 🔧 Scripts Disponibles
 
+La referencia actual de scripts en `package.json` es la siguiente:
+
 ```bash
-# Desarrollo
-npm run dev          # Iniciar servidor de desarrollo
-
-# Producción
-npm run build        # Compilar para producción
-npm start           # Iniciar aplicación compilada
-
-# Testing
-npm run test         # Ejecutar tests unitarios
-npm run test:watch   # Ejecutar tests en modo watch
-npm run test:e2e     # Ejecutar tests end-to-end
-
-# Linting
-npm run lint         # Ejecutar ESLint
-npm run lint:fix     # Arreglar automáticamente problemas de lint
-
-# Formating
-npm run format       # Formatear código con Prettier
+npm run dev     # Inicia Next.js en el puerto 3001
+npm run build   # Genera el build de producción
+npm run start   # Arranca la aplicación compilada
+npm run lint    # Ejecuta ESLint
 ```
 
 ## 🚀 Despliegue
@@ -349,8 +337,9 @@ vercel
 
 Configurar en Vercel:
 - `NEXT_PUBLIC_API_URL` → URL de API de producción
+- `NEXT_PUBLIC_APP_URL` → URL pública del gestor
 - `NEXT_PUBLIC_SUPABASE_URL` → URL de Supabase
-- `NEXT_PUBLIC_SUPABASE_KEY` → Anon key de Supabase
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Anon key de Supabase
 
 ## 📊 Métricas del Proyecto
 

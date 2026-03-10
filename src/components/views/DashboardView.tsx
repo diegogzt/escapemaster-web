@@ -50,6 +50,8 @@ import {
   useDashboardLayoutActions,
   DEFAULT_LAYOUT,
 } from "@/stores/dashboard-layout-store";
+import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 
 // Local DEFAULT_LAYOUT removed in favor of store import
@@ -58,33 +60,31 @@ function WidgetItem({
   widget,
   isEditMode,
   onRemove,
-  onResize,
+  onResizeCommit,
   onConfigure,
   dragHandleProps,
-  style,
   isDragging,
+  wrapperRef,
+  colWidth,
 }: {
   widget: WidgetConfig;
   isEditMode: boolean;
   onRemove?: (id: string) => void;
-  onResize?: (
-    id: string,
-    newSpan: number,
-    dimension: "width" | "height"
-  ) => void;
+  /** Called ONLY on mouse-up with the final span value */
+  onResizeCommit?: (id: string, newSpan: number, dimension: "width" | "height") => void;
   onConfigure?: (widget: WidgetConfig) => void;
   dragHandleProps?: any;
-  style?: React.CSSProperties;
   isDragging?: boolean;
+  /** The outer SortableWidget div—used to update gridColumn/gridRow directly during drag */
+  wrapperRef?: React.RefObject<HTMLDivElement | null>;
+  /** Width of one grid column in px */
+  colWidth: number;
 }) {
   const def = WIDGET_REGISTRY[widget.type];
   const [isBlinking, setIsBlinking] = useState(false);
-  const elementRef = useRef<HTMLDivElement>(null);
 
   if (!def) return null;
   const Component = def.component;
-
-  // Merge default config with widget-specific config
   const widgetConfig = { ...def.defaultConfig, ...widget.config };
 
   const handleResizeMouseDown = (
@@ -96,74 +96,70 @@ function WidgetItem({
 
     const startX = e.clientX;
     const startY = e.clientY;
-    const startColSpan = widget.colSpan || 48;
-    const startRowSpan = widget.rowSpan || 8;
+    const startColSpan = widget.colSpan || def.defaultColSpan || 6;
+    const startRowSpan = widget.rowSpan || def.defaultRowSpan || 4;
+    const rowHeight = 50;
+    const minW = def.minColSpan || 1;
+    const maxW = 6;
+    const minH = def.minRowSpan || 2;
+    const maxH = 80;
 
-    const element = elementRef.current;
-    if (!element) return;
-    const rect = element.getBoundingClientRect();
-    const colWidth = rect.width / startColSpan;
-    const rowHeight = 10;
+    let lastSpan = dimension === "width" ? startColSpan : startRowSpan;
+    let rafId: number | null = null;
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      const currentX = moveEvent.clientX;
-      const currentY = moveEvent.clientY;
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        let newSpan: number;
 
-      let delta = 0;
-      let newSpan = 0;
-      let isLimitReached = false;
-
-      if (dimension === "width") {
-        const diff = currentX - startX;
-        delta = Math.round(diff / colWidth);
-        newSpan = startColSpan + delta;
-
-        if (newSpan < 1 || newSpan > 48) {
-          isLimitReached = true;
+        if (dimension === "width") {
+          const delta = Math.round((moveEvent.clientX - startX) / colWidth);
+          newSpan = Math.max(minW, Math.min(maxW, startColSpan + delta));
+        } else {
+          const delta = Math.round((moveEvent.clientY - startY) / rowHeight);
+          newSpan = Math.max(minH, Math.min(maxH, startRowSpan + delta));
         }
-      } else {
-        const diff = currentY - startY;
-        delta = Math.round(diff / rowHeight);
-        newSpan = startRowSpan + delta;
 
-        if (newSpan < 5) {
-          isLimitReached = true;
+        if (newSpan !== lastSpan) {
+          lastSpan = newSpan;
+          // Update the WRAPPER div directly — zero React re-renders during drag
+          if (wrapperRef?.current) {
+            if (dimension === "width") {
+              wrapperRef.current.style.gridColumn = `span ${newSpan} / span ${newSpan}`;
+            } else {
+              wrapperRef.current.style.gridRow = `span ${newSpan} / span ${newSpan}`;
+            }
+          }
         }
-      }
 
-      if (isLimitReached) {
-        if (!isBlinking) {
+        const atLimit = (dimension === "width" && (newSpan === minW || newSpan === maxW)) ||
+                        (dimension === "height" && (newSpan === minH || newSpan === maxH));
+        if (atLimit && !isBlinking) {
           setIsBlinking(true);
           setTimeout(() => setIsBlinking(false), 300);
         }
-      } else {
-        if (
-          (dimension === "width" && newSpan !== widget.colSpan) ||
-          (dimension === "height" && newSpan !== widget.rowSpan)
-        ) {
-          onResize?.(widget.id, newSpan, dimension);
-        }
-      }
+      });
     };
 
     const handleMouseUp = () => {
+      if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
       document.body.style.cursor = "default";
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
+      // Commit final span to state only once
+      onResizeCommit?.(widget.id, lastSpan, dimension);
     };
 
-    document.body.style.cursor =
-      dimension === "width" ? "col-resize" : "row-resize";
+    document.body.style.cursor = dimension === "width" ? "col-resize" : "row-resize";
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   };
 
   return (
     <div
-      ref={elementRef}
-      style={style}
       className={cn(
-        "relative group h-full w-full transition-all duration-200 bg-[var(--color-background)] rounded-xl shadow-sm border border-[var(--color-beige)] overflow-hidden",
+        "relative group h-full w-full rounded-xl flex flex-col overflow-hidden",
         isEditMode && "ring-2 ring-dashed ring-primary/30 cursor-default",
         isDragging && "opacity-30",
         isBlinking && "ring-4 ring-red-500 ring-opacity-100"
@@ -171,7 +167,7 @@ function WidgetItem({
     >
       {isEditMode && (
         <>
-          {onResize && (
+          {onResizeCommit && (
             <div
               onMouseDown={(e) => handleResizeMouseDown(e, "width")}
               className="absolute top-0 bottom-0 -right-1 w-4 z-30 cursor-col-resize flex items-center justify-center group/handle hover:bg-primary/10 rounded-r-md transition-colors"
@@ -181,7 +177,7 @@ function WidgetItem({
             </div>
           )}
 
-          {onResize && (
+          {onResizeCommit && (
             <div
               onMouseDown={(e) => handleResizeMouseDown(e, "height")}
               className="absolute bottom-0 left-0 right-0 h-4 z-30 cursor-row-resize flex items-center justify-center group/handle hover:bg-primary/10 rounded-b-md transition-colors"
@@ -226,7 +222,7 @@ function WidgetItem({
           </div>
         </>
       )}
-      <div className="h-full w-full overflow-auto">
+      <div className="h-full w-full flex-1 flex flex-col min-h-0 relative">
         <Component {...widgetConfig} />
       </div>
     </div>
@@ -237,20 +233,18 @@ function SortableWidget({
   widget,
   isEditMode,
   onRemove,
-  onResize,
+  onResizeCommit,
   onConfigure,
   isMobile,
+  colWidth,
 }: {
   widget: WidgetConfig;
   isEditMode: boolean;
   onRemove: (id: string) => void;
-  onResize: (
-    id: string,
-    newSpan: number,
-    dimension: "width" | "height"
-  ) => void;
+  onResizeCommit: (id: string, newSpan: number, dimension: "width" | "height") => void;
   onConfigure: (widget: WidgetConfig) => void;
   isMobile: boolean;
+  colWidth: number;
 }) {
   const {
     attributes,
@@ -261,34 +255,42 @@ function SortableWidget({
     isDragging,
   } = useSortable({ id: widget.id, disabled: !isEditMode });
 
-  const style = {
+  // We keep a ref to the wrapper so WidgetItem can update its gridColumn directly
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const setRefs = (el: HTMLDivElement | null) => {
+    setNodeRef(el);
+    (wrapperRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+  };
+
+  const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
-    gridColumn: isMobile
-      ? "span 1"
-      : `span ${widget.colSpan || 48} / span ${widget.colSpan || 48}`,
-    gridRow: isMobile
-      ? "auto"
-      : `span ${widget.rowSpan || 8} / span ${widget.rowSpan || 8}`,
+    gridColumn: isMobile ? "span 1" : `span ${widget.colSpan || 6} / span ${widget.colSpan || 6}`,
+    gridRow: isMobile ? "auto" : `span ${widget.rowSpan || 4} / span ${widget.rowSpan || 4}`,
     height: isMobile ? "auto" : "100%",
     marginBottom: isMobile ? "1rem" : undefined,
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative h-full">
+    <div ref={setRefs} style={style} className="relative h-full">
       <WidgetItem
         widget={widget}
         isEditMode={isEditMode}
         onRemove={onRemove}
-        onResize={onResize}
+        onResizeCommit={onResizeCommit}
         onConfigure={onConfigure}
         dragHandleProps={{ ...attributes, ...listeners }}
-        style={style}
         isDragging={isDragging}
+        wrapperRef={wrapperRef}
+        colWidth={colWidth}
       />
     </div>
   );
 }
+
+
+
 
 export function DashboardView() {
   const [isEditMode, setIsEditMode] = useState(false);
@@ -301,7 +303,26 @@ export function DashboardView() {
   // Use persistent store with safety check
   const { widgets: rawWidgets, activeCollectionId } = useDashboardLayoutStore();
   const widgets = Array.isArray(rawWidgets) ? rawWidgets : [];
-  const { setWidgets, updateWidgetConfig, setActiveCollectionId, resetLayout: resetStoreLayout } = useDashboardLayoutActions();
+  const { setWidgets, updateWidgetLayout, updateWidgetConfig, setActiveCollectionId, resetLayout: resetStoreLayout } = useDashboardLayoutActions();
+
+  // Compute colWidth from the grid container width
+  const gridRef = useRef<HTMLDivElement>(null);
+  const getColWidth = () => {
+    if (gridRef.current) return gridRef.current.getBoundingClientRect().width / 6;
+    return 200; // fallback
+  };
+  const [colWidth, setColWidth] = useState(200);
+  useEffect(() => {
+    const update = () => setColWidth(getColWidth());
+    const observer = new ResizeObserver(update);
+    if (gridRef.current) observer.observe(gridRef.current);
+    update();
+    return () => observer.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMounted]);
+  
+  const { user } = useAuth();
+  const isAdminUser = user?.email === "admin@dixai.net";
 
   useEffect(() => {
     setIsMounted(true);
@@ -413,6 +434,44 @@ export function DashboardView() {
     return () => clearTimeout(timer);
   }, [widgets, isServerSynced, activeCollectionId, isSaving, isMounted]);
 
+  const handleSaveGlobalDefaults = async () => {
+    if (!isAdminUser) return;
+    setIsSaving(true);
+    let errorCount = 0;
+    
+    // Toast notification
+    const toastId = toast.loading("Aplicando configuración como Default Global...");
+
+    try {
+      for (const widget of widgets) {
+        const typeDefinition = WIDGET_REGISTRY[widget.type];
+        if (!typeDefinition) continue;
+
+        try {
+          // Attempt to update definition API directly tracking widget boundaries
+          await dashboardService.updateDefinition(widget.type, {
+             default_col_span: widget.colSpan || typeDefinition.defaultColSpan,
+             default_row_span: widget.rowSpan || typeDefinition.defaultRowSpan || 4
+          });
+        } catch (e) {
+          errorCount++;
+          console.error(`Error procesando configuración base para ${widget.type}:`, e);
+        }
+      }
+
+      if (errorCount === 0) {
+        toast.success("¡Diseño global actualizado con éxito!", { id: toastId });
+      } else {
+         toast.error(`Ajustes globales completados con ${errorCount} fallos.`, { id: toastId });
+      }
+    } catch(globalError) {
+      console.error(globalError);
+      toast.error("Error catastrofico guardando los ajustes globales.", { id: toastId });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const handleSaveLayout = async () => {
     setIsSaving(true);
     try {
@@ -466,7 +525,7 @@ export function DashboardView() {
     const def = WIDGET_REGISTRY[type];
     
     // Auto-layout logic for incoming widgets 
-    const maxCols = 48; // Total grid columns constraint
+    const maxCols = 6; // Total grid columns constraint
     let nextColSpan = def.defaultColSpan;
     
     // Ensure the new widget doesn't inherently exceed max grid size
@@ -480,7 +539,7 @@ export function DashboardView() {
       // Very basic heuristic: sum colSpans until we hit 48, then reset. Find what's left in the final theoretical row.
       let runningSum = 0;
       widgets.forEach(w => {
-         runningSum += (w.colSpan || 48);
+         runningSum += (w.colSpan || 6);
          if (runningSum >= maxCols) {
             // It either filled the row perfectly or overflowed to a new one. 
             // We just keep the remainder.
@@ -493,7 +552,7 @@ export function DashboardView() {
     // If adding this widget exceeds the row, and it's not a full-width widget, try to shrink it to fit the gap,
     // OR if the gap is too small (< minColSpan), let it wrap to a new row at its preferred size.
     const spaceLeftInRow = maxCols - currentOccupiedInRow;
-    const minCols = def.minColSpan || 4;
+    const minCols = def.minColSpan || 1;
     
     if (currentOccupiedInRow > 0 && spaceLeftInRow < nextColSpan) {
        // It doesn't fit with its default size.
@@ -508,7 +567,7 @@ export function DashboardView() {
       id: `${type}-${Date.now()}`,
       type: type,
       colSpan: nextColSpan,
-      rowSpan: def.defaultRowSpan || 8,
+      rowSpan: def.defaultRowSpan || 4,
     };
     
     setWidgets([...widgets, newWidget]);
@@ -517,30 +576,31 @@ export function DashboardView() {
   const removeWidget = (id: string) => setWidgets(widgets.filter((w) => w.id !== id));
 
   const handleResize = (id: string, newSpan: number, dimension: "width" | "height") => {
-    setWidgets(widgets.map((w) => {
-      if (w.id === id) {
-        const def = WIDGET_REGISTRY[w.type];
-        if (dimension === "width") {
-            const minW = def?.minColSpan || 1;
-            return { ...w, colSpan: Math.max(minW, Math.min(48, newSpan)) };
-        }
-        const minH = def?.minRowSpan || 5;
-        return { ...w, rowSpan: Math.max(minH, newSpan) };
-      }
-      return w;
-    }));
+    // Find definition from local registry
+    const widget = widgets.find(w => w.id === id);
+    if (!widget) return;
+    
+    const def = WIDGET_REGISTRY[widget.type];
+    
+    if (dimension === "width") {
+        const minW = def?.minColSpan || 1;
+        updateWidgetLayout(id, { colSpan: Math.max(minW, Math.min(6, newSpan)) });
+    } else {
+        const minH = def?.minRowSpan || 2;
+        updateWidgetLayout(id, { rowSpan: Math.max(minH, newSpan) });
+    }
   };
 
   const autoLayoutWidgets = () => {
-    const maxCols = 48;
+    const maxCols = 6;
     let currentRow: WidgetConfig[] = [];
     let currentOccupied = 0;
     let newLayout: WidgetConfig[] = [];
 
     widgets.forEach((w) => {
-      const def = WIDGET_REGISTRY[w.type] || { defaultColSpan: 12, minColSpan: 4 };
+      const def = WIDGET_REGISTRY[w.type] || { defaultColSpan: 2, minColSpan: 1 };
       let preferred = def.defaultColSpan > maxCols ? maxCols : def.defaultColSpan;
-      const minSpace = def.minColSpan || 4;
+      const minSpace = def.minColSpan || 1;
       
       const spaceLeft = maxCols - currentOccupied;
 
@@ -556,7 +616,7 @@ export function DashboardView() {
           // Distribute the remaining dead space to the LAST widget of the current row so it flushes right cleanly
           if (currentRow.length > 0 && spaceLeft > 0) {
              const lastWidget = newLayout[newLayout.length - 1];
-             lastWidget.colSpan = (lastWidget.colSpan || 12) + spaceLeft;
+             lastWidget.colSpan = (lastWidget.colSpan || 2) + spaceLeft;
           }
           // Now place current widget on new row
           const wrappedWidget = { ...w, colSpan: preferred };
@@ -613,11 +673,10 @@ export function DashboardView() {
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  if (confirm("¿Estás seguro de que quieres restablecer el diseño original?")) {
                     setWidgets(DEFAULT_LAYOUT);
                     setIsEditMode(false);
-                  }
-                }}
+                    toast.success("Diseño restablecido al predeterminado");
+                  }}
                 className="bg-[var(--color-background)] text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
               >
                 <Trash2 className="mr-1.5 h-3.5 w-3.5" />
@@ -666,6 +725,12 @@ export function DashboardView() {
               </Button>
             </>
           )}
+          {isEditMode && isAdminUser && (
+             <Button onClick={handleSaveGlobalDefaults} variant="outline" size="sm" className={cn("text-yellow-600 border-yellow-200 bg-[var(--color-background)] hover:bg-yellow-50 hover:text-yellow-700")} disabled={isSaving}>
+               <LayoutTemplate className={cn("mr-1.5 h-3.5 w-3.5", isSaving && "animate-spin")} />
+               Predeterminada Global
+             </Button>
+          )}
           <Button onClick={handleSaveLayout} variant="outline" size="sm" className={cn("text-[var(--color-foreground)] border-[var(--color-beige)] bg-[var(--color-background)] hover:bg-beige hover:text-[var(--color-foreground)]", activeCollectionId && "border-primary/30 text-primary")} disabled={isSaving}>
             <Save className={cn("mr-1.5 h-3.5 w-3.5", isSaving && "animate-spin")} />
             {isSaving ? "Guardando..." : "Guardar"}
@@ -703,16 +768,16 @@ export function DashboardView() {
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <SortableContext items={widgets.map((w) => w.id)} strategy={rectSortingStrategy}>
-          <div className={cn("grid gap-4", isMobile ? "grid-cols-1 auto-rows-auto" : "auto-rows-[10px]")} style={isMobile ? {} : { gridTemplateColumns: "repeat(48, minmax(0, 1fr))" }}>
+          <div ref={gridRef} className={cn("grid gap-4", isMobile ? "grid-cols-1 auto-rows-auto" : "auto-rows-[50px]")} style={isMobile ? {} : { gridTemplateColumns: "repeat(6, minmax(0, 1fr))" }}>
             {widgets.map((widget) => (
-              <SortableWidget key={widget.id} widget={widget} isEditMode={isEditMode} onRemove={removeWidget} onResize={handleResize} onConfigure={handleConfigureWidget} isMobile={isMobile} />
+              <SortableWidget key={widget.id} widget={widget} isEditMode={isEditMode} onRemove={removeWidget} onResizeCommit={handleResize} onConfigure={handleConfigureWidget} isMobile={isMobile} colWidth={colWidth} />
             ))}
           </div>
         </SortableContext>
         <DragOverlay modifiers={[restrictToWindowEdges]}>
           {activeWidget ? (
             <div style={{ width: "100%", height: "100%", cursor: "grabbing" }}>
-               <WidgetItem widget={activeWidget} isEditMode={isEditMode} isDragging />
+               <WidgetItem widget={activeWidget} isEditMode={isEditMode} isDragging colWidth={colWidth} />
             </div>
           ) : null}
         </DragOverlay>

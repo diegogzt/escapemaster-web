@@ -94,26 +94,23 @@ export function CalendarWidget({
     setView(defaultView);
   }, [defaultView]);
 
-  const allDays = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-  const days = showWeekends ? allDays : allDays.slice(1, 6);
-  const monthNames = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
+  // Helpers for Intl localization
+  const getDayName = (dayIndex: number) => {
+    // 0 = Sunday, 1 = Monday, etc.
+    const date = new Date(Date.UTC(2023, 0, 1 + dayIndex)); 
+    return new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(date).slice(0, 3);
+  };
+  
+  const days = showWeekends ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
 
   // Helper to get session counts for a date from real data
   const getSessionsForDate = (d: Date) => {
-    const dateStr = d.toISOString().split("T")[0];
+    // Fixed timezone issue: use local date string instead of toISOString which can be off by a day
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+    
     const dayBookings = bookings.filter(b => b.date === dateStr);
     
     // Count bookings by room
@@ -158,8 +155,8 @@ export function CalendarWidget({
 
           return (
             <div key={index} className="flex flex-col items-center gap-2">
-              <span className="text-xs text-[var(--color-muted-foreground)] font-medium uppercase">
-                {days[d.getDay()]}
+              <span className="text-xs text-[var(--color-muted-foreground)] font-medium capitalize">
+                {new Intl.DateTimeFormat("es-ES", { weekday: "short" }).format(d).slice(0, 3)}
               </span>
               <span
                 className={cn(
@@ -202,8 +199,8 @@ export function CalendarWidget({
     return (
       <div className="grid grid-cols-7 gap-1 text-center text-sm">
         {days.map((d) => (
-          <div key={d} className="font-semibold text-[var(--color-muted-foreground)] py-1">
-            {d}
+          <div key={d} className="font-semibold text-[var(--color-muted-foreground)] py-1 capitalize">
+            {getDayName(d)}
           </div>
         ))}
         {blanks.map((_, i) => (
@@ -301,7 +298,7 @@ export function CalendarWidget({
           <ChevronLeft className="h-4 w-4 text-secondary group-hover:text-[var(--color-foreground)]" />
         </button>
         <span className="font-medium text-[var(--color-foreground)] capitalize text-sm">
-          {monthNames[date.getMonth()]} {date.getFullYear()}
+          {new Intl.DateTimeFormat("es-ES", { month: "long" }).format(date)} {date.getFullYear()}
         </span>
         <button
           onClick={() => {

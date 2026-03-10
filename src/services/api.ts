@@ -1,40 +1,95 @@
 import axios from "axios";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.escapemaster.es";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "https://api.escapemaster.es";
+
+console.log(`%c[API] Base URL: ${API_URL}`, "color: #00bcd4; font-weight: bold");
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000, // 10 seconds timeout
+  timeout: 30000, // 30 seconds timeout (remote Supabase can be slow)
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Add a request interceptor to include the token
+// Add a request interceptor to include the token AND log every request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    // Attach timestamp for duration measurement
+    (config as any).__startTime = Date.now();
+    const method = (config.method || "GET").toUpperCase();
+    const url = `${config.baseURL || ""}${config.url || ""}`;
+    const params = config.params ? `?${new URLSearchParams(config.params).toString()}` : "";
+    console.log(
+      `%c[API] ➡️ ${method} ${config.url}${params}`,
+      "color: #2196f3; font-weight: bold",
+      {
+        fullUrl: `${url}${params}`,
+        hasToken: !!token,
+        data: config.data || null,
+      }
+    );
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    console.error(`%c[API] ❌ Request setup error`, "color: #f44336; font-weight: bold", error);
+    return Promise.reject(error);
+  }
 );
 
-// Add a response interceptor to handle auth errors
+// Add a response interceptor to log responses AND handle auth errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const duration = Date.now() - ((response.config as any).__startTime || Date.now());
+    const dataSize = JSON.stringify(response.data || {}).length;
+    const method = (response.config.method || "GET").toUpperCase();
+    console.log(
+      `%c[API] ✅ ${method} ${response.config.url} — ${response.status} (${duration}ms, ${dataSize} bytes)`,
+      "color: #4caf50; font-weight: bold",
+      {
+        status: response.status,
+        duration: `${duration}ms`,
+        dataKeys: response.data && typeof response.data === "object"
+          ? Object.keys(response.data)
+          : typeof response.data,
+        data: response.data,
+      }
+    );
+    return response;
+  },
   (error) => {
+    const config = error.config || {};
+    const duration = Date.now() - ((config as any).__startTime || Date.now());
+    const method = (config.method || "GET").toUpperCase();
+    const status = error.response?.status || "TIMEOUT/NETWORK";
+    const responseData = error.response?.data || null;
+
+    console.error(
+      `%c[API] ❌ ${method} ${config.url} — ${status} (${duration}ms)`,
+      "color: #f44336; font-weight: bold",
+      {
+        status,
+        duration: `${duration}ms`,
+        code: error.code,
+        message: error.message,
+        responseData,
+        requestParams: config.params || null,
+        requestData: config.data || null,
+      }
+    );
+
     if (error.response?.status === 401) {
-      // Clear token and redirect to login if unauthorized
+      console.warn(`%c[API] 🔒 401 Unauthorized — clearing token`, "color: #ff9800; font-weight: bold");
       if (typeof window !== "undefined") {
         localStorage.removeItem("token");
-        // Also remove cookie
         document.cookie =
           "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
 
-        // Only redirect if not already on login/register
         if (
           !window.location.pathname.includes("/login") &&
           !window.location.pathname.includes("/register")
@@ -599,6 +654,10 @@ export const reports = {
     const response = await api.get("/reports/bookings", { params });
     return response.data;
   },
+  getOccupancy: async (params?: any) => {
+    const response = await api.get("/reports/occupancy", { params });
+    return response.data;
+  },
   exportBookings: async (
     format: "csv" | "pdf" | "excel",
     startDate?: string,
@@ -631,7 +690,7 @@ export const roles = {
     return response.data;
   },
   update: async (id: string, data: any) => {
-    const response = await api.patch(`/roles/${id}`, data);
+    const response = await api.put(`/roles/${id}`, data);
     return response.data;
   },
   delete: async (id: string) => {
@@ -957,7 +1016,7 @@ export const notifications = {
     return response.data;
   },
   markRead: async (id: string) => {
-    const response = await api.put(`/notifications/me/${id}/read`);
+    const response = await api.post(`/notifications/me/${id}/read`);
     return response.data;
   },
   delete: async (id: string) => {
@@ -996,11 +1055,11 @@ export const billing = {
 // === REVIEWS ===
 export const reviews = {
   getForRoom: async (roomId: string) => {
-    const response = await api.get(`/reviews/rooms/${roomId}`);
+    const response = await api.get(`/reviews/room/${roomId}`);
     return response.data;
   },
   getSummary: async (roomId: string) => {
-    const response = await api.get(`/reviews/rooms/${roomId}/summary`);
+    const response = await api.get(`/reviews/room/${roomId}/summary`);
     return response.data;
   },
   getPending: async () => {
@@ -1011,7 +1070,7 @@ export const reviews = {
     reviewId: string,
     data: { action: string; reason?: string },
   ) => {
-    const response = await api.put(`/reviews/admin/${reviewId}/moderate`, data);
+    const response = await api.post(`/reviews/admin/${reviewId}/moderate`, data);
     return response.data;
   },
   delete: async (reviewId: string) => {
