@@ -1031,6 +1031,10 @@ export const billing = {
     const response = await api.get("/billing/config");
     return response.data;
   },
+  getPlans: async () => {
+    const response = await api.get("/billing/plans");
+    return response.data;
+  },
   getConnectStatus: async () => {
     const response = await api.get("/billing/connect/status");
     return response.data;
@@ -1051,6 +1055,7 @@ export const billing = {
     return response.data;
   },
 };
+
 
 // === REVIEWS ===
 export const reviews = {

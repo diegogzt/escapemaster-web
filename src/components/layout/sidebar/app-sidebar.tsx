@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { 
   ChevronDown, ChevronRight, ChevronLeft, LayoutDashboard, CalendarDays, ClipboardList, 
   DoorOpen, BarChart3, Settings, Users, LogOut, Clock, ShieldCheck, Gamepad2, Tags, 
-  Wallet, Bell, Star, Bot 
+  Wallet, Bell, Star, Bot, CreditCard
 } from "lucide-react";
 import Link from "next/link";
 import { auth } from "@/services/api";
@@ -251,6 +251,7 @@ export function AppSidebar() {
             <div className="space-y-1" title={isCollapsed ? "Gestión" : ""}>
                {isCollapsed && <div className="h-4 border-b border-beige/30 mb-2"></div>}
               {hasPermission("manage_bookings") && <NavItem href="/coupons" icon={Tags} label="Cupones" isCollapsed={isCollapsed} />}
+              {hasPermission("view_stats") && <NavItem href="/payments" icon={CreditCard} label="Pagos" isCollapsed={isCollapsed} />}
               {hasPermission("view_reports") && <NavItem href="/payouts" icon={Wallet} label="Liquidaciones" isCollapsed={isCollapsed} />}
               <NavItem href="/reports" icon={BarChart3} label="Reportes" isCollapsed={isCollapsed} />
               <NavItem href="/notifications" icon={Bell} label="Notificaciones" isCollapsed={isCollapsed} />
