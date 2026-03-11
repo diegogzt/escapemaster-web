@@ -724,9 +724,9 @@ export const admin = {
 
 // === GAME MASTER ===
 export const gamemaster = {
-  getToday: async (roomId?: string) => {
+  getToday: async (params?: { room_id?: string; date_from?: string; date_to?: string; status?: string | string[]; search?: string }) => {
     const response = await api.get("/gamemaster/today", {
-      params: roomId ? { room_id: roomId } : {},
+      params: params || {},
     });
     return response.data;
   },
