@@ -35,8 +35,10 @@ import {
   X,
   Settings2,
   Trash2,
+  Database,
 } from "lucide-react";
 import { useTheme, CustomTheme, PaletteColors } from "@/context/ThemeContext";
+import { ERDMigrationWizard } from "@/components/erd-migration/ERDMigrationWizard";
 
 function ColorPicker({ label, value, onChange }: { label: string, value: string, onChange: (v: string) => void }) {
   return (
@@ -86,6 +88,7 @@ export default function SettingsPage() {
   } = useTheme();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isErdWizardOpen, setIsErdWizardOpen] = useState(false);
   const [editingTheme, setEditingTheme] = useState<CustomTheme | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -527,6 +530,42 @@ export default function SettingsPage() {
             </div>
           </Card>
         </section>
+
+        {/* Data Import Section */}
+        <section>
+          <div className="flex items-center gap-2 mb-4">
+            <Database className="text-primary" size={24} />
+            <h2 className="text-2xl font-semibold text-[var(--color-foreground)]">Importar Datos</h2>
+          </div>
+          <Card className="w-full max-w-none bg-[var(--color-background)] border-[var(--color-beige)]">
+            <CardHeader>
+              <CardTitle>Migración desde otros sistemas</CardTitle>
+            </CardHeader>
+            <div className="p-6 pt-0">
+              <div className="flex items-center justify-between p-4 border border-[var(--color-beige)] rounded-xl bg-[var(--color-background-soft)]">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-primary/10 text-primary rounded-xl">
+                    <Database size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-[var(--color-foreground)]">ERD (Escape Room Director)</h4>
+                    <p className="text-sm text-[var(--color-foreground)] opacity-60">
+                      Importa salas, reservas, cupones, empleados y datos RGPD desde tu cuenta de ERD.
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" onClick={() => setIsErdWizardOpen(true)}>
+                  Migrar desde ERD
+                </Button>
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        <ERDMigrationWizard
+          isOpen={isErdWizardOpen}
+          onClose={() => setIsErdWizardOpen(false)}
+        />
 
         {/* Feature Highlights (replacing security in this view or just removing personal items) */}
         <section>
