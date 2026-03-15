@@ -55,6 +55,17 @@ export function AppSidebar() {
       setSidebarWidth(Number(savedWidth));
     }
     setIsInitialized(true);
+
+    // 2. Auto-collapse on tablet (768px–1023px) when no user preference saved
+    const tabletQuery = window.matchMedia("(max-width: 1023px)");
+    const handleTabletChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (localStorage.getItem("sidebar-collapsed") === null) {
+        setIsCollapsed(e.matches);
+      }
+    };
+    handleTabletChange(tabletQuery);
+    tabletQuery.addEventListener("change", handleTabletChange);
+    return () => tabletQuery.removeEventListener("change", handleTabletChange);
   }, []);
 
   useEffect(() => {

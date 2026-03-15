@@ -140,6 +140,30 @@ export function BookingsView() {
 
   const BookingSkeleton = () => <Card className="p-4 border-beige/50 animate-pulse"><div className="h-4 w-24 bg-[var(--color-background-soft)] rounded mb-2" /><div className="h-6 w-32 bg-[var(--color-background-soft)] rounded" /></Card>;
 
+  // Mobile card view for a single booking
+  const BookingCard = ({ b }: { b: Booking }) => (
+    <Card
+      data-testid="booking-card"
+      className="p-4"
+      style={{ borderLeft: `4px solid ${b.room_color}` }}
+    >
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <p className="text-xs text-[var(--color-muted-foreground)]">{b.date} · {b.time}</p>
+          <h3 className="font-bold text-sm mt-0.5">{b.room_name}</h3>
+        </div>
+        {getStatusBadge(b.status)}
+      </div>
+      <p className="text-sm opacity-70 mb-3">{b.group_name}</p>
+      <div className="flex justify-between items-center border-t border-beige pt-2">
+        <span className="text-xs text-[var(--color-muted-foreground)]">GM: {b.game_master}</span>
+        <Link href={`/bookings/${b.id}`}>
+          <Button variant="outline" size="sm">Ver</Button>
+        </Link>
+      </div>
+    </Card>
+  );
+
   if (error) return <div className="text-center p-12"><AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-2" /><p className="text-red-600">{error}</p><Button onClick={() => fetchData(1)}>Reintentar</Button></div>;
 
   return (
@@ -150,7 +174,8 @@ export function BookingsView() {
           <p className="text-[var(--color-foreground)] opacity-75">Gestiona las sesiones y reservas</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="bg-[var(--color-background)] border border-beige rounded-lg p-1 flex mr-2">
+          {/* View mode toggle — hidden on mobile (always card view) */}
+          <div className="hidden sm:flex bg-[var(--color-background)] border border-beige rounded-lg p-1 mr-2">
             <button onClick={() => setViewMode("grid")} className={`p-2 rounded-md ${viewMode === "grid" ? "bg-primary/10 text-primary" : "text-muted-foreground"}`}><LayoutGrid size={20} /></button>
             <button onClick={() => setViewMode("table")} className={`p-2 rounded-md ${viewMode === "table" ? "bg-primary/10 text-primary" : "text-muted-foreground"}`}><List size={20} /></button>
           </div>
@@ -161,9 +186,17 @@ export function BookingsView() {
       <Card className="mb-6 p-4">
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
+            {/* Issue 7: max-w-[600px] on desktop so it doesn't stretch infinitely */}
+            <div className="flex-1 relative max-w-full md:max-w-[600px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
-              <input type="text" placeholder="Buscar..." className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:ring-2 focus:ring-primary/20" value={searchTerm} onChange={(e) => updateFilter({ searchTerm: e.target.value })} />
+              <input
+                data-testid="bookings-search"
+                type="text"
+                placeholder="Buscar..."
+                className="w-full pl-10 pr-4 py-2 border border-beige rounded-lg focus:ring-2 focus:ring-primary/20"
+                value={searchTerm}
+                onChange={(e) => updateFilter({ searchTerm: e.target.value })}
+              />
             </div>
             <select className="px-4 py-2 border border-beige rounded-lg bg-[var(--color-background)]" value={statusFilter} onChange={(e) => updateFilter({ statusFilter: e.target.value })}>
               <option value="all">Todos los estados</option>
@@ -187,42 +220,55 @@ export function BookingsView() {
         </div>
       </Card>
 
-      {viewMode === "grid" ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {loading ? Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />) : (bookings || []).map(b => (
-            <Card key={b.id} className="p-4" style={{ borderLeft: `4px solid ${b.room_color}` }}>
-              <div className="flex justify-between mb-2"><strong>{b.date} {b.time}</strong> {getStatusBadge(b.status)}</div>
-              <h3 className="font-bold">{b.room_name}</h3>
-              <p className="text-sm opacity-70">{b.group_name}</p>
-              <div className="flex justify-between mt-4 border-t pt-2 items-center">
-                <span className="text-xs">GM: {b.game_master}</span>
-                <Link href={`/bookings/${b.id}`}><Button variant="outline" size="sm">Ver</Button></Link>
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="bg-[var(--color-background)] rounded-xl border border-beige overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-[var(--color-light)]">
-              <tr>
-                <th className="p-4">Fecha/Hora</th><th className="p-4">Sala</th><th className="p-4">Grupo</th><th className="p-4">Estado</th><th className="p-4 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(bookings || []).map(b => (
-                <tr key={b.id} className="border-t border-beige">
-                  <td className="p-4">{b.date} {b.time}</td>
-                  <td className="p-4">{b.room_name}</td>
-                  <td className="p-4">{b.group_name}</td>
-                  <td className="p-4">{getStatusBadge(b.status)}</td>
-                  <td className="p-4 text-right"><Link href={`/bookings/${b.id}`}><Eye size={18} /></Link></td>
+      {/* Issue 3: Mobile = card view, sm+ = grid/table depending on viewMode */}
+      <div className="sm:hidden space-y-3" data-testid="mobile-card-list">
+        {loading
+          ? Array(4).fill(0).map((_, i) => <BookingSkeleton key={i} />)
+          : (bookings || []).map(b => <BookingCard key={b.id} b={b} />)
+        }
+      </div>
+
+      <div className="hidden sm:block">
+        {viewMode === "grid" ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {loading ? Array(6).fill(0).map((_, i) => <BookingSkeleton key={i} />) : (bookings || []).map(b => (
+              <Card key={b.id} className="p-4" style={{ borderLeft: `4px solid ${b.room_color}` }}>
+                <div className="flex justify-between mb-2"><strong>{b.date} {b.time}</strong> {getStatusBadge(b.status)}</div>
+                <h3 className="font-bold">{b.room_name}</h3>
+                <p className="text-sm opacity-70">{b.group_name}</p>
+                <div className="flex justify-between mt-4 border-t pt-2 items-center">
+                  <span className="text-xs">GM: {b.game_master}</span>
+                  <Link href={`/bookings/${b.id}`}><Button variant="outline" size="sm">Ver</Button></Link>
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div
+            data-testid="bookings-table"
+            className="bg-[var(--color-background)] rounded-xl border border-beige overflow-hidden"
+          >
+            <table className="w-full text-left">
+              <thead className="bg-[var(--color-light)]">
+                <tr>
+                  <th className="p-4">Fecha/Hora</th><th className="p-4">Sala</th><th className="p-4">Grupo</th><th className="p-4">Estado</th><th className="p-4 text-right">Acciones</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+              </thead>
+              <tbody>
+                {(bookings || []).map(b => (
+                  <tr key={b.id} className="border-t border-beige">
+                    <td className="p-4">{b.date} {b.time}</td>
+                    <td className="p-4">{b.room_name}</td>
+                    <td className="p-4">{b.group_name}</td>
+                    <td className="p-4">{getStatusBadge(b.status)}</td>
+                    <td className="p-4 text-right"><Link href={`/bookings/${b.id}`}><Eye size={18} /></Link></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
