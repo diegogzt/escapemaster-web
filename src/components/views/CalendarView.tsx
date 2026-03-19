@@ -14,7 +14,7 @@ import {
   Plus,
 } from "lucide-react";
 import Button from "@/components/Button";
-import { bookings as bookingsApi, rooms as roomsApi } from "@/services/api";
+import { bookings as bookingsApi } from "@/services/api";
 import { useDataStore } from "@/stores/data-store";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 
@@ -59,30 +59,31 @@ export function CalendarView() {
 
   const setView = (v: ViewType) => setCalendarState({ view: v });
   const setCurrentDate = (d: Date) => setCalendarState({ currentDate: d.toISOString() });
-  const setSessions = (s: Session[]) => setCalendarState({ sessions: s, lastFetched: Date.now() });
+  const setSessions = (s: Session[], month: string) =>
+    setCalendarState({ sessions: s, lastFetched: Date.now(), cachedMonth: month });
 
   useEffect(() => {
     if (!isMounted) return;
     async function fetchData() {
-      // Basic cache check
-      const isFresh = calendarState.lastFetched && (Date.now() - calendarState.lastFetched < 60000);
-      if (isFresh && sessions.length > 0) {
+      // Month-aware cache: skip refetch if same month and data is fresh (5 min TTL)
+      const currentMonth = format(startOfMonth(currentDate), "yyyy-MM");
+      const isFresh = calendarState.lastFetched && (Date.now() - calendarState.lastFetched < 300_000);
+      if (isFresh && calendarState.cachedMonth === currentMonth && sessions.length > 0) {
         return;
       }
 
       try {
         setLoading(true);
         setError(null);
-        
+
         const firstDayStr = format(startOfMonth(currentDate), "yyyy-MM-dd");
         const lastDayStr = format(endOfMonth(currentDate), "yyyy-MM-dd");
 
-        // Individual try-catch for rooms to avoid blocking the whole fetch if rooms fail
+        // Use globally-cached rooms from the store (shared across all views)
         let roomsMap: Record<string, any> = {};
         try {
-          const roomsData = await roomsApi.list();
-          const roomsResult = roomsData?.rooms || (Array.isArray(roomsData) ? roomsData : []);
-          roomsResult.forEach((room: any) => { roomsMap[room.id] = room; });
+          await fetchRooms();
+          useDataStore.getState().rooms.forEach((room: any) => { roomsMap[room.id] = room; });
         } catch (rErr) {
           console.warn("[Calendar] Failed to fetch rooms, colors might be affected", rErr);
         }
@@ -107,13 +108,14 @@ export function CalendarView() {
             const status = (b.booking_status || "pending") as any;
             const start = new Date(b.start_time);
             const end = b.end_time ? new Date(b.end_time) : new Date(start.getTime() + 90 * 60000);
-            let color = b.room_color || "#3B82F6";
+            // Priority: room.color (configured) → status_colors override → booking.room_color → default
+            let color = roomsMap[b.room_id]?.color || b.room_color || "#3B82F6";
             if (b.room_id && roomsMap[b.room_id]?.status_colors?.[status]) color = roomsMap[b.room_id].status_colors[status];
             
             return { id: b.id, title: roomName, customer: b.guest?.full_name || "Sin cliente", start, end, room: roomName, status, color };
           });
         
-        setSessions(transformedSessions);
+        setSessions(transformedSessions, currentMonth);
       } catch (err: any) {
         console.error("[Calendar] Critical fetch error:", err);
         const status = err.response?.status;
@@ -239,7 +241,15 @@ export function CalendarView() {
       ) : (
         <>
           {view === "month" && (
-            <div className="bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden">
+            <div className="relative bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden">
+              {loading && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20 flex items-center justify-center rounded-[2.5rem]">
+                  <div className="flex flex-col items-center gap-3 bg-white rounded-2xl px-8 py-5 shadow-xl border border-beige">
+                    <Loader2 className="animate-spin text-primary" size={28} />
+                    <span className="text-sm font-bold text-primary/70">Cargando reservas...</span>
+                  </div>
+                </div>
+              )}
                <div className="grid grid-cols-7 gap-px bg-beige/30">
                 {["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"].map(d => (
                   <div key={d} className="bg-[var(--color-background)] py-4 text-center">
@@ -256,7 +266,7 @@ export function CalendarView() {
                   return (
                     <div 
                       key={i} 
-                      className={`min-h-[140px] bg-[var(--color-background)] p-3 transition-colors ${!day.isCurrentMonth ? "opacity-30 bg-[var(--color-light)]/10" : "hover:bg-primary/5 cursor-pointer group"}`}
+                      className={`min-h-[108px] bg-[var(--color-background)] p-3 transition-colors ${!day.isCurrentMonth ? "opacity-30 bg-[var(--color-light)]/10" : "hover:bg-primary/5 cursor-pointer group"}`}
                       onClick={() => day.isCurrentMonth && router.push(`/bookings/create?date=${day.date.toISOString().split('T')[0]}`)}
                     >
                       <div className="flex justify-between items-start mb-2">
@@ -270,7 +280,7 @@ export function CalendarView() {
                         )}
                       </div>
                       
-                      <div className="space-y-1.5 overflow-y-auto max-h-[100px] custom-scrollbar pr-1">
+                      <div className="space-y-1.5 overflow-y-auto max-h-[70px] custom-scrollbar pr-1">
                         {daySessions.map(session => (
                           <div 
                             key={session.id}
@@ -294,7 +304,15 @@ export function CalendarView() {
           )}
           
           {view === "week" && (
-            <div className="bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden flex flex-col h-[700px]">
+            <div className="relative bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden flex flex-col h-[580px]">
+              {loading && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20 flex items-center justify-center rounded-[2.5rem]">
+                  <div className="flex flex-col items-center gap-3 bg-white rounded-2xl px-8 py-5 shadow-xl border border-beige">
+                    <Loader2 className="animate-spin text-primary" size={28} />
+                    <span className="text-sm font-bold text-primary/70">Cargando reservas...</span>
+                  </div>
+                </div>
+              )}
               <div className="grid grid-cols-[100px_repeat(7,1fr)] bg-beige/30 border-b border-beige/50">
                 <div className="bg-[var(--color-background)]" />
                 {Array.from({ length: 7 }).map((_, i) => {
@@ -351,13 +369,14 @@ export function CalendarView() {
                             <div 
                               key={session.id}
                               onClick={() => router.push(`/bookings/${session.id}`)}
-                              style={{ 
-                                top: `${top}px`, 
+                              style={{
+                                top: `${top}px`,
                                 height: `${height}px`,
                                 backgroundColor: session.color,
-                                boxShadow: `0 4px 12px ${session.color}30`
+                                boxShadow: `0 4px 12px ${session.color}30`,
+                                color: getContrastColor(session.color),
                               }}
-                              className="absolute left-1 right-1 rounded-xl p-2 text-white text-[10px] font-bold overflow-hidden cursor-pointer hover:scale-[1.02] transition-all z-10 border border-white/20"
+                              className="absolute left-1 right-1 rounded-xl p-2 text-[10px] font-bold overflow-hidden cursor-pointer hover:scale-[1.02] transition-all z-10 border border-white/20"
                             >
                               <div className="flex justify-between items-start gap-1">
                                 <span className="truncate">{session.title}</span>
@@ -376,7 +395,15 @@ export function CalendarView() {
           )}
 
           {view === "day" && (
-            <div className="bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden flex flex-col h-[700px]">
+            <div className="relative bg-[var(--color-background)] rounded-[2.5rem] border border-beige shadow-xl overflow-hidden flex flex-col h-[580px]">
+              {loading && (
+                <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20 flex items-center justify-center rounded-[2.5rem]">
+                  <div className="flex flex-col items-center gap-3 bg-white rounded-2xl px-8 py-5 shadow-xl border border-beige">
+                    <Loader2 className="animate-spin text-primary" size={28} />
+                    <span className="text-sm font-bold text-primary/70">Cargando reservas...</span>
+                  </div>
+                </div>
+              )}
               <div className="p-6 bg-[var(--color-background)] border-b border-beige/50 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <div className={`w-14 h-14 rounded-2xl flex flex-col items-center justify-center ${isSameDay(currentDate, new Date()) ? "bg-primary text-white shadow-xl shadow-primary/30" : "bg-primary/5 text-primary border border-primary/10"}`}>
@@ -403,7 +430,7 @@ export function CalendarView() {
                 <div className="grid grid-cols-[100px_1fr] min-h-full">
                   <div className="flex flex-col bg-beige/5">
                     {Array.from({ length: 24 }).map((_, i) => (
-                      <div key={i} className="h-24 border-b border-beige/20 text-right pr-6 pt-4 text-[11px] font-black text-muted-foreground/40">
+                      <div key={i} className="h-20 border-b border-beige/20 text-right pr-6 pt-3 text-[11px] font-black text-muted-foreground/40">
                         {String(i).padStart(2, '0')}:00
                       </div>
                     ))}
@@ -411,7 +438,7 @@ export function CalendarView() {
                   
                   <div className="relative group">
                     {Array.from({ length: 24 }).map((_, i) => (
-                      <div key={i} className="h-24 border-b border-beige/10 hover:bg-primary/[0.01] transition-colors" />
+                      <div key={i} className="h-20 border-b border-beige/10 hover:bg-primary/[0.01] transition-colors" />
                     ))}
                     
                     {/* Sessions */}
@@ -419,8 +446,8 @@ export function CalendarView() {
                       const startHour = session.start.getHours();
                       const startMin = session.start.getMinutes();
                       const duration = (session.end.getTime() - session.start.getTime()) / (1000 * 60);
-                      const top = (startHour * 96) + (startMin / 60 * 96);
-                      const height = (duration / 60) * 96;
+                      const top = (startHour * 80) + (startMin / 60 * 80);
+                      const height = (duration / 60) * 80;
                       
                       // Simple overlap detection (naive)
                       const overlapCount = arr.filter(s => s.start < session.end && s.end > session.start).length;
@@ -439,9 +466,10 @@ export function CalendarView() {
                             width: `${width - 4}%`,
                             backgroundColor: session.color,
                             boxShadow: `0 8px 20px ${session.color}40`,
-                            zIndex: 10 + overlapIndex
+                            zIndex: 10 + overlapIndex,
+                            color: getContrastColor(session.color),
                           }}
-                          className="absolute rounded-[1.25rem] p-4 text-white shadow-lg cursor-pointer hover:scale-[1.01] transition-all border border-white/20 group/session"
+                          className="absolute rounded-[1.25rem] p-4 shadow-lg cursor-pointer hover:scale-[1.01] transition-all border border-white/20 group/session"
                         >
                            <div className="flex justify-between items-start mb-2">
                             <span className="text-xs font-black uppercase tracking-widest bg-white/20 px-2 py-0.5 rounded-lg">{session.start.getHours()}:{String(session.start.getMinutes()).padStart(2, '0')}</span>

@@ -38,6 +38,7 @@ interface DataState {
     currentDate: string; // ISO string
     sessions: any[];
     lastFetched: number | null;
+    cachedMonth: string | null; // "yyyy-MM" of the last fetched month
   };
   setCalendarState: (state: Partial<DataState["calendarState"]>) => void;
 
@@ -136,6 +137,7 @@ export const useDataStore = create<DataState>()(
         currentDate: new Date().toISOString(),
         sessions: [],
         lastFetched: null,
+        cachedMonth: null,
       },
       setCalendarState: (newState) => set((state) => ({
         calendarState: { ...state.calendarState, ...newState }
@@ -161,6 +163,7 @@ export const useDataStore = create<DataState>()(
           currentDate: state.calendarState.currentDate,
           sessions: state.calendarState.sessions,
           lastFetched: state.calendarState.lastFetched,
+          cachedMonth: state.calendarState.cachedMonth,
         },
         rooms: state.rooms,
         roles: state.roles,
