@@ -546,6 +546,15 @@ export function ERDMigrationWizard({
                             {r.errors.length > 0 &&
                               `, ${r.errors.length} errores`}
                           </p>
+                          {r.errors.length > 0 && (
+                            <ul className="mt-1 space-y-0.5">
+                              {r.errors.map((err, i) => (
+                                <li key={i} className="text-[10px] text-red-400 truncate" title={err}>
+                                  {err}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
                         {r.status === "completed" && (
                           <Check size={18} className="text-green-500" />
