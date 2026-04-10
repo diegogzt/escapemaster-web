@@ -39,7 +39,7 @@ export function StatsCards({
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 h-full">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 h-full">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full">
             <div className="h-4 bg-[var(--color-background-soft)] rounded w-1/2 mb-4"></div>
@@ -88,14 +88,14 @@ export function StatsCards({
   const canViewRevenue = user?.role?.name === 'admin' || user?.role?.name === 'manager' || user?.permissions?.includes('view_reports');
   const stats = allStats.filter((s) => visibleStats.includes(s.id) && (s.id !== 'revenue' || canViewRevenue));
 
-  // Dynamic grid columns based on config — always 1 col on mobile
+  // Dynamic grid columns based on config
   const gridCols =
     {
       1: "grid-cols-1",
-      2: "grid-cols-1 sm:grid-cols-2",
-      3: "grid-cols-1 sm:grid-cols-2 md:grid-cols-3",
-      4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4",
-    }[columns] || "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4";
+      2: "grid-cols-2",
+      3: "grid-cols-1 sm:grid-cols-3",
+      4: "grid-cols-2 lg:grid-cols-4",
+    }[columns] || "grid-cols-2 lg:grid-cols-4";
 
   return (
     <div className={`grid ${gridCols} gap-3 h-full`}>

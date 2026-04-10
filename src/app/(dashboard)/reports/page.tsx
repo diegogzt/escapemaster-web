@@ -101,7 +101,7 @@ export default function ReportsPage() {
   const [customDateEnd, setCustomDateEnd] = useState("");
   const [showExpenseForm, setShowExpenseForm] = useState(false);
   const [showChartForm, setShowChartForm] = useState(false);
-
+  
   // API data states
   const [loading, setLoading] = useState(true);
   const [revenueData, setRevenueData] = useState<RevenueData[]>([]);
@@ -123,30 +123,30 @@ export default function ReportsPage() {
           roomsApi.list(),
           dashboard.getStats(),
         ]);
-
+        
         // Calculate revenue by day of week
         const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
         const revenueByDay: Record<string, { ingresos: number; count: number }> = {};
         dayNames.forEach(d => { revenueByDay[d] = { ingresos: 0, count: 0 }; });
-
+        
         // Calculate room popularity
         const roomBookings: Record<string, number> = {};
-
+        
         // Calculate hourly distribution
         const hourlyData: Record<string, number> = {
           "10:00": 0, "12:00": 0, "14:00": 0, "16:00": 0, "18:00": 0, "20:00": 0, "22:00": 0
         };
-
+        
         let totalRevenue = 0;
-
+        
         // Extract array from paginated response
         const bookingsList = bookingsData?.bookings || (Array.isArray(bookingsData) ? bookingsData : []);
-
+        
         // API returns: id, start_time, total_price, room_name, booking_status
         bookingsList.forEach((b: any) => {
           const price = Number(b.total_price) || 0;
           totalRevenue += price;
-
+          
           // Revenue by day - parse from start_time
           if (b.start_time) {
             const startTime = new Date(b.start_time);
@@ -156,19 +156,19 @@ export default function ReportsPage() {
               revenueByDay[dayName].ingresos += price;
               revenueByDay[dayName].count++;
             }
-
+            
             // Hourly distribution
             const hour = startTime.getHours();
-            const hourSlot = hour < 11 ? "10:00" : hour < 13 ? "12:00" : hour < 15 ? "14:00" :
+            const hourSlot = hour < 11 ? "10:00" : hour < 13 ? "12:00" : hour < 15 ? "14:00" : 
                             hour < 17 ? "16:00" : hour < 19 ? "18:00" : hour < 21 ? "20:00" : "22:00";
             hourlyData[hourSlot] = (hourlyData[hourSlot] || 0) + 1;
           }
-
+          
           // Room popularity
           const roomName = b.room_name || "Sin sala";
           roomBookings[roomName] = (roomBookings[roomName] || 0) + 1;
         });
-
+        
         // Transform to chart data
         const transformedRevenue: RevenueData[] = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map(d => ({
           name: d,
@@ -177,7 +177,7 @@ export default function ReportsPage() {
           beneficio: Math.round((revenueByDay[d]?.ingresos || 0) * 0.7),
         }));
         setRevenueData(transformedRevenue);
-
+        
         // Transform room popularity
         const totalBookingsCount = Object.values(roomBookings).reduce((a, b) => a + b, 0);
         const transformedRooms: RoomPopularity[] = Object.entries(roomBookings)
@@ -188,7 +188,7 @@ export default function ReportsPage() {
           }))
           .slice(0, 5);
         setRoomPopularity(transformedRooms);
-
+        
         // Transform hourly
         const transformedHourly: HourlyData[] = Object.entries(hourlyData).map(([time, count]) => {
           const maxCount = Math.max(...Object.values(hourlyData), 1);
@@ -198,7 +198,7 @@ export default function ReportsPage() {
           };
         });
         setHourlyDistribution(transformedHourly);
-
+        
         // Set stats
         setStats({
           totalRevenue,
@@ -211,7 +211,7 @@ export default function ReportsPage() {
           .sort((a: any, b: any) => new Date(b.start_time).getTime() - new Date(a.start_time).getTime())
           .slice(0, 5);
         setRecentBookings(sortedBookings);
-
+        
       } catch (err) {
         console.error("Error fetching report data:", err);
       } finally {
@@ -267,24 +267,21 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-8 w-full pb-12 px-4 lg:px-8">
-
-      {/* ── Header ── */}
-      <div className="rounded-[2.5rem] bg-[var(--color-background)] border border-[var(--color-beige)] p-6 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      {/* Header - More compact and desktop-oriented */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-[var(--color-background)] p-6 rounded-2xl border border-beige/50 shadow-sm">
         <div>
-          <h1 className="font-black text-4xl tracking-tight text-[var(--color-foreground)]">
-            Panel Financiero
+          <h1 className="text-4xl font-bold text-primary tracking-tight">
+            Panel de Control Financiero
           </h1>
-          <p className="text-[var(--color-muted-foreground)] mt-1 text-base">
+          <p className="text-[var(--color-foreground)]/60 mt-1 text-lg">
             Análisis detallado del rendimiento y métricas operativas.
           </p>
         </div>
-
         <div className="flex flex-wrap gap-3 items-center w-full lg:w-auto">
-          {/* Date range selector */}
-          <label className="rounded-xl border border-[var(--color-beige)] bg-[var(--color-light)]/50 px-4 py-2.5 flex items-center gap-2 cursor-pointer focus-within:ring-2 focus-within:ring-[var(--color-primary)]/20 transition-all">
-            <Calendar size={16} className="text-[var(--color-primary)] shrink-0" />
+          <div className="bg-[var(--color-light)]/50 border border-beige rounded-xl flex items-center px-4 py-2.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+            <Calendar size={18} className="text-primary mr-2" />
             <select
-              className="bg-transparent border-none text-sm font-semibold focus:outline-none text-[var(--color-foreground)] lg:min-w-[160px]"
+              className="bg-transparent border-none text-sm font-semibold focus:outline-none text-[var(--color-foreground)] w-full lg:min-w-[160px]"
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
             >
@@ -296,27 +293,16 @@ export default function ReportsPage() {
               <option value="year">Este Año</option>
               <option value="custom">Personalizado</option>
             </select>
-          </label>
+          </div>
 
-          {/* Export buttons */}
-          <Button
-            variant="outline"
-            onClick={() => handleExport("csv")}
-            className="bg-[var(--color-background)] rounded-xl"
-          >
-            <Download size={16} className="mr-2" />
-            Exportar Gráficos
-          </Button>
-
-          <Button
-            variant="outline"
-            onClick={async () => {
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => handleExport("csv")} className="bg-[var(--color-background)]">
+              <Download size={18} className="mr-2" />
+              Exportar Gráficos
+            </Button>
+            <Button variant="outline" onClick={async () => {
               try {
-                const blob = await reports.exportBookings(
-                  "csv",
-                  dateRange === "custom" ? customDateStart : undefined,
-                  dateRange === "custom" ? customDateEnd : undefined
-                );
+                const blob = await reports.exportBookings("csv", dateRange === "custom" ? customDateStart : undefined, dateRange === "custom" ? customDateEnd : undefined);
                 const url = URL.createObjectURL(new Blob([blob]));
                 const a = document.createElement("a");
                 a.href = url;
@@ -327,130 +313,97 @@ export default function ReportsPage() {
               } catch {
                 toast.error("Error al exportar reservas");
               }
-            }}
-            className="bg-[var(--color-background)] rounded-xl"
-          >
-            <Download size={16} className="mr-2" />
-            Exportar Reservas
-          </Button>
-
-          <Button
-            variant="primary"
-            onClick={() => setShowExpenseForm(true)}
-            className="rounded-xl shadow-lg shadow-[var(--color-primary)]/20"
-          >
-            <Plus size={16} className="mr-2" />
-            Nuevo Registro
-          </Button>
+            }} className="bg-[var(--color-background)]">
+              <Download size={18} className="mr-2" />
+              Exportar Reservas
+            </Button>
+            <Button variant="primary" onClick={() => setShowExpenseForm(true)} className="shadow-lg shadow-primary/20">
+              <Plus size={18} className="mr-2" />
+              Nuevo Registro
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* ── Main Dashboard Grid ── */}
+      {/* Main Dashboard Grid */}
       <div className="grid grid-cols-12 gap-8">
-
-        {/* Left Column: KPIs + Main Charts (8 cols) */}
+        {/* Left Column: KPIs and Main Charts (8 cols) */}
         <div className="col-span-12 lg:col-span-8 space-y-8">
+          {/* Financial KPIs - 4 per row on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+                  <DollarSign size={24} />
+                </div>
+                {/* Growth indicator would require period comparison in API */}
+              </div>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Ingresos Totales</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{stats.totalRevenue.toLocaleString()}€</h3>
+            </Card>
 
-          {/* KPI Cards — 4 per row on desktop */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-
-            {/* Ingresos Totales */}
-            <div className="rounded-2xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)] hover:shadow-md transition-all group">
-              <div className="mb-4">
-                <div className="inline-flex p-3 bg-[var(--color-primary)]/10 rounded-2xl text-[var(--color-primary)] group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors">
-                  <DollarSign size={22} />
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-secondary/10 rounded-2xl text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
+                  <Wallet size={24} />
                 </div>
               </div>
-              <p className="text-sm text-[var(--color-muted-foreground)] font-medium mb-1">
-                Ingresos Totales
-              </p>
-              <h3 className="text-3xl font-black text-[var(--color-foreground)]">
-                {stats.totalRevenue.toLocaleString()}€
-              </h3>
-            </div>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Beneficio Neto</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{stats.profit.toLocaleString()}€</h3>
+            </Card>
 
-            {/* Beneficio Neto */}
-            <div className="rounded-2xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)] hover:shadow-md transition-all group">
-              <div className="mb-4">
-                <div className="inline-flex p-3 bg-[#97bc62]/10 rounded-2xl text-[#97bc62] group-hover:bg-[#97bc62] group-hover:text-white transition-colors">
-                  <Wallet size={22} />
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-accent/10 rounded-2xl text-accent group-hover:bg-accent group-hover:text-white transition-colors">
+                  <CreditCard size={24} />
                 </div>
               </div>
-              <p className="text-sm text-[var(--color-muted-foreground)] font-medium mb-1">
-                Beneficio Neto
-              </p>
-              <h3 className="text-3xl font-black text-[var(--color-foreground)]">
-                {stats.profit.toLocaleString()}€
-              </h3>
-            </div>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Gastos (Est.)</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{(stats.totalRevenue - stats.profit).toLocaleString()}€</h3>
+            </Card>
 
-            {/* Gastos Estimados */}
-            <div className="rounded-2xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)] hover:shadow-md transition-all group">
-              <div className="mb-4">
-                <div className="inline-flex p-3 bg-[#d4a373]/10 rounded-2xl text-[#d4a373] group-hover:bg-[#d4a373] group-hover:text-white transition-colors">
-                  <CreditCard size={22} />
+            <Card className="p-6 border-none shadow-sm bg-[var(--color-background)] hover:shadow-md transition-all group">
+              <div className="flex justify-between items-start mb-4">
+                <div className="p-3 bg-red-50 rounded-2xl text-error group-hover:bg-error group-hover:text-white transition-colors">
+                  <AlertCircle size={24} />
                 </div>
               </div>
-              <p className="text-sm text-[var(--color-muted-foreground)] font-medium mb-1">
-                Gastos (Est.)
-              </p>
-              <h3 className="text-3xl font-black text-[var(--color-foreground)]">
-                {(stats.totalRevenue - stats.profit).toLocaleString()}€
-              </h3>
-            </div>
-
-            {/* Total Reservas */}
-            <div className="rounded-2xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)] hover:shadow-md transition-all group">
-              <div className="mb-4">
-                <div className="inline-flex p-3 bg-blue-50 rounded-2xl text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
-                  <Users size={22} />
-                </div>
-              </div>
-              <p className="text-sm text-[var(--color-muted-foreground)] font-medium mb-1">
-                Total Reservas
-              </p>
-              <h3 className="text-3xl font-black text-[var(--color-foreground)]">
-                {stats.totalBookings}
-              </h3>
-            </div>
+              <p className="text-sm font-medium text-[var(--color-muted-foreground)] mb-1">Cancelaciones</p>
+              <h3 className="text-3xl font-bold text-[var(--color-foreground)]">{stats.totalBookings > 0 ? ((stats.totalBookings / (stats.totalBookings || 1)) * 0).toFixed(1) : 0}%</h3>
+              {/* Note: Cancellation rate requires cancelled bookings count which isn't in stats yet, defaulting to 0 for now or need to calculate */}
+            </Card>
           </div>
 
           {/* Main Chart: Balance Financiero */}
-          <div className="rounded-3xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)]">
-            <div className="flex justify-between items-center mb-6">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
+            <div className="flex justify-between items-center mb-8">
               <div>
-                <h3 className="font-black text-lg text-[var(--color-foreground)]">
-                  Balance Financiero Semanal
-                </h3>
-                <p className="text-sm text-[var(--color-muted-foreground)] mt-0.5">
-                  Comparativa de ingresos vs gastos operativos
-                </p>
+                <h3 className="text-xl font-bold text-[var(--color-foreground)]">Balance Financiero Semanal</h3>
+                <p className="text-sm text-[var(--color-muted-foreground)]">Comparativa de ingresos vs gastos operativos</p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)]">
-                  <span className="w-3 h-3 rounded-full bg-[var(--color-primary)]" />
-                  Ingresos
+              <div className="flex gap-2">
+                <div className="flex items-center text-xs font-medium text-[var(--color-muted-foreground)] mr-4">
+                  <span className="w-3 h-3 bg-primary rounded-full mr-1.5"></span> Ingresos
                 </div>
-                <div className="flex items-center gap-1.5 text-xs font-medium text-[var(--color-muted-foreground)]">
-                  <span className="w-3 h-3 rounded-full bg-[#cc0303]" />
-                  Gastos
+                <div className="flex items-center text-xs font-medium text-[var(--color-muted-foreground)]">
+                  <span className="w-3 h-3 bg-error rounded-full mr-1.5"></span> Gastos
                 </div>
               </div>
             </div>
-            <div className="h-[380px] w-full">
+            <div className="h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={revenueData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
-                  <XAxis
-                    dataKey="name"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#9CA3AF', fontSize: 12 }}
+                  <XAxis 
+                    dataKey="name" 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tick={{ fill: '#9CA3AF', fontSize: 12 }} 
                     dy={10}
                   />
-                  <YAxis
-                    axisLine={false}
-                    tickLine={false}
+                  <YAxis 
+                    axisLine={false} 
+                    tickLine={false} 
                     tick={{ fill: '#9CA3AF', fontSize: 12 }}
                   />
                   <Tooltip
@@ -462,22 +415,20 @@ export default function ReportsPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </div>
+          </Card>
 
-          {/* Recent Transactions Table */}
-          <div className="rounded-3xl overflow-hidden border border-[var(--color-beige)] bg-[var(--color-background)]">
-            <div className="p-6 border-b border-[var(--color-beige)] flex justify-between items-center">
-              <h3 className="font-black text-lg text-[var(--color-foreground)]">
-                Últimas Transacciones
-              </h3>
-              <Button variant="ghost" size="sm" className="text-[var(--color-primary)] font-bold">
+          {/* Recent Activity Table */}
+          <Card className="border-none shadow-sm bg-[var(--color-background)] overflow-hidden">
+            <div className="p-6 border-b border-gray-50 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-[var(--color-foreground)]">Últimas Transacciones</h3>
+              <Button variant="ghost" size="sm" className="text-primary font-bold">
                 Ver historial completo
               </Button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
-                  <tr className="bg-[var(--color-light)]/50 text-[var(--color-muted-foreground)] text-xs uppercase tracking-wider">
+                  <tr className="bg-[var(--color-light)]/30 text-[var(--color-muted-foreground)] text-xs uppercase tracking-wider">
                     <th className="px-6 py-4 font-bold">Referencia</th>
                     <th className="px-6 py-4 font-bold">Cliente</th>
                     <th className="px-6 py-4 font-bold">Sala / Servicio</th>
@@ -485,31 +436,24 @@ export default function ReportsPage() {
                     <th className="px-6 py-4 font-bold text-right">Monto</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[var(--color-beige)]/60">
+                <tbody className="divide-y divide-gray-50">
                   {recentBookings.length > 0 ? (
                     recentBookings.map((booking, i) => (
-                      <tr
-                        key={booking.id}
-                        className="hover:bg-[var(--color-light)]/30 transition-colors"
-                      >
-                        <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)] font-mono">
-                          #{booking.id.substring(0, 8)}
-                        </td>
+                      <tr key={booking.id} className="hover:bg-[var(--color-light)]/20 transition-colors group">
+                        <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)] font-mono">#{booking.id.substring(0, 8)}</td>
                         <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-[var(--color-beige)]/60 flex items-center justify-center text-[var(--color-primary)] font-black text-xs">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 rounded-full bg-beige/40 flex items-center justify-center text-primary font-bold text-xs mr-3">
                               {booking.guest?.full_name?.charAt(0) || "C"}
                             </div>
-                            <span className="text-sm font-bold text-[var(--color-foreground)]">
-                              {booking.guest?.full_name || "Cliente"}
-                            </span>
+                            <span className="text-sm font-bold text-[var(--color-foreground)]">{booking.guest?.full_name || "Cliente"}</span>
                           </div>
                         </td>
                         <td className="px-6 py-4">
                           <span
                             className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide"
                             style={{
-                              backgroundColor: (roomPopularity[i % roomPopularity.length]?.color || "#ccc") + "20",
+                              backgroundColor: (roomPopularity[i % roomPopularity.length]?.color || "#ccc") + "15",
                               color: roomPopularity[i % roomPopularity.length]?.color || "#666",
                             }}
                           >
@@ -517,23 +461,16 @@ export default function ReportsPage() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-sm text-[var(--color-muted-foreground)]">
-                          {booking.start_time
-                            ? new Date(booking.start_time).toLocaleDateString()
-                            : "-"}
+                          {booking.start_time ? new Date(booking.start_time).toLocaleDateString() : "-"}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <span className="text-sm font-black text-[var(--color-primary)]">
-                            +{Number(booking.total_price).toFixed(2)}€
-                          </span>
+                          <span className="text-sm font-bold text-primary">+{Number(booking.total_price).toFixed(2)}€</span>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan={5}
-                        className="px-6 py-10 text-center text-[var(--color-muted-foreground)] text-sm"
-                      >
+                      <td colSpan={5} className="px-6 py-8 text-center text-[var(--color-muted-foreground)]">
                         No hay transacciones recientes
                       </td>
                     </tr>
@@ -541,18 +478,15 @@ export default function ReportsPage() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </Card>
         </div>
 
-        {/* Right Column: Secondary Charts (4 cols) */}
+        {/* Right Column: Secondary Charts and Stats (4 cols) */}
         <div className="col-span-12 lg:col-span-4 space-y-8">
-
           {/* Room Popularity */}
-          <div className="rounded-3xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)]">
-            <h3 className="font-black text-lg text-[var(--color-foreground)] mb-6">
-              Popularidad de Salas
-            </h3>
-            <div className="h-[280px] w-full">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6">Popularidad de Salas</h3>
+            <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -570,70 +504,56 @@ export default function ReportsPage() {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 space-y-2.5">
+            <div className="mt-6 space-y-3">
               {roomPopularity.map((room, i) => (
                 <div key={i} className="flex justify-between items-center">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className="w-3 h-3 rounded-full shrink-0"
-                      style={{ backgroundColor: room.color }}
-                    />
-                    <span className="text-sm font-medium text-[var(--color-foreground)]">
-                      {room.name}
-                    </span>
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 rounded-full mr-3" style={{ backgroundColor: room.color }}></div>
+                    <span className="text-sm font-medium text-[var(--color-foreground)]">{room.name}</span>
                   </div>
-                  <span className="text-sm font-black text-[var(--color-foreground)]">
-                    {room.value}%
-                  </span>
+                  <span className="text-sm font-bold text-[var(--color-foreground)]">{room.value}%</span>
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
           {/* Hourly Occupancy */}
-          <div className="rounded-3xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)]">
-            <h3 className="font-black text-lg text-[var(--color-foreground)] mb-6">
-              Picos de Ocupación
-            </h3>
-            <div className="h-[220px] w-full">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
+            <h3 className="text-xl font-bold text-[var(--color-foreground)] mb-6">Picos de Ocupación</h3>
+            <div className="h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={hourlyDistribution}>
                   <defs>
                     <linearGradient id="colorOcc" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3} />
-                      <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0} />
+                      <stop offset="5%" stopColor={COLORS.primary} stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor={COLORS.primary} stopOpacity={0}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F0F0F0" />
                   <XAxis dataKey="time" hide />
                   <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="ocupacion"
-                    stroke={COLORS.primary}
+                  <Area 
+                    type="monotone" 
+                    dataKey="ocupacion" 
+                    stroke={COLORS.primary} 
                     strokeWidth={3}
-                    fillOpacity={1}
-                    fill="url(#colorOcc)"
+                    fillOpacity={1} 
+                    fill="url(#colorOcc)" 
                   />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <div className="mt-4 p-4 bg-[var(--color-light)]/40 rounded-2xl border border-[var(--color-beige)]/60">
-              <p className="text-xs text-[var(--color-muted-foreground)] leading-relaxed">
-                <span className="font-bold text-[var(--color-primary)]">Tip:</span> El pico máximo
-                de ocupación se registra a las{" "}
-                <span className="font-bold">20:00h</span>. Considera reforzar el personal en este
-                horario.
+            <div className="mt-4 p-4 bg-[var(--color-light)]/30 rounded-xl border border-beige/30">
+              <p className="text-xs text-[var(--color-foreground)]/60 leading-relaxed">
+                <span className="font-bold text-primary">Tip:</span> El pico máximo de ocupación se registra a las <span className="font-bold">20:00h</span>. Considera reforzar el personal en este horario.
               </p>
             </div>
-          </div>
+          </Card>
 
           {/* Expenses Breakdown */}
-          <div className="rounded-3xl border border-[var(--color-beige)] p-6 bg-[var(--color-background)]">
+          <Card className="p-8 border-none shadow-sm bg-[var(--color-background)]">
             <div className="flex justify-between items-center mb-6">
-              <h3 className="font-black text-lg text-[var(--color-foreground)]">
-                Distribución de Gastos
-              </h3>
+              <h3 className="text-xl font-bold text-[var(--color-foreground)]">Distribución de Gastos</h3>
               <button
                 onClick={() => {
                   if (editingExpenses) {
@@ -641,19 +561,18 @@ export default function ReportsPage() {
                   }
                   setEditingExpenses(!editingExpenses);
                 }}
-                className="text-xs font-semibold text-[var(--color-primary)] hover:underline"
+                className="text-xs font-medium text-primary hover:underline"
               >
                 {editingExpenses ? "Cancelar" : "Editar"}
               </button>
             </div>
-
             {editingExpenses ? (
               <div className="space-y-3">
                 {expensesDraft.map((expense, i) => (
                   <div key={i} className="flex gap-2 items-center">
                     <input
                       type="text"
-                      className="flex-1 bg-[var(--color-light)] border border-[var(--color-beige)] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20"
+                      className="flex-1 bg-[var(--color-light)] border border-[var(--color-beige)] rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
                       value={expense.name}
                       onChange={(e) => {
                         const updated = [...expensesDraft];
@@ -663,7 +582,7 @@ export default function ReportsPage() {
                     />
                     <input
                       type="number"
-                      className="w-24 bg-[var(--color-light)] border border-[var(--color-beige)] rounded-lg px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]/20"
+                      className="w-24 bg-[var(--color-light)] border border-[var(--color-beige)] rounded-lg px-2 py-1.5 text-sm text-right focus:outline-none focus:ring-2 focus:ring-primary/20"
                       value={expense.value}
                       onChange={(e) => {
                         const updated = [...expensesDraft];
@@ -680,10 +599,8 @@ export default function ReportsPage() {
                   </div>
                 ))}
                 <button
-                  onClick={() =>
-                    setExpensesDraft([...expensesDraft, { name: "Nuevo gasto", value: 0 }])
-                  }
-                  className="w-full py-1.5 text-xs font-medium text-[var(--color-primary)] border border-dashed border-[var(--color-beige)] rounded-lg hover:bg-[var(--color-light)] transition-colors"
+                  onClick={() => setExpensesDraft([...expensesDraft, { name: "Nuevo gasto", value: 0 }])}
+                  className="w-full py-1.5 text-xs font-medium text-primary border border-dashed border-[var(--color-beige)] rounded-lg hover:bg-[var(--color-light)]"
                 >
                   + Añadir categoría
                 </button>
@@ -693,38 +610,34 @@ export default function ReportsPage() {
                     localStorage.setItem("org_expenses_config", JSON.stringify(expensesDraft));
                     setEditingExpenses(false);
                   }}
-                  className="w-full py-2 text-sm font-bold text-white bg-[var(--color-primary)] rounded-xl hover:bg-[var(--color-primary)]/90 transition-colors"
+                  className="w-full py-2 text-sm font-bold text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Guardar cambios
                 </button>
               </div>
             ) : (
-              <div className="space-y-5">
+              <div className="space-y-6">
                 {expensesData.map((expense, i) => {
                   const total = expensesData.reduce((acc, curr) => acc + curr.value, 0);
                   const percentage = total > 0 ? (expense.value / total) * 100 : 0;
                   return (
-                    <div key={i} className="space-y-1.5">
+                    <div key={i} className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="font-medium text-[var(--color-muted-foreground)]">
-                          {expense.name}
-                        </span>
-                        <span className="font-black text-[var(--color-foreground)]">
-                          {expense.value.toLocaleString()}€
-                        </span>
+                        <span className="font-medium text-[var(--color-muted-foreground)]">{expense.name}</span>
+                        <span className="font-bold text-[var(--color-foreground)]">{expense.value.toLocaleString()}€</span>
                       </div>
                       <div className="w-full bg-[var(--color-light)] h-2 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-[var(--color-primary)] rounded-full transition-all duration-500"
+                        <div 
+                          className="h-full bg-primary rounded-full" 
                           style={{ width: `${percentage}%` }}
-                        />
+                        ></div>
                       </div>
                     </div>
                   );
                 })}
               </div>
             )}
-          </div>
+          </Card>
         </div>
       </div>
     </div>
