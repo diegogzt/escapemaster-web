@@ -202,17 +202,18 @@ docker service inspect my-manager-api-rroybx
 
 ```bash
 # Producción (main → API v1)
-./scripts/deploy-frontend.sh https://my.escapemaster.es/api/v1
+GHCR_PAT=your_pat ./scripts/deploy-frontend.sh https://my.escapemaster.es/api/v1
 
 # Desarrollo (dev → API v2)
-./scripts/deploy-frontend.sh https://my.escapemaster.es/api/v2
+GHCR_PAT=your_pat ./scripts/deploy-frontend.sh https://my.escapemaster.es/api/v2
 ```
 
 El script `scripts/deploy-frontend.sh`:
-1. Construye la imagen con `--build-arg` para `NEXT_PUBLIC_API_URL` y `NEXT_PUBLIC_APP_URL`
-2. Etiqueta con timestamp: `ghcr.io/diegogzt/escapemaster-frontend:YYYYMMDDHHMMSS`
-3. Hace push a GHCR
-4. Actualiza el servicio `manager-frontend-erhb6r` en Swarm
+1. Hace `docker login` a GHCR usando `GHCR_PAT` (pasado via variable de entorno, nunca hardcodeado)
+2. Construye la imagen con `--build-arg` para `NEXT_PUBLIC_API_URL` y `NEXT_PUBLIC_APP_URL`
+3. Etiqueta con timestamp: `ghcr.io/dgtovar/escapemaster-frontend:YYYYMMDDHHMMSS`
+4. Hace push a GHCR
+5. Actualiza el servicio `manager-frontend-erhb6r` en Swarm
 
 ### Verificar Deploy
 
@@ -238,7 +239,7 @@ Si prefieres usar el tipo **Docker Image** en Dokploy en lugar de Git-based:
 1. Ir al proyecto `manager-frontend-erhb6r` en Dokploy
 2. Cambiar **Deployment Type** → **Docker Image**
 3. Configurar:
-   - **Image**: `ghcr.io/diegogzt/escapemaster-frontend:TAG` (usar el tag del último deploy)
+   - **Image**: `ghcr.io/dgtovar/escapemaster-frontend:TAG` (usar el tag del último deploy)
    - **Registry**: `ghcr.io`
    - **Username**: `dgtovar` (tu usuario GitHub)
    - **Password**: GHCR PAT token

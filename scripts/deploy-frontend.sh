@@ -1,14 +1,23 @@
 #!/bin/bash
 # Deploy Frontend to GHCR and update Dokploy service
 # Usage:
-#   ./deploy-frontend.sh [api_url]
-#   ./deploy-frontend.sh https://my.escapemaster.es/api/v1  # production
-#   ./deploy-frontend.sh https://my.escapemaster.es/api/v2  # development
+#   GHCR_PAT=your_ghcr_pat ./deploy-frontend.sh [api_url]
+#   GHCR_PAT=your_ghcr_pat ./deploy-frontend.sh https://my.escapemaster.es/api/v1  # production
+#   GHCR_PAT=your_ghcr_pat ./deploy-frontend.sh https://my.escapemaster.es/api/v2  # development
 set -e
 
 API_URL="${1:-https://my.escapemaster.es/api/v1}"
 TAG=$(date +%Y%m%d%H%M%S)
-IMAGE="ghcr.io/diegogzt/escapemaster-frontend:$TAG"
+IMAGE="ghcr.io/dgtovar/escapemaster-frontend:$TAG"
+GHCR_PAT="${GHCR_PAT:-}"
+
+if [ -z "$GHCR_PAT" ]; then
+  echo "Error: GHCR_PAT environment variable is required"
+  echo "  GHCR_PAT=your_pat ./deploy-frontend.sh [api_url]"
+  exit 1
+fi
+
+echo "$GHCR_PAT" | docker login ghcr.io -u dgtovar --password-stdin
 
 echo "=============================================="
 echo "  Deploying Frontend to GHCR"
@@ -39,7 +48,7 @@ docker service update \
 
 echo ""
 echo "=============================================="
-echo "  ✅ Deployed successfully!"
+echo "  Deployed successfully!"
 echo "  Image: $IMAGE"
 echo "  Service: manager-frontend-erhb6r"
 echo "=============================================="
