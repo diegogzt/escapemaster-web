@@ -26,13 +26,6 @@ Sigue estos pasos para un despliegue controlado.
 4. Genera el build con `npm run build`.
 5. Arranca la app con `npm run start` si el entorno es self-hosted.
 
-### Nota sobre plataforma
-
-Los archivos de entorno existentes incluyen variables `VERCEL_*`, por lo que el
-proyecto parece desplegarse en Vercel o en una plataforma compatible. Si usas
-ese flujo, el paso clave es sincronizar las variables de entorno correctas antes
-de lanzar el build.
-
 ## Variables críticas antes de desplegar
 
 Estas variables afectan directamente a la salud de la aplicación.
@@ -41,8 +34,6 @@ Estas variables afectan directamente a la salud de la aplicación.
 | --- | --- |
 | `NEXT_PUBLIC_API_URL` | El gestor no podrá cargar datos ni autenticar usuarios |
 | `NEXT_PUBLIC_APP_URL` | Links absolutos y callbacks pueden fallar |
-| `NEXT_PUBLIC_SUPABASE_URL` | Fallan integraciones cliente con Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Fallan llamadas públicas a Supabase |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Las funciones que dependan de Google AI dejarán de responder |
 | `MISTRAL_API_KEY` | Las funciones que dependan de Mistral dejarán de responder |
 
@@ -80,10 +71,8 @@ Esta tabla resume los fallos más probables según la configuración actual.
 | --- | --- | --- |
 | La app no arranca en local | Dependencias no instaladas o puerto ocupado | Ejecuta `npm install` y comprueba el puerto `3001` |
 | El dashboard carga vacío o con errores de red | `NEXT_PUBLIC_API_URL` incorrecta | Revisa la URL y confirma que `manager/api` está disponible |
-| Fallan llamadas a Supabase | `NEXT_PUBLIC_SUPABASE_URL` o `NEXT_PUBLIC_SUPABASE_ANON_KEY` incorrectas | Revisa formato y valor de ambas variables |
 | El build falla por imports o rutas | Código inválido o dependencias rotas | Ejecuta `npm run lint`, revisa imports y repite `npm run build` |
 | Funciones AI no responden | Faltan `GOOGLE_GENERATIVE_AI_API_KEY` o `MISTRAL_API_KEY` | Configura las claves o desactiva la función afectada |
-| El entorno de producción se comporta distinto a local | Variables `VERCEL_*` o URL públicas desalineadas | Compara el entorno desplegado con la configuración local |
 
 ## Procedimiento de rollback
 
@@ -106,9 +95,7 @@ Sigue estos pasos si un despliegue rompe el gestor.
 Si el problema es de entorno y no de código:
 
 1. Restaura `NEXT_PUBLIC_API_URL` a la versión previamente válida.
-2. Restaura `NEXT_PUBLIC_SUPABASE_URL` y
-   `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
-3. Repite el despliegue sin cambiar el código.
+2. Repite el despliegue sin cambiar el código.
 
 ## Documentación obsoleta para revisión manual
 
@@ -130,4 +117,4 @@ trabajo futuro:
 
 Los siguientes pasos recomendados son añadir un `.env.example`, definir scripts
 oficiales de prueba y documentar el flujo de despliegue exacto del entorno de
-producción si va a seguir en Vercel.
+producción en Dokploy.

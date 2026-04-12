@@ -49,39 +49,8 @@ Estas variables son las que configuran el comportamiento funcional del gestor.
 | --- | --- | --- |
 | `NEXT_PUBLIC_API_URL` | URL base de la API que consume el gestor | URL absoluta, por ejemplo `http://localhost:8000` |
 | `NEXT_PUBLIC_APP_URL` | URL pública de la aplicación | URL absoluta, por ejemplo `https://escapemaster.es` |
-| `NEXT_PUBLIC_SUPABASE_URL` | URL del proyecto de Supabase | URL absoluta de Supabase |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave pública de Supabase para el cliente | Token público de Supabase |
 | `GOOGLE_GENERATIVE_AI_API_KEY` | Clave para integraciones con Google Generative AI | API key secreta |
 | `MISTRAL_API_KEY` | Clave para integraciones con Mistral | API key secreta |
-| `VERCEL_OIDC_TOKEN` | Token OIDC inyectado por Vercel para flujos de plataforma | JWT o token de plataforma |
-
-### Variables de build y plataforma
-
-Estas variables aparecen en `.env.prod` y parecen ser inyectadas por la
-plataforma de despliegue. No suelen definirse manualmente en desarrollo local.
-
-| Variable | Propósito | Formato esperado |
-| --- | --- | --- |
-| `NX_DAEMON` | Controla el daemon de Nx | `true` o `false` |
-| `TURBO_CACHE` | Configura el modo de caché de Turborepo | Cadena como `remote:rw` |
-| `TURBO_DOWNLOAD_LOCAL_ENABLED` | Habilita descarga local de caché remota | `true` o `false` |
-| `TURBO_REMOTE_ONLY` | Fuerza el uso exclusivo de caché remota | `true` o `false` |
-| `TURBO_RUN_SUMMARY` | Activa el resumen de ejecución de Turborepo | `true` o `false` |
-| `VERCEL` | Marca de entorno Vercel | `1` |
-| `VERCEL_ENV` | Entorno lógico de Vercel | `development`, `preview` o `production` |
-| `VERCEL_TARGET_ENV` | Entorno de despliegue objetivo | `development`, `preview` o `production` |
-| `VERCEL_URL` | URL asignada por Vercel al despliegue | Host o URL |
-| `VERCEL_GIT_COMMIT_AUTHOR_LOGIN` | Login del autor del commit | Cadena o vacío |
-| `VERCEL_GIT_COMMIT_AUTHOR_NAME` | Nombre del autor del commit | Cadena o vacío |
-| `VERCEL_GIT_COMMIT_MESSAGE` | Mensaje del commit desplegado | Cadena o vacío |
-| `VERCEL_GIT_COMMIT_REF` | Rama o ref del despliegue | Cadena o vacío |
-| `VERCEL_GIT_COMMIT_SHA` | SHA del commit desplegado | Hash o vacío |
-| `VERCEL_GIT_PREVIOUS_SHA` | SHA anterior al despliegue actual | Hash o vacío |
-| `VERCEL_GIT_PROVIDER` | Proveedor Git del despliegue | Cadena o vacío |
-| `VERCEL_GIT_PULL_REQUEST_ID` | Identificador de PR asociado | Número o vacío |
-| `VERCEL_GIT_REPO_ID` | Identificador interno del repositorio | Cadena o vacío |
-| `VERCEL_GIT_REPO_OWNER` | Owner del repositorio | Cadena o vacío |
-| `VERCEL_GIT_REPO_SLUG` | Nombre corto del repositorio | Cadena o vacío |
 
 ### Plantilla local recomendada
 
@@ -90,8 +59,6 @@ Usa esta plantilla mínima para empezar en local.
 ```env
 NEXT_PUBLIC_API_URL="http://localhost:8000"
 NEXT_PUBLIC_APP_URL="http://localhost:3001"
-NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-NEXT_PUBLIC_SUPABASE_ANON_KEY="your-public-anon-key"
 GOOGLE_GENERATIVE_AI_API_KEY=""
 MISTRAL_API_KEY=""
 ```
