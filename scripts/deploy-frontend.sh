@@ -7,7 +7,7 @@
 set -e
 
 API_URL="${1:-https://my.escapemaster.es/api/v1}"
-TAG=$(date +%Y%m%d%H%M%S)
+TAG=$(git rev-parse --short HEAD)
 IMAGE="ghcr.io/dgtovar/escapemaster-frontend:$TAG"
 GHCR_PAT="${GHCR_PAT:-}"
 
