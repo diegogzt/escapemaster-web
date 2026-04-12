@@ -118,8 +118,6 @@ Crear `.env.local` y agregar:
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_APP_URL=http://localhost:3001
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
 ```
 
 ### 4. Iniciar Servidor de Desarrollo
@@ -320,26 +318,15 @@ npm run lint    # Ejecuta ESLint
 
 ## 🚀 Despliegue
 
-### Vercel
+Despliegue mediante Dokploy usando `dokploy.yml` en la raíz del proyecto.
+Configura las variables de entorno en el panel de Dokploy para cada entorno
+(preproduction-v2 → API v2, production-v1 → API v1).
 
-La aplicación está optimizada para despliegue en Vercel:
-
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
-
-# Login y deploy
-vercel login
-vercel
-```
-
-### Variables de Entorno en Producción
-
-Configurar en Vercel:
-- `NEXT_PUBLIC_API_URL` → URL de API de producción
-- `NEXT_PUBLIC_APP_URL` → URL pública del gestor
-- `NEXT_PUBLIC_SUPABASE_URL` → URL de Supabase
-- `NEXT_PUBLIC_SUPABASE_ANON_KEY` → Anon key de Supabase
+Variables requeridas:
+- `NEXT_PUBLIC_API_URL` → URL de API (`https://my.escapemaster.es/api/v1` o `/v2`)
+- `NEXT_PUBLIC_APP_URL` → URL pública (`https://my.escapemaster.es`)
+- `GOOGLE_GENERATIVE_AI_API_KEY` → Clave de Google AI
+- `MISTRAL_API_KEY` → Clave de Mistral
 
 ## 📊 Métricas del Proyecto
 
