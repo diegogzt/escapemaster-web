@@ -7,8 +7,6 @@
 set -e
 
 API_URL="${1:-https://my.escapemaster.es/api/v1}"
-TAG=$(git rev-parse --short HEAD)
-IMAGE="ghcr.io/dgtovar/escapemaster-frontend:$TAG"
 GHCR_PAT="${GHCR_PAT:-}"
 
 if [ -z "$GHCR_PAT" ]; then
@@ -17,6 +15,17 @@ if [ -z "$GHCR_PAT" ]; then
   exit 1
 fi
 
+# Increment version
+VERSION_FILE="VERSION"
+CURRENT_VERSION=$(cat "$VERSION_FILE" 2>/dev/null || echo "0")
+MAJOR=$(echo "$CURRENT_VERSION" | cut -d. -f1)
+MINOR=$(echo "$CURRENT_VERSION" | cut -d. -f2)
+MINOR=$((MINOR + 1))
+VERSION="${MAJOR}.${MINOR}"
+echo "$VERSION" > "$VERSION_FILE"
+
+IMAGE="ghcr.io/dgtovar/escapemaster-frontend:v${VERSION}"
+
 echo "$GHCR_PAT" | docker login ghcr.io -u dgtovar --password-stdin
 
 echo "=============================================="
@@ -24,10 +33,9 @@ echo "  Deploying Frontend to GHCR"
 echo "=============================================="
 echo "  API URL:  $API_URL"
 echo "  Image:    $IMAGE"
-echo "  Time:     $(date)"
+echo "  Version:  v$VERSION"
 echo "=============================================="
 
-# Build with build args baked in
 echo ""
 echo "[1/3] Building Docker image..."
 docker build -f Dockerfile.production \
