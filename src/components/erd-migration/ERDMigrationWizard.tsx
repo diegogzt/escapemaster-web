@@ -164,26 +164,51 @@ export function ERDMigrationWizard({
 
   const missingDeps = getMissingDependencies([...selectedModules]);
 
-  // Step 4: Execute migration
+  // Step 4: Execute migration with status polling
   const handleMigrate = async () => {
     if (!erdSessionId || selectedModules.size === 0) return;
     setStep("progress");
     setIsMigrating(true);
+
     try {
-      const response = await erdMigration.execute(erdSessionId, [
-        ...selectedModules,
-      ]);
-      setResults(response.results);
-      setMigrationDone(true);
-      if (response.success) {
-        toast.success("Migración completada con éxito");
-      } else {
-        toast.warning("Migración completada con algunos errores");
-      }
+      // Execute migration - returns immediately, migration runs in background
+      await erdMigration.execute(erdSessionId, [...selectedModules]);
+
+      // Poll status while migration is running
+      const pollInterval = setInterval(async () => {
+        try {
+          const status = await erdMigration.status(erdSessionId);
+          if (!status.is_running) {
+            clearInterval(pollInterval);
+            if (status.results) {
+              setResults(status.results);
+            }
+            if (status.status === "completed") {
+              toast.success("Migración completada. Revisa tu email para el resumen.");
+            } else if (status.status === "failed") {
+              toast.error(status.error_message || "Error en la migración");
+            }
+            setMigrationDone(true);
+            setIsMigrating(false);
+          }
+        } catch {
+          // Continue polling
+        }
+      }, 3000); // Poll every 3 seconds
+
+      // Safety timeout - stop polling after 5 minutes
+      setTimeout(() => {
+        clearInterval(pollInterval);
+        if (isMigrating) {
+          toast.warning("La migración está tardando más de lo esperado. Recibirás un email cuando termine.");
+          setMigrationDone(true);
+          setIsMigrating(false);
+        }
+      }, 300000);
+
     } catch {
       toast.error("Error durante la migración");
       setMigrationDone(true);
-    } finally {
       setIsMigrating(false);
     }
   };

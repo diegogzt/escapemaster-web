@@ -81,6 +81,18 @@ export interface ErdMigrateResponse {
   results: ErdMigrateModuleResult[];
 }
 
+export interface ErdStatusResponse {
+  is_running: boolean;
+  current_module: string | null;
+  modules_completed: number;
+  total_modules: number;
+  results: ErdMigrateModuleResult[] | null;
+  started_at: string | null;
+  completed_at: string | null;
+  status: "idle" | "running" | "completed" | "failed";
+  error_message: string | null;
+}
+
 // ─── Dependency graph ───
 
 const DEPENDENCY_MAP: Record<MigrationModule, MigrationModule[]> = {
@@ -146,6 +158,13 @@ export const erdMigration = {
     const response = await api.post("/migration/erd/execute", {
       erd_session_id: erdSessionId,
       modules,
+    });
+    return response.data;
+  },
+
+  status: async (erdSessionId: string): Promise<ErdStatusResponse> => {
+    const response = await api.post("/migration/erd/status", {
+      erd_session_id: erdSessionId,
     });
     return response.data;
   },
