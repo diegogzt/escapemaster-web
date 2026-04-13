@@ -1,5 +1,15 @@
 # Changelog - EscapeMaster Manager
 
+## [0.5.0] - 2026-04-13
+
+### Added
+- **ERD Status Polling**: Migration now uses `POST /migration/erd/status` endpoint to poll progress while running. Frontend shows "check email" message instead of hanging waiting for completion.
+- **ErdStatusResponse Interface**: New interface in `erdMigration.ts` and `erdOnboarding.ts` for status polling responses.
+- **Safety Timeout**: After 5 minutes of polling without completion, wizard shows warning message suggesting user check email for results.
+- **Email Notification**: User receives email summary when migration completes (via AWS SES or Resend).
+
+---
+
 ## [0.4.0] - 2026-04-13
 
 ### Added
