@@ -8,10 +8,12 @@ import Button from "@/components/Button";
 import Input from "@/components/Input";
 import Select from "@/components/Select";
 import { Card, CardHeader, CardTitle } from "@/components/Card";
-import { Check, Building2, Palette, Settings, UserPlus } from "lucide-react";
+import { Check, Building2, Palette, Settings, UserPlus, Database } from "lucide-react";
 import { orgs, auth } from "@/services/api";
+import { ERDOnboardingWizard } from "@/components/onboarding/ERDOnboardingWizard";
+import type { ErdMigrateModuleResult } from "@/services/erdOnboarding";
 
-type Step = "theme" | "organization" | "invite" | "config";
+type Step = "theme" | "organization" | "erd" | "invite" | "config";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -71,12 +73,12 @@ export default function OnboardingPage() {
         }
         const res = await orgs.join(formData.orgCode);
         setOrgId(res.id);
-        
+
         // Fetch updated user data
         await new Promise((resolve) => setTimeout(resolve, 500));
         await auth.me();
       }
-      setStep("invite");
+      setStep("erd");
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || "Error al procesar");
     } finally {
@@ -102,8 +104,22 @@ export default function OnboardingPage() {
   const handleNext = () => {
     if (step === "theme") setStep("organization");
     else if (step === "organization") handleOrgSubmit();
+    else if (step === "erd") setStep("invite");
     else if (step === "invite") setStep("config");
     else if (step === "config") router.push("/dashboard");
+  };
+
+  const handleErdComplete = (results: ErdMigrateModuleResult[]) => {
+    const hasResults = results && results.length > 0;
+    if (hasResults) {
+      const totalMigrated = results.reduce((sum, r) => sum + r.migrated, 0);
+      toast.success(`Migración completada: ${totalMigrated} registros importados`);
+    }
+    setStep("invite");
+  };
+
+  const handleErdSkip = () => {
+    setStep("invite");
   };
 
   return (
@@ -122,6 +138,13 @@ export default function OnboardingPage() {
           completed={step !== "theme" && step !== "organization"}
           icon={<Building2 size={20} />}
           label="Organización"
+        />
+        <div className="w-12 h-0.5 bg-beige" />
+        <StepIndicator
+          active={step === "erd"}
+          completed={step === "invite" || step === "config"}
+          icon={<Database size={20} />}
+          label="ERD"
         />
         <div className="w-12 h-0.5 bg-beige" />
         <StepIndicator
@@ -245,22 +268,22 @@ export default function OnboardingPage() {
                 <div className="space-y-4">
                   {orgMode === "create" ? (
                     <>
-                      <Input 
-                        name="orgName" 
-                        label="Nombre de la Organización" 
-                        placeholder="Ej. Escape Room Madrid" 
+                      <Input
+                        name="orgName"
+                        label="Nombre de la Organización"
+                        placeholder="Ej. Escape Room Madrid"
                         value={formData.orgName}
                         onChange={handleInputChange}
                       />
-                      <Input 
-                        name="phone" 
-                        label="Teléfono" 
-                        placeholder="+34 600 000 000" 
+                      <Input
+                        name="phone"
+                        label="Teléfono"
+                        placeholder="+34 600 000 000"
                         value={formData.phone}
                         onChange={handleInputChange}
                       />
-                      <Select 
-                        name="businessType" 
+                      <Select
+                        name="businessType"
                         label="Tipo de Negocio"
                         value={formData.businessType}
                         onChange={handleInputChange}
@@ -271,10 +294,10 @@ export default function OnboardingPage() {
                       </Select>
                     </>
                   ) : (
-                    <Input 
-                      name="orgCode" 
-                      label="Código de Invitación" 
-                      placeholder="ABCD-1234" 
+                    <Input
+                      name="orgCode"
+                      label="Código de Invitación"
+                      placeholder="ABCD-1234"
                       value={formData.orgCode}
                       onChange={handleInputChange}
                     />
@@ -291,6 +314,26 @@ export default function OnboardingPage() {
                 </div>
               </Card>
             )}
+          </div>
+        )}
+
+        {step === "erd" && (
+          <div className="animate-fade-in">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold text-primary mb-4">
+                Migrar desde ERD
+              </h1>
+              <p className="text-[var(--color-foreground)]">
+                ¿Tienes datos en Escape Room Director? Migra tus salas, reservas,
+                empleados y más para no partir de cero.
+              </p>
+            </div>
+            <Card className="max-w-2xl mx-auto">
+              <ERDOnboardingWizard
+                onComplete={handleErdComplete}
+                onSkip={handleErdSkip}
+              />
+            </Card>
           </div>
         )}
 
