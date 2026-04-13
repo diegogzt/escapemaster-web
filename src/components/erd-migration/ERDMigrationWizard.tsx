@@ -42,32 +42,32 @@ const MODULE_CONFIG: Record<
   rooms: {
     icon: DoorOpen,
     label: "Salas",
-    description: "Juegos, precios y horarios",
+    description: "Juegos, precios, horarios, ubicación, matriz de precios por jugador y tarifas de temporada",
   },
   bookings: {
     icon: ClipboardList,
     label: "Reservas",
-    description: "Historial completo de reservas y clientes",
+    description: "Historial completo de reservas con estado de pago correcto y saldo pendiente",
   },
   payments: {
     icon: Database,
     label: "Pagos",
-    description: "Registros de pagos de reservas",
+    description: "Registros de pagos de reservas con método, importe y estado",
   },
   coupons: {
     icon: Tags,
     label: "Cupones",
-    description: "Cupones de descuento y tarjetas regalo",
+    description: "Cupones de descuento con fecha de inicio y validez",
   },
   employees: {
     icon: Users,
     label: "Empleados",
-    description: "Staff y game masters",
+    description: "Staff con roles reales, teléfono y estado activo",
   },
   gdpr: {
     icon: ShieldCheck,
     label: "Firmas RGPD",
-    description: "Registros de consentimiento de clientes",
+    description: "Registros de consentimiento con rgpd1, rgpd2 y marketing",
   },
 };
 

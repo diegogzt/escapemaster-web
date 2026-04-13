@@ -550,7 +550,7 @@ export default function SettingsPage() {
                   <div>
                     <h4 className="font-bold text-[var(--color-foreground)]">ERD (Escape Room Director)</h4>
                     <p className="text-sm text-[var(--color-foreground)] opacity-60">
-                      Importa salas, reservas, cupones, empleados y datos RGPD desde tu cuenta de ERD.
+                      Importa salas (con matriz de precios, tarifas de temporada y ubicación), reservas con pagos, cupones con fecha de inicio, empleados con roles y teléfono, y consentimientos GDPR.
                     </p>
                   </div>
                 </div>
