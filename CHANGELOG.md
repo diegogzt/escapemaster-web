@@ -1,5 +1,12 @@
 # Changelog - EscapeMaster Manager
 
+## [0.4.0] - 2026-04-13
+
+### Added
+- **Settings ERD Migration UI Updated**: MODULE_CONFIG descriptions now list all migratable data types including matriz de precios, tarifas de temporada, ubicación, pagos con método e importe, empleados con roles y teléfono, y consentimientos GDPR con rgpd1/rgpd2.
+
+---
+
 ## [0.3.0] - 2026-04-13
 
 ### Added
