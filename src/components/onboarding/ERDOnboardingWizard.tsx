@@ -164,10 +164,23 @@ export function ERDOnboardingWizard({
     setIsMigrating(true);
 
     try {
-      // Execute migration - returns immediately, migration runs in background
-      await erdOnboarding.execute(erdSessionId, [...selectedModules]);
+      // Execute migration - may return immediately or after completion
+      const execResponse = await erdOnboarding.execute(erdSessionId, [...selectedModules]);
 
-      // Poll status while migration is running
+      // If results returned immediately, use them directly
+      if (execResponse.results && execResponse.results.length > 0) {
+        setResults(execResponse.results);
+        setMigrationDone(true);
+        setIsMigrating(false);
+        if (execResponse.success) {
+          toast.success("Migración completada con éxito");
+        } else {
+          toast.warning("Migración completada con algunos errores");
+        }
+        return;
+      }
+
+      // Otherwise poll for status (migration runs in background)
       const pollInterval = setInterval(async () => {
         try {
           const status = await erdOnboarding.status(erdSessionId);
@@ -199,8 +212,9 @@ export function ERDOnboardingWizard({
         }
       }, 300000);
 
-    } catch {
-      toast.error("Error durante la migración");
+    } catch (err: any) {
+      const message = err.response?.data?.detail || err.message || "Error durante la migración";
+      toast.error(message);
       setMigrationDone(true);
       setIsMigrating(false);
     }
