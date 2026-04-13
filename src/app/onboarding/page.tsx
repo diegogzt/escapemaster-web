@@ -57,12 +57,10 @@ export default function OnboardingPage() {
         }
         const res = await orgs.create({ name: formData.orgName });
         setOrgId(res.id);
-        
+
         // Fetch updated user data to get the organization_id
-        // The API assigns the user to the org automatically
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Small delay for DB consistency
         const userData = await auth.me();
-        
+
         // Verify user now has organization
         if (!userData.organization_id) {
           throw new Error("Failed to assign user to organization");
@@ -75,7 +73,6 @@ export default function OnboardingPage() {
         setOrgId(res.id);
 
         // Fetch updated user data
-        await new Promise((resolve) => setTimeout(resolve, 500));
         await auth.me();
       }
       setStep("erd");

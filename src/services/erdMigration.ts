@@ -9,6 +9,30 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 529) {
+      // Retry up to 2 times with exponential backoff
+      for (let i = 1; i <= 2; i++) {
+        await new Promise((resolve) => setTimeout(resolve, i * 2000));
+        try {
+          const config = { ...error.config };
+          const token = localStorage.getItem("token");
+          if (token) {
+            config.headers = { ...config.headers, Authorization: `Bearer ${token}` };
+          }
+          const response = await api.request(config);
+          return response;
+        } catch {
+          // continue to next retry
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
