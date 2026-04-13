@@ -1,5 +1,12 @@
 # Changelog - EscapeMaster Manager
 
+## [0.6.0] - 2026-04-13
+
+### Fixed
+- **Handle immediate execute response**: If `execute()` returns results immediately (fast migration), use them directly without polling.
+
+---
+
 ## [0.5.0] - 2026-04-13
 
 ### Added
