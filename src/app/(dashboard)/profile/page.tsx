@@ -18,6 +18,8 @@ import {
   Sun,
   Eye,
   EyeOff,
+  Shield,
+  Crown,
 } from "lucide-react";
 
 const THEMES = [
@@ -139,6 +141,21 @@ export default function ProfilePage() {
                     icon={<Mail size={18} />}
                     disabled
                   />
+                  {user?.role_name && (
+                    <div className="flex items-center gap-2 p-3 bg-primary/5 border border-primary/10 rounded-xl">
+                      <div className="p-2 bg-primary/10 text-primary rounded-lg">
+                        {user.role_name.toLowerCase().includes("admin") || user.role_name.toLowerCase().includes("owner") || user.role_name.toLowerCase().includes("propietario") ? (
+                          <Crown size={18} />
+                        ) : (
+                          <Shield size={18} />
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-[var(--color-foreground)]">Rol en la Organización</p>
+                        <p className="text-lg font-bold text-primary">{user.role_name}</p>
+                      </div>
+                    </div>
+                  )}
                   <div className="md:col-span-2 p-4 bg-primary/5 border border-primary/10 rounded-2xl flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-primary/10 text-primary rounded-xl">

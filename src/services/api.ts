@@ -441,6 +441,14 @@ export const rooms = {
     const response = await api.delete(`/rooms/${id}`);
     return response.data;
   },
+  getDeletionImpact: async (id: string) => {
+    const response = await api.get(`/rooms/${id}/deletion-impact`);
+    return response.data;
+  },
+  deactivate: async (id: string) => {
+    const response = await api.post(`/rooms/${id}/deactivate`);
+    return response.data;
+  },
   getAvailability: async (id: string, checkDate: string, numPeople: number) => {
     const response = await api.get(`/rooms/${id}/availability`, {
       params: { check_date: checkDate, num_people: numPeople },

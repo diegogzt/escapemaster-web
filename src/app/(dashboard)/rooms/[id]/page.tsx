@@ -96,6 +96,16 @@ export default function RoomConfigPage() {
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [savingNotifications, setSavingNotifications] = useState(false);
 
+  // Delete Dialog State
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [deletionImpact, setDeletionImpact] = useState<any>(null);
+  const [loadingImpact, setLoadingImpact] = useState(false);
+  const [confirmRoomName, setConfirmRoomName] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  // Deactivate State
+  const [deactivating, setDeactivating] = useState(false);
+
   useEffect(() => {
     rooms
       .list()
@@ -165,6 +175,52 @@ export default function RoomConfigPage() {
     setCustomFields(customFields.filter((f) => f.id !== id));
   };
 
+  const handleDeactivate = async () => {
+    setDeactivating(true);
+    try {
+      await rooms.deactivate(roomId);
+      toast.success("Sala desactivada correctamente");
+      router.push("/rooms");
+    } catch (err: any) {
+      toast.error(err.response?.data?.detail || "Error al desactivar la sala");
+    } finally {
+      setDeactivating(false);
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    setShowDeleteDialog(true);
+    setLoadingImpact(true);
+    setDeletionImpact(null);
+    setConfirmRoomName("");
+    try {
+      const impact = await rooms.getDeletionImpact(roomId);
+      setDeletionImpact(impact);
+    } catch (err: any) {
+      toast.error("Error al cargar el impacto de eliminación");
+      setShowDeleteDialog(false);
+    } finally {
+      setLoadingImpact(false);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (confirmRoomName !== roomData.name) {
+      toast.error("El nombre de la sala no coincide");
+      return;
+    }
+    setDeleting(true);
+    try {
+      await rooms.delete(roomId);
+      toast.success("Sala eliminada correctamente");
+      router.push("/rooms");
+    } catch (err: any) {
+      toast.error(err.response?.data?.detail || "Error al eliminar la sala");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -232,10 +288,18 @@ export default function RoomConfigPage() {
             Ajusta los detalles de {roomData.name}
           </p>
         </div>
-        <Button variant="ghost" className="text-red-500 hover:bg-red-50">
-          <Trash2 size={18} className="mr-2" />
-          Eliminar Sala
-        </Button>
+        <div className="flex gap-2">
+          {roomData.is_active && (
+            <Button variant="secondary" onClick={handleDeactivate} loading={deactivating}>
+              <Ban size={18} className="mr-2" />
+              Desactivar Sala
+            </Button>
+          )}
+          <Button variant="ghost" className="text-red-500 hover:bg-red-50" onClick={handleDeleteClick}>
+            <Trash2 size={18} className="mr-2" />
+            Eliminar Sala
+          </Button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -1106,6 +1170,77 @@ export default function RoomConfigPage() {
               </div>
             </div>
           </Card>
+        </div>
+      )}
+
+      {/* Delete Confirmation Dialog */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[var(--color-background)] rounded-xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <Trash2 size={20} className="text-red-600" />
+              </div>
+              <h2 className="text-xl font-bold text-primary">Eliminar Sala</h2>
+            </div>
+
+            {loadingImpact ? (
+              <div className="text-center py-8">
+                <div className="animate-spin w-8 h-8 border-2 border-primary border-t-transparent rounded-full mx-auto mb-3"></div>
+                <p className="text-[var(--color-muted-foreground)]">Cargando información...</p>
+              </div>
+            ) : deletionImpact ? (
+              <>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+                  <h3 className="font-semibold text-amber-800 mb-2">Impacto de la eliminación</h3>
+                  <ul className="text-sm text-amber-700 space-y-1">
+                    <li>• {deletionImpact.future_bookings_count || 0} reservas futuras</li>
+                    <li>• {deletionImpact.related_extras_count || 0} extras relacionados</li>
+                    <li>• {deletionImpact.room_schedules_count || 0} horarios configurados</li>
+                  </ul>
+                  {deletionImpact.warning && (
+                    <p className="text-amber-800 font-medium mt-3 text-sm">
+                      ⚠️ {deletionImpact.warning}
+                    </p>
+                  )}
+                </div>
+
+                <p className="text-[var(--color-foreground)] mb-4">
+                  Esta acción no se puede deshacer. Para confirmar, escribe el nombre de la sala: <strong>{roomData.name}</strong>
+                </p>
+
+                <input
+                  type="text"
+                  value={confirmRoomName}
+                  onChange={(e) => setConfirmRoomName(e.target.value)}
+                  placeholder={roomData.name}
+                  className="w-full px-4 py-2 border border-beige rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                />
+
+                <div className="flex gap-3">
+                  <Button
+                    variant="secondary"
+                    onClick={() => setShowDeleteDialog(false)}
+                    className="flex-1"
+                    disabled={deleting}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={handleConfirmDelete}
+                    loading={deleting}
+                    disabled={confirmRoomName !== roomData.name}
+                    className="flex-1"
+                  >
+                    Eliminar Sala
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <p className="text-red-500">Error al cargar la información de impacto.</p>
+            )}
+          </div>
         </div>
       )}
     </div>
