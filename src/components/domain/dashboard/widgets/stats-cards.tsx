@@ -41,7 +41,10 @@ export function StatsCards({
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 h-full">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full">
+          <div
+            key={i}
+            className="bg-[var(--color-background)] p-4 rounded-xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full"
+          >
             <div className="h-4 bg-[var(--color-background-soft)] rounded w-1/2 mb-4"></div>
             <div className="h-8 bg-[var(--color-background-soft)] rounded w-3/4"></div>
           </div>
@@ -85,8 +88,14 @@ export function StatsCards({
     },
   ];
 
-  const canViewRevenue = user?.role?.name === 'admin' || user?.role?.name === 'manager' || user?.permissions?.includes('view_reports');
-  const stats = allStats.filter((s) => visibleStats.includes(s.id) && (s.id !== 'revenue' || canViewRevenue));
+  const canViewRevenue =
+    user?.role?.name === "admin" ||
+    user?.role?.name === "manager" ||
+    user?.permissions?.includes("view_reports");
+  const stats = allStats.filter(
+    (s) =>
+      visibleStats.includes(s.id) && (s.id !== "revenue" || canViewRevenue),
+  );
 
   // Dynamic grid columns based on config
   const gridCols =
@@ -111,7 +120,9 @@ export function StatsCards({
             <stat.icon className={`h-4 w-4 ${stat.color} flex-shrink-0`} />
           </div>
           <div className="min-h-0">
-            <div className="text-xl font-bold text-[var(--color-foreground)]">{stat.value}</div>
+            <div className="text-xl font-bold text-[var(--color-foreground)]">
+              {stat.value}
+            </div>
             {showTrends && (
               <p className="text-xs text-[var(--color-muted-foreground)] mt-1 truncate">
                 {stat.change}

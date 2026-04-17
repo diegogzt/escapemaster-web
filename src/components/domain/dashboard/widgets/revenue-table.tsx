@@ -113,7 +113,7 @@ export function RevenueTableWidget() {
             <Download className="h-4 w-4" />
           </button>
           <button className="p-2 border border-[var(--color-beige)] rounded-lg hover:bg-primary/10 hover:text-primary text-secondary" aria-label="Filtrar">
-            <Download className="h-4 w-4" />
+            <Filter className="h-4 w-4" />
           </button>
         </div>
       </div>

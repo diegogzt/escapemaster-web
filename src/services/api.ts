@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.escapemaster.es";
+  process.env.NEXT_PUBLIC_API_URL || "https://my.escapemaster.es/api/v1";
 
 console.log(`%c[API] Base URL: ${API_URL}`, "color: #00bcd4; font-weight: bold");
 
@@ -1111,5 +1111,121 @@ export const achievements = {
     return response.data;
   },
 };
+
+// === INTEGRATION CALENDARS ===
+export const integrationCalendars = {
+  // CRUD
+  list: async (params?: { is_active?: boolean; search?: string }) => {
+    const response = await api.get("/integration-calendars", { params });
+    return response.data;
+  },
+  get: async (id: string) => {
+    const response = await api.get(`/integration-calendars/${id}`);
+    return response.data;
+  },
+  create: async (data: CreateIntegrationCalendarData) => {
+    const response = await api.post("/integration-calendars", data);
+    return response.data;
+  },
+  update: async (id: string, data: UpdateIntegrationCalendarData) => {
+    const response = await api.put(`/integration-calendars/${id}`, data);
+    return response.data;
+  },
+  delete: async (id: string) => {
+    const response = await api.delete(`/integration-calendars/${id}`);
+    return response.data;
+  },
+
+  // Custom Fields
+  getFields: async (calendarId: string) => {
+    const response = await api.get(`/integration-calendars/${calendarId}/fields`);
+    return response.data;
+  },
+  createField: async (calendarId: string, data: CreateCustomFieldData) => {
+    const response = await api.post(`/integration-calendars/${calendarId}/fields`, data);
+    return response.data;
+  },
+  updateField: async (calendarId: string, fieldId: string, data: UpdateCustomFieldData) => {
+    const response = await api.put(`/integration-calendars/${calendarId}/fields/${fieldId}`, data);
+    return response.data;
+  },
+  deleteField: async (calendarId: string, fieldId: string) => {
+    const response = await api.delete(`/integration-calendars/${calendarId}/fields/${fieldId}`);
+    return response.data;
+  },
+
+  // Blocked Dates
+  getBlockedDates: async (calendarId: string) => {
+    const response = await api.get(`/integration-calendars/${calendarId}/blocked-dates`);
+    return response.data;
+  },
+  createBlockedDate: async (calendarId: string, data: { blocked_date: string; reason?: string }) => {
+    const response = await api.post(`/integration-calendars/${calendarId}/blocked-dates`, data);
+    return response.data;
+  },
+  deleteBlockedDate: async (calendarId: string, dateId: string) => {
+    const response = await api.delete(`/integration-calendars/${calendarId}/blocked-dates/${dateId}`);
+    return response.data;
+  },
+
+  // API Key
+  regenerateApiKey: async (calendarId: string) => {
+    const response = await api.post(`/integration-calendars/${calendarId}/api-key`);
+    return response.data;
+  },
+  revokeApiKey: async (calendarId: string) => {
+    const response = await api.delete(`/integration-calendars/${calendarId}/api-key`);
+    return response.data;
+  },
+
+  // Embed Code
+  getEmbedCode: async (calendarId: string) => {
+    const response = await api.get(`/integration-calendars/${calendarId}/embed-code`);
+    return response.data;
+  },
+};
+
+// Types
+export interface CreateIntegrationCalendarData {
+  name: string;
+  slug: string;
+  description?: string;
+  flow_type?: 'room_first' | 'date_first';
+  room_ids?: string[];
+  timezone?: string;
+  slot_duration_minutes?: number;
+  slot_interval_minutes?: number;
+  advance_booking_hours?: number;
+  max_advance_days?: number;
+  primary_color?: string;
+  background_color?: string;
+  font_family?: string;
+  border_radius?: number;
+  show_available_only?: boolean;
+  allow_cancellation?: boolean;
+  require_deposit?: boolean;
+  min_deposit_amount?: number;
+  read_only?: boolean;
+  is_active?: boolean;
+  is_public?: boolean;
+}
+
+export interface UpdateIntegrationCalendarData extends Partial<CreateIntegrationCalendarData> {}
+
+export interface CreateCustomFieldData {
+  field_key: string;
+  field_type?: 'text' | 'textarea' | 'select' | 'checkbox' | 'email' | 'phone' | 'number';
+  field_label: string;
+  field_placeholder?: string;
+  is_required?: boolean;
+  show_in_confirmation?: boolean;
+  sort_order?: number;
+  options?: Array<{ value: string; label: string }>;
+  validation_pattern?: string;
+  min_length?: number;
+  max_length?: number;
+}
+
+export interface UpdateCustomFieldData extends Partial<Omit<CreateCustomFieldData, 'field_key'>> {}
 
 export default api;

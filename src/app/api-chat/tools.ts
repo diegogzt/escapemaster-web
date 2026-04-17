@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.escapemaster.es";
+  process.env.NEXT_PUBLIC_API_URL || "https://my.escapemaster.es/api/v1";
 
 // Helper function to make authenticated requests to the Rust backend
 async function fetchBackend(

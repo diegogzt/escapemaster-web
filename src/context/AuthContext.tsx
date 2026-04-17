@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 
@@ -32,25 +38,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push("/login");
   }, [router]);
 
-  const login = useCallback((token: string) => {
-    localStorage.setItem("token", token);
-    Cookies.set("token", token, { expires: 7 }); // 7 days
-    setIsAuthenticated(true);
-    
-    // Fetch user data immediately after login
-    auth.me().then((userData) => {
-      setUser(userData);
-      if (!userData.organization_id) {
-        router.push("/onboarding");
-      } else {
-        router.push("/dashboard");
-      }
-    }).catch((error) => {
-      console.error("Login failed during user fetch:", error);
-      // If we can't get user data, we might want to logout or show error
-      // For now, we'll just log it, but ideally we should handle it.
-    });
-  }, [router]);
+  const login = useCallback(
+    (token: string) => {
+      localStorage.setItem("token", token);
+      Cookies.set("token", token, { expires: 7 }); // 7 days
+      setIsAuthenticated(true);
+
+      // Fetch user data immediately after login
+      auth
+        .me()
+        .then((userData) => {
+          setUser(userData);
+          if (!userData.organization_id) {
+            router.push("/onboarding");
+          } else {
+            router.push("/dashboard");
+          }
+        })
+        .catch((error) => {
+          console.error("Login failed during user fetch:", error);
+          // If we can't get user data, we might want to logout or show error
+          // For now, we'll just log it, but ideally we should handle it.
+        });
+    },
+    [router],
+  );
 
   const updateUser = useCallback(async (data: any) => {
     setUser((prev: any) => ({ ...prev, ...data }));
@@ -130,8 +142,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           !publicRoutes.includes(pathname) &&
           !pathname.startsWith("/reset-password")
         ) {
-           // Fallback redirect if middleware misses it
-           router.push("/login");
+          // Fallback redirect if middleware misses it
+          router.push("/login");
         }
       }
 

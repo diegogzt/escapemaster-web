@@ -1227,7 +1227,7 @@ export default function RoomConfigPage() {
                     Cancelar
                   </Button>
                   <Button
-                    variant="destructive"
+                    variant="danger"
                     onClick={handleConfirmDelete}
                     loading={deleting}
                     disabled={confirmRoomName !== roomData.name}

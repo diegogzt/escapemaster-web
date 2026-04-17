@@ -10,7 +10,13 @@ import { GameMasterView } from "@/components/views/GameMasterView";
 import { usePathname } from "next/navigation";
 
 // Views that we want to keep alive
-const PERSISTENT_PATHS = ["/dashboard", "/calendar", "/bookings", "/time-tracking", "/gamemaster"];
+const PERSISTENT_PATHS = [
+  "/dashboard",
+  "/calendar",
+  "/bookings",
+  "/time-tracking",
+  "/gamemaster",
+];
 
 export function ViewRenderer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -21,7 +27,9 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
 
   React.useEffect(() => {
     if (PERSISTENT_PATHS.includes(pathname)) {
-      setVisited(prev => prev[pathname] ? prev : { ...prev, [pathname]: true });
+      setVisited((prev) =>
+        prev[pathname] ? prev : { ...prev, [pathname]: true },
+      );
     }
   }, [pathname]);
 
@@ -33,7 +41,18 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
       {/* Persistent Views Shell - Lazy loaded and then kept alive */}
       <div className={isPersistent ? "block" : "hidden"}>
         {visited["/dashboard"] && (
-          <div style={pathname === "/dashboard" ? undefined : { position: "absolute", left: "-9999px", width: "100%", visibility: "hidden" }}>
+          <div
+            style={
+              pathname === "/dashboard"
+                ? undefined
+                : {
+                    position: "absolute",
+                    left: "-9999px",
+                    width: "100%",
+                    visibility: "hidden",
+                  }
+            }
+          >
             <DashboardView />
           </div>
         )}
@@ -60,11 +79,7 @@ export function ViewRenderer({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Non-persistent content (Actual page children for subpages like /reports) */}
-      {!isPersistent && (
-        <div className="block">
-          {children}
-        </div>
-      )}
+      {!isPersistent && <div className="block">{children}</div>}
     </div>
   );
 }

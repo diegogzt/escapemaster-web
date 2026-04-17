@@ -36,17 +36,18 @@ export default function CreateUserPage() {
       try {
         setLoadingRoles(true);
         setError("");
-        
+
         // Fetch roles and user info (for invitation code) in parallel
         const [rolesData, meData] = await Promise.all([
           roles.list(),
-          auth.me()
+          auth.me(),
         ]);
 
         // Handle both object {roles: []} and array [] responses
-        const list = rolesData.roles || (Array.isArray(rolesData) ? rolesData : []);
+        const list =
+          rolesData.roles || (Array.isArray(rolesData) ? rolesData : []);
         setRolesList(list);
-        
+
         // Get invitation code from current user's organization
         if (meData?.invitation_code) {
           setInvitationCode(meData.invitation_code);
@@ -100,7 +101,7 @@ export default function CreateUserPage() {
           setError(errorMessages);
         } else {
           setError(
-            typeof detail === "string" ? detail : "Error al crear el usuario"
+            typeof detail === "string" ? detail : "Error al crear el usuario",
           );
         }
       } else {
@@ -120,7 +121,8 @@ export default function CreateUserPage() {
             Crear Nuevo Usuario
           </h1>
           <p className="text-[var(--color-foreground)]/60 text-lg">
-            Invita a un nuevo miembro a tu equipo mediante su correo electrónico.
+            Invita a un nuevo miembro a tu equipo mediante su correo
+            electrónico.
           </p>
         </div>
         <Button
@@ -334,13 +336,17 @@ export default function CreateUserPage() {
                   </h4>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-xs font-bold text-[var(--color-foreground)]">Admin</p>
+                      <p className="text-xs font-bold text-[var(--color-foreground)]">
+                        Admin
+                      </p>
                       <p className="text-[11px] text-[var(--color-foreground)]/60">
                         Acceso total a configuración, finanzas y usuarios.
                       </p>
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-[var(--color-foreground)]">Manager</p>
+                      <p className="text-xs font-bold text-[var(--color-foreground)]">
+                        Manager
+                      </p>
                       <p className="text-[11px] text-[var(--color-foreground)]/60">
                         Gestión de salas, reservas y reportes básicos.
                       </p>
@@ -373,7 +379,7 @@ export default function CreateUserPage() {
           </div>
         </div>
       </form>
-      
+
       {/* Success Modal with Invitation Code */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -386,15 +392,17 @@ export default function CreateUserPage() {
                 ¡Usuario Creado!
               </h2>
               <p className="text-[var(--color-foreground)]/60 mt-2">
-                Se ha invitado a <strong>{createdUserEmail}</strong> a tu organización.
+                Se ha invitado a <strong>{createdUserEmail}</strong> a tu
+                organización.
               </p>
             </div>
 
             <div className="bg-beige/20 rounded-2xl p-6 space-y-4">
               <p className="text-sm text-[var(--color-foreground)]/80">
-                El nuevo usuario debe usar este código de invitación para completar su registro:
+                El nuevo usuario debe usar este código de invitación para
+                completar su registro:
               </p>
-              
+
               <div className="flex items-center gap-3">
                 <div className="flex-1 bg-[var(--color-background)] border-2 border-primary/30 rounded-xl px-4 py-3 font-mono text-2xl text-center font-bold tracking-widest text-primary">
                   {invitationCode || "------"}
@@ -414,9 +422,13 @@ export default function CreateUserPage() {
               <div className="text-xs text-[var(--color-foreground)]/60 space-y-1">
                 <p className="flex items-center gap-2">
                   <ExternalLink className="w-3 h-3" />
-                  Enlace de registro: <strong>manager.escapemaster.es/login</strong>
+                  Enlace de registro:{" "}
+                  <strong>manager.escapemaster.es/login</strong>
                 </p>
-                <p>El usuario debe seleccionar "Acceder con código" e ingresar el código de arriba.</p>
+                <p>
+                  El usuario debe seleccionar "Acceder con código" e ingresar el
+                  código de arriba.
+                </p>
               </div>
             </div>
 
@@ -433,10 +445,7 @@ export default function CreateUserPage() {
                 <Copy className="w-4 h-4 mr-2" />
                 Copiar Enlace
               </Button>
-              <Button
-                className="flex-1"
-                onClick={() => router.push("/users")}
-              >
+              <Button className="flex-1" onClick={() => router.push("/users")}>
                 Ir a Usuarios
               </Button>
             </div>
@@ -446,4 +455,3 @@ export default function CreateUserPage() {
     </div>
   );
 }
-

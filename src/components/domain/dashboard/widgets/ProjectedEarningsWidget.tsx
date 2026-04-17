@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
 import { TrendingUp, DollarSign, Clock } from "lucide-react";
 import { widgets } from "@/services/api";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+} from "recharts";
 
 import { WidgetConfigOptions } from "../types";
 
-export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { className?: string }) {
+export function ProjectedEarningsWidget({
+  className,
+}: WidgetConfigOptions & { className?: string }) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +35,9 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
 
   if (loading) {
     return (
-      <div className={`bg-[var(--color-background)] p-6 rounded-2xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full ${className}`}>
+      <div
+        className={`bg-[var(--color-background)] p-6 rounded-2xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full ${className}`}
+      >
         <div className="h-6 bg-[var(--color-background-soft)] rounded w-1/2 mb-6"></div>
         <div className="h-32 bg-[var(--color-background-soft)] rounded w-full"></div>
       </div>
@@ -43,11 +55,17 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
   const progress = total > 0 ? (data.gross_revenue / total) * 100 : 0;
 
   return (
-    <div className={`bg-[var(--color-background)] p-6 rounded-2xl border border-[var(--color-beige)] shadow-sm flex flex-col h-full ${className}`}>
+    <div
+      className={`bg-[var(--color-background)] p-6 rounded-2xl border border-[var(--color-beige)] shadow-sm flex flex-col h-full ${className}`}
+    >
       <div className="flex justify-between items-start mb-6">
         <div>
-          <h3 className="text-lg font-bold text-[var(--color-foreground)]">Proyección Mensual</h3>
-          <p className="text-sm text-[var(--color-muted-foreground)]">Ganancias estimadas vs reales</p>
+          <h3 className="text-lg font-bold text-[var(--color-foreground)]">
+            Proyección Mensual
+          </h3>
+          <p className="text-sm text-[var(--color-muted-foreground)]">
+            Ganancias estimadas vs reales
+          </p>
         </div>
         <div className="p-2 bg-primary/10 rounded-xl text-primary">
           <TrendingUp size={20} />
@@ -66,7 +84,7 @@ export function ProjectedEarningsWidget({ className }: WidgetConfigOptions & { c
 
         {/* Progress Bar */}
         <div className="w-full bg-[var(--color-light)] h-3 rounded-full overflow-hidden mb-4">
-          <div 
+          <div
             className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
             style={{ width: `${progress}%` }}
           ></div>

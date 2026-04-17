@@ -93,7 +93,7 @@ export default function BookingForm({
         const data = await rooms.list();
         const roomsList = data?.rooms || (Array.isArray(data) ? data : []);
         setRoomOptions(
-          roomsList.map((r: any) => ({ value: r.id, label: r.name }))
+          roomsList.map((r: any) => ({ value: r.id, label: r.name })),
         );
         if (!isEdit && roomsList.length > 0) {
           setFormData((prev) => ({ ...prev, room_id: roomsList[0].id }));
@@ -145,7 +145,7 @@ export default function BookingForm({
     try {
       // Combine date and time
       const startDateTime = new Date(
-        `${formData.start_date}T${formData.start_time}`
+        `${formData.start_date}T${formData.start_time}`,
       );
       // Default duration 1.5h
       const endDateTime = new Date(startDateTime.getTime() + 90 * 60000);
@@ -694,7 +694,9 @@ export default function BookingForm({
                   <span className="text-sm font-medium text-[var(--color-foreground)]">
                     Importe pagado
                   </span>
-                  <span className="font-bold text-[var(--color-foreground)]">{totalPaid} €</span>
+                  <span className="font-bold text-[var(--color-foreground)]">
+                    {totalPaid} €
+                  </span>
                 </div>
                 <div className="flex justify-between items-center bg-[var(--color-light)] p-2 rounded">
                   <span className="text-sm font-medium text-[var(--color-foreground)]">

@@ -38,7 +38,7 @@ export function QuarterlyStatsWidget({
   const getQuarterLabel = () => {
     if (dateRange === "year") return "Año Actual";
     if (dateRange === "month") return "Mes Actual";
-    
+
     const now = new Date();
     const quarter = Math.floor(now.getMonth() / 3) + 1;
     return `Q${quarter}`;
@@ -49,7 +49,12 @@ export function QuarterlyStatsWidget({
       <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden animate-pulse">
         <div className="h-6 bg-[var(--color-background-soft)] rounded w-1/3 mb-4"></div>
         <div className="flex-1 grid grid-cols-2 gap-3">
-          {[1,2,3,4].map(i => <div key={i} className="bg-[var(--color-light)] rounded-lg h-full"></div>)}
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="bg-[var(--color-light)] rounded-lg h-full"
+            ></div>
+          ))}
         </div>
       </div>
     );
@@ -72,10 +77,12 @@ export function QuarterlyStatsWidget({
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <div className="flex items-center gap-2">
           <CalendarRange className="h-5 w-5 text-primary" />
-          <h3 className="font-semibold text-[var(--color-foreground)] text-sm">Resumen {getQuarterLabel()}</h3>
+          <h3 className="font-semibold text-[var(--color-foreground)] text-sm">
+            Resumen {getQuarterLabel()}
+          </h3>
         </div>
         <span className="text-xs font-medium bg-primary/10 text-primary px-2 py-1 rounded-full">
-           Vs. periodo anterior
+          Vs. periodo anterior
         </span>
       </div>
 
@@ -85,7 +92,9 @@ export function QuarterlyStatsWidget({
             <DollarSign className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Ingresos</span>
           </div>
-          <p className="text-xl font-bold text-[var(--color-foreground)]">{formatCurrency(revenue)}</p>
+          <p className="text-xl font-bold text-[var(--color-foreground)]">
+            {formatCurrency(revenue)}
+          </p>
         </div>
 
         <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
@@ -93,7 +102,9 @@ export function QuarterlyStatsWidget({
             <Users className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Jugadores</span>
           </div>
-          <p className="text-xl font-bold text-[var(--color-foreground)]">{(totalPlayers || 0).toLocaleString()}</p>
+          <p className="text-xl font-bold text-[var(--color-foreground)]">
+            {(totalPlayers || 0).toLocaleString()}
+          </p>
         </div>
 
         <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
@@ -101,7 +112,9 @@ export function QuarterlyStatsWidget({
             <TrendingUp className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Ticket Medio</span>
           </div>
-          <p className="text-xl font-bold text-[var(--color-foreground)]">{ticketMedio.toFixed(0)} €</p>
+          <p className="text-xl font-bold text-[var(--color-foreground)]">
+            {ticketMedio.toFixed(0)} €
+          </p>
         </div>
 
         <div className="p-3 bg-[var(--color-light)] rounded-lg flex flex-col justify-center">
@@ -109,7 +122,9 @@ export function QuarterlyStatsWidget({
             <CalendarRange className="h-4 w-4 flex-shrink-0" />
             <span className="text-xs font-medium truncate">Ocupación</span>
           </div>
-          <p className="text-xl font-bold text-[var(--color-foreground)]">{occupancy}%</p>
+          <p className="text-xl font-bold text-[var(--color-foreground)]">
+            {occupancy}%
+          </p>
         </div>
       </div>
     </div>

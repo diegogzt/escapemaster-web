@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle } from "@/components/Card";
 import Button from "@/components/Button";
 import { apiKeys } from "@/services/api";
 import { toast } from "sonner";
-import { Key, Copy, Trash2, Plus, Eye, EyeOff, Code, ExternalLink } from "lucide-react";
+import { Key, Copy, Trash2, Plus, Eye, EyeOff, Code, ExternalLink, Calendar } from "lucide-react";
 import Link from "next/link";
 
 export default function IntegrationsPage() {
@@ -143,6 +143,28 @@ export default function IntegrationsPage() {
                 </div>
               </>
             )}
+          </div>
+        </Card>
+
+        {/* Calendars de Reserva */}
+        <Card className="border-beige">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar size={20} className="text-primary" />
+              Calendarios de Reserva
+            </CardTitle>
+          </CardHeader>
+          <div className="p-6">
+            <p className="text-sm text-[var(--color-muted-foreground)] mb-4">
+              Crea calendarios de reserva personalizados para insertar en las webs de tus clientes.
+              Configura qué salas mostrar, campos personalizados y estilos.
+            </p>
+            <Link href="/settings/integrations/calendars">
+              <Button>
+                <Calendar size={16} className="mr-2" />
+                Gestionar Calendarios
+              </Button>
+            </Link>
           </div>
         </Card>
 

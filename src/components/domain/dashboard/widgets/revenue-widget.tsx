@@ -9,12 +9,16 @@ interface RevenueWidgetProps extends WidgetConfigOptions {
   targetMonthly?: number;
 }
 
-export function RevenueWidget({ 
-  title = "Ingresos", 
+export function RevenueWidget({
+  title = "Ingresos",
   defaultPeriod = "month",
-  targetMonthly = 10000 
+  targetMonthly = 10000,
 }: RevenueWidgetProps) {
-  const [data, setData] = useState<{ total: number; change: string; progress: number } | null>(null);
+  const [data, setData] = useState<{
+    total: number;
+    change: string;
+    progress: number;
+  } | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +32,7 @@ export function RevenueWidget({
           setData({
             total,
             change: "+12.5%", // TODO: Calulate real change
-            progress
+            progress,
           });
         }
       } catch (error) {
@@ -57,7 +61,9 @@ export function RevenueWidget({
           <div className="p-2 bg-primary/10 rounded-lg">
             <DollarSign className="h-5 w-5 text-primary" />
           </div>
-          <h3 className="font-semibold text-[var(--color-foreground)]">{title}</h3>
+          <h3 className="font-semibold text-[var(--color-foreground)]">
+            {title}
+          </h3>
         </div>
         <span className="text-xs font-medium px-2 py-1 bg-green-100 text-green-700 rounded-full flex items-center gap-1">
           <TrendingUp size={12} />
@@ -67,17 +73,35 @@ export function RevenueWidget({
 
       <div className="space-y-1">
         <p className="text-sm text-[var(--color-muted-foreground)]">
-          Total este {defaultPeriod === "month" ? "mes" : defaultPeriod === "year" ? "año" : "semana"}
+          Total este{" "}
+          {defaultPeriod === "month"
+            ? "mes"
+            : defaultPeriod === "year"
+              ? "año"
+              : "semana"}
         </p>
         <h2 className="text-3xl font-bold text-[var(--color-foreground)]">
-          €{(currentData.total || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          €
+          {(currentData.total || 0).toLocaleString(undefined, {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })}
         </h2>
       </div>
 
       <div className="mt-4 pt-4 border-t border-[var(--color-beige)]">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-[var(--color-muted-foreground)]">Meta {defaultPeriod === "month" ? "mensual" : defaultPeriod === "year" ? "anual" : "semanal"}</span>
-          <span className="font-medium text-[var(--color-foreground)]">€{(targetMonthly || 0).toLocaleString()}</span>
+          <span className="text-[var(--color-muted-foreground)]">
+            Meta{" "}
+            {defaultPeriod === "month"
+              ? "mensual"
+              : defaultPeriod === "year"
+                ? "anual"
+                : "semanal"}
+          </span>
+          <span className="font-medium text-[var(--color-foreground)]">
+            €{(targetMonthly || 0).toLocaleString()}
+          </span>
         </div>
         <div className="mt-2 h-2 w-full bg-[var(--color-light)] rounded-full overflow-hidden">
           <div
