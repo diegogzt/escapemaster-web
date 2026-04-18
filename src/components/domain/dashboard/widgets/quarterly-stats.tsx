@@ -72,6 +72,14 @@ export function QuarterlyStatsWidget({
     return `${val.toFixed(0)} €`;
   };
 
+  // Tooltip explanations for KPIs
+  const kpiDefinitions = {
+    ingresos: "Total facturado en el periodo (reservas confirmadas + completadas)",
+    jugadores: "Jugadores únicos que han reservado en el periodo",
+    ticketMedio: "Ingresos ÷ número de reservas (precio medio por reserva)",
+    ocupacion: "Reservas ÷ slots disponibles (8 sesiones/día por sala activa)"
+  };
+
   return (
     <div className="bg-[var(--color-background)] p-4 rounded-xl shadow-sm border border-[var(--color-beige)] h-full flex flex-col overflow-hidden">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">

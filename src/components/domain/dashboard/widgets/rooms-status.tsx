@@ -39,16 +39,19 @@ export function RoomsStatusWidget({}: RoomsStatusProps) {
           <div className="text-center text-[var(--color-muted-foreground)] py-8 text-sm">No hay salas activas configuradas.</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {items.map(r => (
+            {items.map(r => {
+              const price = r.price_per_person;
+              return (
               <div key={r.id} className="p-3 bg-[var(--color-light)] border border-beige rounded-xl relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-8 h-8 opacity-20 group-hover:scale-150 transition-transform origin-top-right rounded-bl-full" style={{ backgroundColor: r.color || '#3B82F6' }}></div>
                 <p className="font-bold text-sm truncate z-10 relative">{r.name}</p>
                 <div className="flex items-center justify-between mt-2 z-10 relative text-xs">
                    <span className="flex items-center gap-1 text-[var(--color-muted-foreground)]"><Users size={12}/> {r.capacity_min}-{r.capacity}</span>
-                   <span className="font-bold">{r.price_per_person}€/pax</span>
+                   <span className="font-bold">{price && price > 0 ? `${price}€/pax` : "Sin precio"}</span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -13,7 +13,7 @@ export function QuickLinksWidget({}: QuickLinksProps) {
     { title: "Clientes", icon: Users, path: "/users", color: "text-amber-600", bg: "bg-amber-50" },
     { title: "Reportes", icon: Activity, path: "/reports", color: "text-emerald-600", bg: "bg-emerald-50" },
     { title: "Salas", icon: Settings, path: "/rooms", color: "text-orange-600", bg: "bg-orange-50" },
-    { title: "Dashboard", icon: Cog, path: "/settings", color: "text-gray-600", bg: "bg-gray-50" },
+    { title: "Configuración", icon: Settings, path: "/settings", color: "text-gray-600", bg: "bg-gray-50" },
   ];
 
   return (

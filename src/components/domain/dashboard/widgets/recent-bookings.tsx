@@ -26,6 +26,17 @@ export function RecentBookingsWidget({ limit = 5 }: RecentBookingsProps) {
     fetchData();
   }, [limit]);
 
+  const getStatusLabel = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "confirmed": return "Confirmada";
+      case "pending": return "Pendiente";
+      case "cancelled": return "Cancelada";
+      case "completed": return "Completada";
+      case "blocked": return "Bloqueada";
+      default: return status || "Desconocido";
+    }
+  };
+
   return (
     <div className="bg-[var(--color-background)] rounded-xl border border-[var(--color-beige)] shadow-sm h-full flex flex-col overflow-hidden">
       <div className="p-4 border-b border-[var(--color-beige)] flex-shrink-0">
@@ -47,11 +58,11 @@ export function RecentBookingsWidget({ limit = 5 }: RecentBookingsProps) {
               <div key={b.id} className="flex justify-between items-center p-2 hover:bg-primary/5 rounded-lg transition-colors">
                 <div>
                    <p className="text-sm font-medium text-[var(--color-foreground)]">{b.room_name || (b.room ? b.room.name : 'Sin sala')}</p>
-                   <p className="text-xs text-[var(--color-muted-foreground)]">{b.guest?.full_name}</p>
+                   <p className="text-xs text-[var(--color-muted-foreground)]">{b.guest?.full_name || 'Cliente no especificado'}</p>
                 </div>
                 <div className="text-right">
-                   <p className="text-sm font-bold">{new Date(b.created_at || b.start_time).toLocaleDateString()}</p>
-                   <span className="text-[10px] uppercase font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">{b.booking_status}</span>
+                   <p className="text-sm font-bold">{new Date(b.created_at || b.start_time).toLocaleDateString('es-ES')}</p>
+                   <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full capitalize">{getStatusLabel(b.booking_status)}</span>
                 </div>
               </div>
             ))}

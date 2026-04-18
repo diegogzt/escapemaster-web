@@ -24,6 +24,27 @@ export function RecentPaymentsWidget({}: RecentPaymentsProps) {
     fetchData();
   }, []);
 
+  const getMethodLabel = (method: string) => {
+    switch (method?.toUpperCase()) {
+      case "CARD": return "Tarjeta";
+      case "CASH": return "Efectivo";
+      case "BANK_TRANSFER": return "Transferencia";
+      case "PAYPAL": return "PayPal";
+      case "Bizum": return "Bizum";
+      default: return method || "Otro";
+    }
+  };
+
+  const getStatusLabel = (status: string) => {
+    switch (status?.toLowerCase()) {
+      case "completed": return "Completado";
+      case "pending": return "Pendiente";
+      case "failed": return "Fallido";
+      case "refunded": return "Reembolsado";
+      default: return status || "Desconocido";
+    }
+  };
+
   return (
     <div className="bg-[var(--color-background)] rounded-xl border border-[var(--color-beige)] shadow-sm h-full flex flex-col overflow-hidden">
       <div className="p-4 border-b border-[var(--color-beige)] flex-shrink-0">
@@ -44,13 +65,13 @@ export function RecentPaymentsWidget({}: RecentPaymentsProps) {
                 <div className="flex items-center gap-2">
                    <ArrowRightCircle size={16} className="text-primary opacity-60"/>
                    <div>
-                     <p className="text-sm font-medium">{p.amount}€</p>
-                     <p className="text-[10px] text-[var(--color-muted-foreground)] uppercase tracking-wider">{p.payment_method}</p>
+                     <p className="text-sm font-medium">{Number(p.amount).toFixed(2)} €</p>
+                     <p className="text-[10px] text-[var(--color-muted-foreground)]">{getMethodLabel(p.payment_method)}</p>
                    </div>
                 </div>
                 <div className="text-right">
-                   <p className="text-xs font-bold">{new Date(p.created_at).toLocaleDateString()}</p>
-                   <p className="text-[10px] text-green-600 font-bold bg-green-50 px-2 rounded mt-0.5">{p.status}</p>
+                   <p className="text-xs font-bold">{new Date(p.created_at).toLocaleDateString('es-ES')}</p>
+                   <p className="text-[10px] text-green-600 font-bold bg-green-50 px-2 rounded mt-0.5 capitalize">{getStatusLabel(p.status)}</p>
                 </div>
               </div>
             ))}

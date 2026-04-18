@@ -33,26 +33,32 @@ export function ProjectedEarningsWidget({
     fetchData();
   }, []);
 
-  if (loading) {
+  // Map backend fields to widget expectations
+  const grossRevenue = data?.total_revenue || 0;
+  const total = data?.projected_revenue || grossRevenue; // Fallback to earned if no projection
+  const pendingRevenue = data?.pending_revenue || (data?.expected_revenue ? data.expected_revenue - grossRevenue : 0);
+  const progress = total > 0 ? (grossRevenue / total) * 100 : (grossRevenue > 0 ? 100 : 0);
+
+  if (!data || (grossRevenue === 0 && pendingRevenue === 0)) {
     return (
       <div
-        className={`bg-[var(--color-background)] p-6 rounded-2xl border border-[var(--color-beige)] shadow-sm animate-pulse h-full ${className}`}
+        className={`bg-[var(--color-background)] p-6 rounded-2xl border border-[var(--color-beige)] shadow-sm flex flex-col h-full ${className}`}
       >
-        <div className="h-6 bg-[var(--color-background-soft)] rounded w-1/2 mb-6"></div>
-        <div className="h-32 bg-[var(--color-background-soft)] rounded w-full"></div>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h3 className="text-lg font-bold text-[var(--color-foreground)]">Proyección Mensual</h3>
+            <p className="text-sm text-[var(--color-muted-foreground)]">Sin datos disponibles</p>
+          </div>
+          <div className="p-2 bg-primary/10 rounded-xl text-primary">
+            <TrendingUp size={20} />
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-sm text-[var(--color-muted-foreground)]">No hay ingresos registrados este mes</p>
+        </div>
       </div>
     );
   }
-
-  if (!data) return null;
-
-  const chartData = [
-    { name: "Ganado", value: data.gross_revenue, color: "#2c5f2d" }, // Primary
-    { name: "Pendiente", value: data.pending_revenue, color: "#d4a373" }, // Accent
-  ];
-
-  const total = data.projected_revenue;
-  const progress = total > 0 ? (data.gross_revenue / total) * 100 : 0;
 
   return (
     <div
@@ -75,10 +81,10 @@ export function ProjectedEarningsWidget({
       <div className="flex-1 flex flex-col justify-end">
         <div className="flex items-baseline gap-2 mb-2">
           <span className="text-3xl font-bold text-[var(--color-foreground)]">
-            €{(data.gross_revenue || 0).toLocaleString()}
+            €{grossRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
           <span className="text-sm font-medium text-[var(--color-muted-foreground)]">
-            / €{(total || 0).toLocaleString()}
+            / €{total.toLocaleString()}
           </span>
         </div>
 
@@ -86,7 +92,7 @@ export function ProjectedEarningsWidget({
         <div className="w-full bg-[var(--color-light)] h-3 rounded-full overflow-hidden mb-4">
           <div
             className="h-full bg-primary rounded-full transition-all duration-1000 ease-out"
-            style={{ width: `${progress}%` }}
+            style={{ width: `${Math.min(progress, 100)}%` }}
           ></div>
         </div>
 
@@ -97,7 +103,7 @@ export function ProjectedEarningsWidget({
               <span className="text-xs font-medium">Ya ganado</span>
             </div>
             <span className="text-sm font-bold text-[var(--color-foreground)] block">
-              €{(data.gross_revenue || 0).toLocaleString()}
+              €{grossRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
           <div className="bg-[var(--color-light)]/30 p-3 rounded-xl">
@@ -106,7 +112,7 @@ export function ProjectedEarningsWidget({
               <span className="text-xs font-medium">Por ganar</span>
             </div>
             <span className="text-sm font-bold text-[var(--color-foreground)] block">
-              €{(data.pending_revenue || 0).toLocaleString()}
+              €{pendingRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </span>
           </div>
         </div>
